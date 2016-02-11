@@ -1,0 +1,11 @@
+Release/obj.target/ella/ella.o: ../ella.cpp \
+  /Users/cvaldez/.node-gyp/0.12.7/src/node.h \
+  /Users/cvaldez/.node-gyp/0.12.7/deps/v8/include/v8.h \
+  /Users/cvaldez/.node-gyp/0.12.7/deps/v8/include/v8stdint.h \
+  /Users/cvaldez/.node-gyp/0.12.7/deps/v8/include/v8config.h \
+  /Users/cvaldez/.node-gyp/0.12.7/src/node_version.h \
+  ../include/java/java_class.hpp ../include/java/jvm_reflection.hpp \
+  ../include/java/jvm_handler.h ../include/java/jvm_global.hpp \
+  ../include/java/jvm_util.hpp ../include/java/jvm_argument.hpp \
+  ../include/java/java_value.hpp ../include/java/jvm_return.hpp \
+  ../include/javascript/js_vm.hpp ../include/javascript/js_util.hpp
