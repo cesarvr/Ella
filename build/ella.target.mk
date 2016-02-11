@@ -28,9 +28,8 @@ CFLAGS_C_Debug := \
 # Flags passed to only C++ files.
 CFLAGS_CC_Debug := \
 	-fno-rtti \
-	-fno-exceptions \
 	-fno-threadsafe-statics \
-	-std=c++11
+	-std=gnu++11
 
 # Flags passed to only ObjC files.
 CFLAGS_OBJC_Debug :=
@@ -70,9 +69,8 @@ CFLAGS_C_Release := \
 # Flags passed to only C++ files.
 CFLAGS_CC_Release := \
 	-fno-rtti \
-	-fno-exceptions \
 	-fno-threadsafe-statics \
-	-std=c++11
+	-std=gnu++11
 
 # Flags passed to only ObjC files.
 CFLAGS_OBJC_Release :=

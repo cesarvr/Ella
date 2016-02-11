@@ -7,53 +7,44 @@
 //
 
 
-#include <node.h>
-#include <v8.h>
+#include <nan.h>
 
 
-#include "java_class.hpp"
-#include "js_vm.hpp"
-
-using namespace v8;
+#include <java_class.hpp>
+#include <js_vm.hpp>
 
 
 JVMLoader vm;
 
-using V8Arguments = const v8::FunctionCallbackInfo<Value>&;
+using V8Arguments = const Nan::FunctionCallbackInfo<v8::Value>&;
 
 void SetClassPath(V8Arguments args){
-    Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
-    
+   
+
     if(args.Length() < 1) {
-        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments.")));
+       Nan::ThrowTypeError("Wrong number of arguments.");
     }
     
     if (!args[0]->IsString()) {
-         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "This funciton expect a String.")));
+         Nan::ThrowTypeError("This funciton expect a String.");
     }
     vm.SetClassPath( JSUtils::ObjectToString( args[0]->ToString() ));
 }
 
 
 void Start(V8Arguments args) {
-    Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
+    
     
     vm.SetClassPath("-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/");
     
     
-    args.GetReturnValue().Set( String::NewFromUtf8(isolate, vm.Start().c_str() ));
+    args.GetReturnValue().Set( Nan::New( vm.Start() ).ToLocalChecked());
 }
 
-void Init(Handle<Object> exports) {
-    Isolate* isolate = Isolate::GetCurrent();
+void Init(v8::Local<v8::Object>  exports) {
     
-    exports->Set(String::NewFromUtf8(isolate, "start"),
-                 FunctionTemplate::New(isolate, Start)->GetFunction());
-    
-    
-
+    exports->Set(Nan::New("start").ToLocalChecked(),
+                 Nan::New<v8::FunctionTemplate>(Start)->GetFunction());
 }
 
 NODE_MODULE(ella, Init)

@@ -10,8 +10,15 @@
             "include/java/",
             "include/javascript/",
         ],
-        'xcode_settings': {
-            'OTHER_CPLUSPLUSFLAGS': ['-std=c++11'],
-        },
+
+        'conditions': [
+            ['OS=="mac"', {
+                'xcode_settings': {
+                    'OTHER_CPLUSPLUSFLAGS': ['-std=gnu++11'],
+                    'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                }
+            }]
+        ],
+
     }]
 }
