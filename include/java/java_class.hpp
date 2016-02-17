@@ -26,10 +26,10 @@ struct JavaMethod {
 class JavaClass {
     
 private:
-    jobject classObject;
     std::vector<JavaMethod> Methods;
     
     std::string name;
+    jobject classObject;
     JVMLoader loader;
     JavaObject javaObject;
     
@@ -42,6 +42,8 @@ public:
     
     static JavaClass CreateObject(JVMLoader loader, std::string className);
     
+    
+    const std::vector<JavaMethod> GetMethods();
     
     void SetMethods(jobjectArray methods);
     

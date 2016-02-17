@@ -17,7 +17,7 @@
     #include <jni.h>
 #endif
 
-
+#include <memory>
 #include <sstream>
 #include <vector>
 

@@ -9,9 +9,9 @@
 #ifndef JSUtils_hpp
 #define JSUtils_hpp
 
-#include <node.h>
-#include <v8.h>
+#include <nan.h>
 #include <iostream>
+
 class JSUtils {
     
 public:

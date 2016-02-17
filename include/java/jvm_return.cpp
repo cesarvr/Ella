@@ -9,7 +9,7 @@
 #include "jvm_return.hpp"
 
 JavaReturn::JavaReturn(std::string returnType): returnType(returnType) {
-    std::cout << "return: " << returnType << std::endl;
+    //:wstd::cout << "return: " << returnType << std::endl;
 };
 
 

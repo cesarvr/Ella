@@ -38,6 +38,10 @@ abs_obj := $(abspath $(obj))
 # generated dependency rule Makefiles in one pass.
 all_deps :=
 
+ifneq (,$(filter $(origin CXX), undefined default))
+  CXX = $(abspath /usr/bin/clang++)
+endif
+LINK ?= ./gyp-mac-tool flock $(builddir)/linker.lock $(abspath /usr/bin/clang++)
 
 
 CC.target ?= $(CC)

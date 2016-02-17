@@ -6,6 +6,7 @@ DEFS_Debug := \
 	'-D_DARWIN_USE_64_BIT_INODE=1' \
 	'-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64' \
+	'-D__MACOSX_CORE__' \
 	'-DBUILDING_NODE_EXTENSION' \
 	'-DDEBUG' \
 	'-D_DEBUG'
@@ -14,7 +15,7 @@ DEFS_Debug := \
 CFLAGS_Debug := \
 	-O0 \
 	-gdwarf-2 \
-	-mmacosx-version-min=10.5 \
+	-mmacosx-version-min=10.7 \
 	-arch x86_64 \
 	-Wall \
 	-Wendif-labels \
@@ -29,7 +30,8 @@ CFLAGS_C_Debug := \
 CFLAGS_CC_Debug := \
 	-fno-rtti \
 	-fno-threadsafe-statics \
-	-std=gnu++11
+	-std=c++11 \
+	-stdlib=libc++
 
 # Flags passed to only ObjC files.
 CFLAGS_OBJC_Debug :=
@@ -49,13 +51,14 @@ DEFS_Release := \
 	'-D_DARWIN_USE_64_BIT_INODE=1' \
 	'-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64' \
+	'-D__MACOSX_CORE__' \
 	'-DBUILDING_NODE_EXTENSION'
 
 # Flags passed to all source files.
 CFLAGS_Release := \
 	-Os \
 	-gdwarf-2 \
-	-mmacosx-version-min=10.5 \
+	-mmacosx-version-min=10.7 \
 	-arch x86_64 \
 	-Wall \
 	-Wendif-labels \
@@ -70,7 +73,8 @@ CFLAGS_C_Release := \
 CFLAGS_CC_Release := \
 	-fno-rtti \
 	-fno-threadsafe-statics \
-	-std=gnu++11
+	-std=c++11 \
+	-stdlib=libc++
 
 # Flags passed to only ObjC files.
 CFLAGS_OBJC_Release :=
@@ -87,7 +91,12 @@ INCS_Release := \
 	-I$(srcdir)/include/javascript
 
 OBJS := \
-	$(obj).target/$(TARGET)/ella.o
+	$(obj).target/$(TARGET)/include/java/jvm_handler.o \
+	$(obj).target/$(TARGET)/include/java/java_class.o \
+	$(obj).target/$(TARGET)/include/java/jvm_argument.o \
+	$(obj).target/$(TARGET)/include/java/java_value.o \
+	$(obj).target/$(TARGET)/include/java/jvm_return.o \
+	$(obj).target/$(TARGET)/main.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)
@@ -116,25 +125,31 @@ $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.cpp FORCE_DO_CMD
 # End of this set of suffix rules
 ### Rules for final target.
 LDFLAGS_Debug := \
+	-stdlib=libc++ \
 	-Wl,-search_paths_first \
-	-mmacosx-version-min=10.5 \
+	-mmacosx-version-min=10.7 \
 	-arch x86_64 \
 	-L$(builddir)
 
 LIBTOOLFLAGS_Debug := \
+	-stdlib=libc++ \
 	-Wl,-search_paths_first
 
 LDFLAGS_Release := \
+	-stdlib=libc++ \
 	-Wl,-search_paths_first \
-	-mmacosx-version-min=10.5 \
+	-mmacosx-version-min=10.7 \
 	-arch x86_64 \
 	-L$(builddir)
 
 LIBTOOLFLAGS_Release := \
+	-stdlib=libc++ \
 	-Wl,-search_paths_first
 
 LIBS := \
-	-undefined dynamic_lookup
+	-undefined dynamic_lookup \
+	-framework \
+	JavaVM
 
 $(builddir)/ella.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(builddir)/ella.node: LIBS := $(LIBS)

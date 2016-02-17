@@ -11,7 +11,8 @@
 
 JavaClass::JavaClass(std::string _className,
                      jobject _classObject,
-                     JVMLoader _loader ):   name(_className),
+                     JVMLoader _loader ):
+name(_className),
 classObject(_classObject),
 loader(_loader)
 {};
@@ -61,12 +62,11 @@ void JavaClass::SetMethods(jobjectArray methods) {
         JavaMethod m;
         
         m.name = Field::GetName(loader, object);
-        std::cout << "->" << m.name << std::endl;
+  
         m.returnType = JavaReturn( Field::GetReturnType(loader, object) );
         m.arguments =  JavaArguments( Field::GetParameters(loader, object) );
         m.methodPTR = loader.GetJNIEnviorment()->FromReflectedMethod(object);
         
-        m.arguments.CheckInfo();
         
         return m;
     };
@@ -86,7 +86,6 @@ JavaMethod JavaClass::LookupMethod(std::string name) {
 };
 
 
-
-
+const std::vector<JavaMethod> JavaClass::GetMethods(){ return Methods; };
 
 
