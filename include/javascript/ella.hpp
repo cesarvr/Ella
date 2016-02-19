@@ -11,7 +11,7 @@
 
 
 
-#include <nan.h>
+#include "nan.h"
 #include "jvm_handler.h"
 #include "jvm_object.hpp"
 #include "adapter.hpp"
@@ -24,7 +24,7 @@
 namespace ella {
     
     JVMLoader vm;
-    
+
     int count = 0;
     std::map<int, Object*> table;
     
@@ -106,7 +106,7 @@ namespace ella {
             callback->Call(1, argv);
             object.ReleaseThread();
         }
-    };
+    }
     
     MethodTopology GetMethodCall(std::string method, NArguments& args) {
         
@@ -159,7 +159,7 @@ namespace ella {
         }catch(VMError& error){
             Nan::ThrowTypeError( error.errorMessage.c_str() );
         }
-    };
+    }
     
     void LoadClass(NArguments& args ) {
         try {
@@ -190,7 +190,7 @@ namespace ella {
         }catch(VMError& e){
             Nan::ThrowTypeError( e.errorMessage.c_str() );
         }
-    };
+    }
     
     void Start(NArguments& args ){
         
@@ -214,7 +214,7 @@ namespace ella {
             }
             
             return false;
-        };
+        }
         
         auto whenFinish = [](Nan::Callback* callback,  bool x){
             if(x) {
@@ -229,11 +229,11 @@ namespace ella {
                 
                 callback->Call(1, argv);
             }
-        };
+        }
         
         auto queueWorker = new AsyncWrap<decltype(worker), bool, decltype(whenFinish)>(callBack, worker, whenFinish);
         Nan::AsyncQueueWorker(queueWorker);
-    };
+    }
     
     void SetClassPath(NArguments& args){
         if(args.Length() < 1) {
@@ -245,7 +245,7 @@ namespace ella {
         }
         
         vm.SetClassPath("-Djava.class.path=" + ObjectToString( args[0]->ToString() ));
-    };
+    }
 }
 
 

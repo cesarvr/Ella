@@ -23,14 +23,13 @@ class JavaValueAdapter : JavaValue {
     
 public:
     static JavaValue toJavaValue(v8::Local<v8::Value>&& object);
-    
 
     static auto handleReturn(JavaValue& jValue) ->decltype( Nan::New(jValue.getStringValue()) ) {
         
         return Nan::New(jValue.getStringValue());
-    };
+    }
     
-};
+}
 
 
 #endif /* adapter_hpp */

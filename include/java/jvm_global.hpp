@@ -22,6 +22,7 @@
 
 #ifdef __linux__
   #include <memory>
+  #include <dlfcn.h>
 #endif
 
 

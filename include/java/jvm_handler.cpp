@@ -3,12 +3,12 @@
 JVMLoader::JVMLoader() {
     
     SetClassPath("-Djava.class.path=*:."); //use current directory as classpath.
-};
+}
 
 void JVMLoader::SetClassPath(std::string _classPath) {
     
     classPath = _classPath;
-};
+}
 
 bool JVMLoader::isVMReady() {
     
@@ -23,7 +23,7 @@ std::string JVMLoader::VMStatus(int status) {
         isJvmStarted = false;
         return "[jvm]: error starting virtual machine.";
     }
-};
+}
 
 
 /* use the one loaded */
@@ -33,10 +33,7 @@ std::string JVMLoader::Start() {
     
     void* handle = dlopen("./libjvm.so", RTLD_LAZY);
     
-    if (!handle) {
-        info.GetReturnValue().Set( Nan::New(" [jvm]: fatal! can't load shared library. libjvm.so").ToLocalChecked() );
-        return;
-    }
+    if (!handle) throw VMError{ "Fatal: Can't load dynamic library libjvm.so" }; 
     
     create_vm = (CreateJVM) dlsym(handle, "JNI_CreateJavaVM");
     
@@ -45,10 +42,10 @@ std::string JVMLoader::Start() {
         
         std::string msg = "Cannot find symbol: JNI_CreateJavaVM || msg: ";
         msg = msg + dlsym_error;
-        info.GetReturnValue().Set( Nan::New(msg).ToLocalChecked() );
         
         dlclose(handle);
-        return;
+        throw VMError{"Fatal: "+ msg };
+
     }
     
 #else
@@ -68,5 +65,5 @@ std::string JVMLoader::Start() {
     int status = create_vm((JavaVM**)&vm, (void**)&env, &vm_args);
     
     return VMStatus(status);
-};
+}
 
