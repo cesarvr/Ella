@@ -9,7 +9,6 @@
 #ifndef jvm_global_h
 #define jvm_global_h
 
-#include <iostream>
 
 #ifdef _WIN32
 	#include <memory>
@@ -21,6 +20,14 @@
     #include <jni.h>
 #endif
 
+#ifdef __linux__
+  #include <memory>
+#endif
+
+
+
+
+#include <iostream>
 #include <sstream>
 #include <vector>
 
