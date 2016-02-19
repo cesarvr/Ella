@@ -19,7 +19,7 @@ Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS contain
 			/*   javaObject now possess the same objects as his counterpart in Java. 
 					 
 			 *   + add
-       *   + toString
+       			 *   + toString
 			 *   + hashCode 
 			 *   + equals , etc...
        */
