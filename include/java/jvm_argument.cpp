@@ -15,15 +15,14 @@ JavaArguments::JavaArguments(std::vector<std::string> arguments) {
 
 void JavaArguments::CheckInfo(){
     
-    std::cout << "checking args: " << std::endl;
+
     for(std::string arg : listOfArguments) {
         std::cout << "->" << arg << std::endl;
     }
 }
 
 
-std::unique_ptr<jvalue[]>
-JavaArguments::GetArguments(JVMLoader loader, std::vector<JavaValue>& values) const{
+std::unique_ptr<jvalue[]> JavaArguments::GetArguments(JEnv env, std::vector<JavaValue>& values) {
     
     if (values.size() < listOfArguments.size()) {
         std::stringstream msg;
@@ -34,7 +33,7 @@ JavaArguments::GetArguments(JVMLoader loader, std::vector<JavaValue>& values) co
         
         msg << "] \n";
         
-        throw VMError{ msg.str(), 5 };
+        throw VMError{ msg.str() };
     }
     
     int argsIndex = 0;
@@ -43,9 +42,18 @@ JavaArguments::GetArguments(JVMLoader loader, std::vector<JavaValue>& values) co
     std::unique_ptr<jvalue[]> jniArguments( new jvalue[ listOfArguments.size() ] );
     
     for(const std::string& arg : listOfArguments) {
-        if (arg == JAVA_STRING_CLASS) {
-            jniArguments[ argsIndex ].l = loader.GetJNIEnviorment()->NewStringUTF( values[ argsIndex ].getStringValue().c_str() );
+        if (arg == JSTRING) {
+            jniArguments[ argsIndex ].l = env->NewStringUTF( values[ argsIndex ].getStringValue().c_str() );
             argsIndex++;
+        }
+        
+        if (arg == JINT) {
+            jniArguments[ argsIndex ].i = values[argsIndex].getIntValue();
+            argsIndex++;
+        }
+        
+        if (arg == JBYTE) {
+            jniArguments[ argsIndex ].b = values[argsIndex].getIntValue();
         }
     }
     

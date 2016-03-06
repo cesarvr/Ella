@@ -11,13 +11,14 @@
 
 #include "jvm_global.hpp"
 
-
 enum class JVMType { String, Integer, Float, ByteArray };
+
 
 
 class JavaValue {
     JVMType type;
-    std::vector<unsigned char> bytes;
+    std::vector<char> bytes;
+    jvalue data;
     
 public:
     
@@ -25,7 +26,7 @@ public:
     JavaValue(std::string value);
     JavaValue(float value);
     JavaValue(int value);
-    JavaValue(std::vector<unsigned char> data);
+    JavaValue(std::vector<char> data);
     
     
     bool IsString(){  return type==JVMType::String; };
@@ -38,7 +39,7 @@ public:
     
     float getFloatValue();
     
-    std::vector<unsigned char> getArrayValue();
+    std::vector<char> getArrayValue();
     
     std::string getStringValue();
     

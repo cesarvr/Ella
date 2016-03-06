@@ -10,47 +10,43 @@
 
 
 JavaValue::JavaValue(std::string value) {
-    //field = value;
-    std::vector<unsigned char> tmp(value.begin(), value.end());
+    std::vector<char> tmp(value.begin(), value.end());
     bytes = tmp;
     type=JVMType::String;
 };
 
 JavaValue::JavaValue(float value) {
-    bytes.push_back(*reinterpret_cast<char*>(&value));
+    data.f = value;
     type=JVMType::Float;
 };
 
 JavaValue::JavaValue(int value) {
-    bytes.push_back(*reinterpret_cast<char*>(&value));
+    data.i = value;
     type=JVMType::Integer;
 };
 
-JavaValue::JavaValue(std::vector<unsigned char> data) {
+JavaValue::JavaValue(std::vector<char> data) {
     bytes = data;
     type=JVMType::ByteArray;
 };
 
-
-std::vector<unsigned char> JavaValue::getArrayValue(){
-    if( !IsArray() ) throw VMError{ "Error: incompatible data. (expected Array)", 05};
+std::vector<char> JavaValue::getArrayValue(){
+    if( !IsArray() ) throw VMError{ "Error: incompatible data. (expected Array)"};
     return bytes;
 };
 
 int JavaValue::getIntValue(){
-    if( !IsInteger() ) throw VMError{ "Error: incompatible data. (expected Integer)", 04};
-    return (int) bytes[0];
+    if( !IsInteger() ) throw VMError{ "Error: incompatible data. (expected Integer)"};
+    return data.i;
 };
 
 float JavaValue::getFloatValue(){
-    if( !IsFloat() ) throw VMError{ "Error: incompatible data. (expected Float)", 03};
-    std::cout << "size ->" << bytes.size() << std::endl;
-    return (float) bytes[0];
+    if( !IsFloat() ) throw VMError{ "Error: incompatible data. (expected Float)"};
+    return data.f;
 };
 
 std::string JavaValue::getStringValue(){
-    if( !IsString() ) throw VMError{ "Error: incompatible data. (expected String) ", 02};
+    if( !IsString() ) throw VMError{ "Error: incompatible data. (expected String) "};
     std::string tmp(bytes.begin(), bytes.end());
     return tmp;
 };
-

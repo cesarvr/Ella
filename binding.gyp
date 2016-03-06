@@ -6,7 +6,7 @@
 
     "targets": [{
         "target_name": "ella",
-        "sources": [ "include/java/jvm_handler.cpp", "include/java/java_class.cpp", "include/java/jvm_argument.cpp", "include/java/java_value.cpp", "include/java/jvm_return.cpp" , "main.cpp"],
+        "sources": [ "include/java/jvm_handler.cpp", "include/java/jvm_object.cpp", "include/java/jvm_argument.cpp", "include/java/java_value.cpp","include/javascript/adapter.cpp", "main.cpp"],
         "cflags": ["-std=c++11", "-stdlib=libc++", "-fexceptions"],
         "cflags_cc": ["-fexceptions"],
         "include_dirs": [

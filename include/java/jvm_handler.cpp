@@ -51,9 +51,10 @@ std::string JVMLoader::Start() {
         return;
     }
     
-#elif __APPLE__
-    create_vm = JNI_CreateJavaVM;
+#else
+	create_vm = JNI_CreateJavaVM;
 #endif
+
     
     JavaVMOption options[1];
     JavaVMInitArgs vm_args;
