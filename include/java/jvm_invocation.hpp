@@ -83,10 +83,20 @@ template <typename F, typename ...Args>
 auto Wrapper(F && f, JEnv env,  Args &&... args) ->decltype(f(env.get(), args...)) {
     try {
         
-        Utils::isNull(env.get());
+        
+        Utils::isNull(&f);
+        Utils::isNull(env);
         Utils::isNull(args...);
         
-        return f(env.get(), args...);
+
+        auto x = f(env.get(), args...);
+        
+        if (env->ExceptionCheck()){
+            throw VMError{"error in JVM: \n"};
+            env->ExceptionDescribe();
+        }
+        
+        return x;
     }catch(VMError& error){
         env->ExceptionDescribe();
         throw error;
@@ -106,7 +116,7 @@ private:
 public:
     
     Functor( JEnv _env , Fx _func ): HandleEnv(_env), func(_func) {
-       std::cout << "ctor: Functor" << std::endl;
+
     };
     
     template <typename ReturnType, typename... Args>
@@ -121,7 +131,14 @@ public:
             
             auto value = func(env.get(), args...);
            
+           
+            if (env->ExceptionCheck()){
+                throw VMError{"error in JVM: \n"};
+                env->ExceptionDescribe();
+            }
+            
             ret.SetValue(value);
+            
             return ret;
         }catch(VMError& error){
             env->ExceptionDescribe();

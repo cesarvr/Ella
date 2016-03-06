@@ -30,16 +30,13 @@ intMethod(env, env->functions->CallIntMethodA)
     auto jenv = GetEnv();
     name = className;
     
-     std::cout << "before Find Class" << std::endl;
-    
     auto member = Wrapper(env->functions->FindClass, env, className.c_str() );
-
+ 
     
     auto constructor = Wrapper(env->functions->GetMethodID,
                                env, member,
                                CLASS_DEFAULT_CTS.c_str(),
                                VOID_RETURN.c_str() );
-    
     
     object = Wrapper(jenv->functions->NewObject,
                      jenv,
@@ -47,6 +44,8 @@ intMethod(env, env->functions->CallIntMethodA)
                      constructor );
     
     reflect.SetClass(object);
+    
+
     
     methods = reflect.GetMethodsDefinition();
 };
@@ -109,7 +108,7 @@ const std::vector<JavaMethod>& Object::GetMembers(){
 Reflect::Reflect(JEnv env):
 HandleEnv(env),
 objectMethod(env, env->functions->CallObjectMethodA) {
-    std::cout << "ctor: Reflect" << std::endl;
+
 };
 
 
@@ -144,8 +143,8 @@ Reflect::GetMethodsDefinition() {
         methd.methodPTR = Wrapper(env->functions->FromReflectedMethod, env, object );
         
         
-      //  std::cout << "Name: "<< methd.name <<std::endl;
-      //  std::cout << "Return: "<< methd.returnType <<std::endl;
+        //std::cout << "Name: "<< methd.name <<std::endl;
+        //std::cout << "Return: "<< methd.returnType <<std::endl;
         
         return methd;
     };

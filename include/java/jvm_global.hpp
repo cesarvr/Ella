@@ -42,10 +42,10 @@ private:
     JEnv env;
     
 public:
-    HandleEnv(JEnv env): env(env){ std::cout << "ctor: JEnv" << std::endl; };
+    HandleEnv(JEnv env): env(env){  };
     
     const JEnv& GetEnv(){
-        std::cout << "GET: JEnv" << std::endl;
+
         return env;
     };
 };

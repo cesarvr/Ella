@@ -11,7 +11,6 @@
 
 #include "jvm_global.hpp"
 
-
 namespace Utils {
     
     template<typename... T>
@@ -26,8 +25,8 @@ namespace Utils {
     
     template<typename T, typename R, typename... Args>
     void isNull(T v1, R v2, Args... args ) {
-        if (v1 == nullptr || v2 == nullptr) {
-            throw VMError{"Error: arguments can't be null." };
+        if (v1 == nullptr ||  v2 == nullptr || v1 == 0x0 || v2 == 0x0) {
+            throw VMError{"Error: arguments can't be null. v1 or v2 (line 30 utils.h)" };
         }
         
         Utils::isNull(args...);

@@ -21,9 +21,26 @@ protected:
 public:
     JVMLoader();
     const std::shared_ptr<JNIEnv>& GetJNIEnviorment() {
+        
         if(env == nullptr || env == 0x0) throw VMError{"JVM: has not been initialize. "};
-       // vm->GetEnv((void**)&env, JNI_VERSION_1_6);
-       // std::cout << "getting an JEnv for this thread" << std::endl;
+       
+        int status = vm->GetEnv((void**)&env, JNI_VERSION_1_6);
+       
+        if (status == JNI_EDETACHED) {
+            
+            std::cout << "GetEnv: not attached" << std::endl;
+            if (vm->AttachCurrentThread((void **) &env, NULL) != 0) {
+                std::cout << "Failed to attach" << std::endl;
+            }
+            
+        } else if (status == JNI_OK) {
+            return env;
+        } else if (status == JNI_EVERSION) {
+            throw VMError{"GetEnv: version not supported"};
+        }
+        
+        
+        // std::cout << "getting an JEnv for this thread" << std::endl;
         
        // if(env == nullptr || env == 0x0) throw VMError{"JVM: has not been initialize. "};
         return env;

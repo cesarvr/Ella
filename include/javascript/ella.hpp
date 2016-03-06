@@ -49,12 +49,7 @@ namespace ella {
         if(cm.size() < 1) throw VMError{"Can't recognize the method signature. what!?, " + std::to_string( cm.size() ) };
         return MethodTopology{cm[1], cm[2]};
     }
-    
-    
-    
-    
-    
-    
+
     void JSInterface(NArguments& args){
         
         try{
@@ -104,20 +99,17 @@ namespace ella {
             Nan::ThrowTypeError( error.errorMessage.c_str() );
         }
     }
-    
-    
-
 
     void LoadClass(NArguments& args ) {
         try {
             
             if(vm.isVMReady()){
                 
-                std::cout << "HOllly Cow  vm ->" << vm.GetJNIEnviorment() << std::endl;
+                std::cout << "vm addr ->" << vm.GetJNIEnviorment() << std::endl;
                 
                 std::string classname = ObjectToString( args[0]->ToString() );
                 
-                Object *java_object =  new Object (vm.GetJNIEnviorment(), "pdf/P2HService");
+                Object *java_object =  new Object(vm.GetJNIEnviorment(), "pdf/P2HService");
                 
                 NObject object = Nan::New<v8::Object>();
                 
