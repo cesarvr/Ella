@@ -65,7 +65,7 @@ std::string JVMLoader::Start() {
     options[0].optionString = (char *)classPath.c_str();
     vm_args.options = options;
     
-    int status = create_vm(&vm, (void**)&env, &vm_args);
+    int status = create_vm((JavaVM**)&vm, (void**)&env, &vm_args);
     
     return VMStatus(status);
 };

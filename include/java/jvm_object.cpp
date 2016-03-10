@@ -20,32 +20,32 @@ std::string ReturnTypeOf(std::string className) {
 
 
 
-Object::Object(JEnv env, std::string className):
-HandleEnv(env),
-reflect(env),
-objectMethod(env, env->functions->CallObjectMethodA),
-intMethod(env, env->functions->CallIntMethodA)
+Object::Object(JVMLoader loader, std::string className):
+HandleEnv(loader),
+reflect(loader),
+objectMethod(loader, loader.GetJNIEnviorment()->functions->CallObjectMethodA),
+intMethod(loader, loader.GetJNIEnviorment()->functions->CallIntMethodA)
 {
     
-    auto jenv = GetEnv();
+    auto env = GetEnv();
     name = className;
     
     auto member = Wrapper(env->functions->FindClass, env, className.c_str() );
- 
+    
     
     auto constructor = Wrapper(env->functions->GetMethodID,
                                env, member,
                                CLASS_DEFAULT_CTS.c_str(),
                                VOID_RETURN.c_str() );
     
-    object = Wrapper(jenv->functions->NewObject,
-                     jenv,
+    object = Wrapper(env->functions->NewObject,
+                     env,
                      member,
                      constructor );
     
     reflect.SetClass(object);
     
-
+    
     
     methods = reflect.GetMethodsDefinition();
 };
@@ -56,6 +56,12 @@ JavaValue Object::Call(std::string methodName, std::vector<JavaValue> args){
     bool methodNotFound = true;
     
     
+    std::cout << "[claiming JNIEnv] 0xdeadbeeF" << std::endl;
+    auto env = GetEnv();
+    std::cout << "[claiming JNIEnv] end :/  0xdeadbeef" << std::endl;
+    
+    
+    JavaValue value;
     
     for(auto& method: methods ){
         
@@ -67,8 +73,9 @@ JavaValue Object::Call(std::string methodName, std::vector<JavaValue> args){
                 
                 auto obj = objectMethod.Call<jstring>(object,
                                                       method.methodPTR,
-                                                      method.arguments.GetArguments(GetEnv(), args).get());
-                return JavaValue(obj.GetValue());
+                                                      method.arguments.GetArguments(env, args).get());
+              
+                value =  JavaValue(obj.GetValue());
                 
             }else if( method.returnType == JINT ){
                 
@@ -76,27 +83,25 @@ JavaValue Object::Call(std::string methodName, std::vector<JavaValue> args){
                 
                 auto obj = intMethod.Call<jint>(object,
                                                 method.methodPTR,
-                                                method.arguments.GetArguments(GetEnv(), args).get());
+                                                method.arguments.GetArguments(env, args).get());
                 
-                return JavaValue(obj.GetValue());
+                
+                value = JavaValue(obj.GetValue());
                 
             }else if( method.returnType == JBYTE_ARRAY ){
                 
                 auto obj = objectMethod.Call<jobject>(object,
                                                       method.methodPTR,
-                                                      method.arguments.GetArguments(GetEnv(), args).get());
+                                                      method.arguments.GetArguments(env, args).get());
                 
-                return JavaValue(Utils::GetArrayFromJVM<char>(GetEnv(), (jobjectArray)obj.GetValue()));
-                
+                value = JavaValue(Utils::GetArrayFromJVM<char>(env, (jobjectArray)obj.GetValue()));
             }
-            
-            
         }
     }
     
     if (methodNotFound) throw "Method not found: " + methodName;
     
-    return JavaValue();
+    return value;
 };
 
 const std::vector<JavaMethod>& Object::GetMembers(){
@@ -105,10 +110,10 @@ const std::vector<JavaMethod>& Object::GetMembers(){
 
 
 
-Reflect::Reflect(JEnv env):
-HandleEnv(env),
-objectMethod(env, env->functions->CallObjectMethodA) {
-
+Reflect::Reflect(JVMLoader loader):
+HandleEnv(loader),
+objectMethod(loader, loader.GetJNIEnviorment()->functions->CallObjectMethodA) {
+    
 };
 
 
@@ -141,10 +146,6 @@ Reflect::GetMethodsDefinition() {
         methd.returnType = GetReturnType(object);
         methd.arguments = JavaArguments( GetParameters(object) );
         methd.methodPTR = Wrapper(env->functions->FromReflectedMethod, env, object );
-        
-        
-        //std::cout << "Name: "<< methd.name <<std::endl;
-        //std::cout << "Return: "<< methd.returnType <<std::endl;
         
         return methd;
     };

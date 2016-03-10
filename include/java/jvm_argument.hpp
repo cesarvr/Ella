@@ -11,7 +11,7 @@
 
 #include "jvm_global.hpp"
 #include "java_value.hpp"
-
+#include "jvm_handler.h"
 
 
 const std::string JSTRING = "java.lang.String";
@@ -20,7 +20,7 @@ const std::string JINT = "int";
 const std::string JBYTE_ARRAY = "[B";
 
 
-class JavaArguments {
+class JavaArguments{
     
 private:
     std::vector<std::string> listOfArguments;

@@ -9,7 +9,7 @@
 #include "jvm_argument.hpp"
 
 
-JavaArguments::JavaArguments(std::vector<std::string> arguments) {
+JavaArguments::JavaArguments( std::vector<std::string> arguments ) {
     listOfArguments = arguments;
 };
 
@@ -17,12 +17,14 @@ void JavaArguments::CheckInfo(){
     
 
     for(std::string arg : listOfArguments) {
-        std::cout << "->" << arg << std::endl;
+       // std::cout << "->" << arg << std::endl;
     }
 }
 
 
 std::unique_ptr<jvalue[]> JavaArguments::GetArguments(JEnv env, std::vector<JavaValue>& values) {
+    
+  //  std::cout << "taking arguments" << std::endl;
     
     if (values.size() < listOfArguments.size()) {
         std::stringstream msg;
@@ -56,6 +58,8 @@ std::unique_ptr<jvalue[]> JavaArguments::GetArguments(JEnv env, std::vector<Java
             jniArguments[ argsIndex ].b = values[argsIndex].getIntValue();
         }
     }
+    
+    // std::cout << "taking arguments [end]" << std::endl;
     
     return jniArguments;
 };

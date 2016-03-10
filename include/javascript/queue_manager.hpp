@@ -42,12 +42,12 @@
 
 
 
-template <typename Function, typename DoneCallBack>
+template <typename Function, typename ReturnType, typename DoneCallBack>
 class AsyncWrap : public Nan::AsyncWorker
 {
     //using X = decltype(Function);
     
-    bool result;
+    ReturnType result;
     Function procedure;
     DoneCallBack doneCallBack;
 
@@ -64,7 +64,7 @@ public:
     
     void Execute(){
         try {
-            std::cout << "executing" << std::endl;
+           // std::cout << "executing" << std::endl;
             
             
              result = procedure();
@@ -76,8 +76,7 @@ public:
     }
     
     void HandleOKCallback () {
-        
-        doneCallBack(callback, result);
+        doneCallBack(callback, std::move(result));
     }
 };
 

@@ -12,7 +12,7 @@ using CreateJVM = jint(*) (JavaVM **pvm, void **penv, void *args);
 
 class JVMLoader {
 protected:
-    JavaVM *vm = nullptr;
+    std::shared_ptr<JavaVM> vm = nullptr;
     std::shared_ptr<JNIEnv> env= nullptr;
     std::string classPath;
     bool isJvmStarted = false;
@@ -27,13 +27,14 @@ public:
         int status = vm->GetEnv((void**)&env, JNI_VERSION_1_6);
        
         if (status == JNI_EDETACHED) {
-            
-            std::cout << "GetEnv: not attached" << std::endl;
+         //   std::cout << "GetJNIEnviorment-> Attaching.." << std::endl;
+           // std::cout << "GetEnv: not attached" << std::endl;
             if (vm->AttachCurrentThread((void **) &env, NULL) != 0) {
-                std::cout << "Failed to attach" << std::endl;
+                std::cout << "GetJNIEnviorment-> Failed to attach" << std::endl;
             }
             
         } else if (status == JNI_OK) {
+         //   std::cout << "GetJNIEnviorment-> JNI_OK" << std::endl;
             return env;
         } else if (status == JNI_EVERSION) {
             throw VMError{"GetEnv: version not supported"};
@@ -46,8 +47,15 @@ public:
         return env;
     };
     
-    
-    
+    void ReleaseThread(){
+       
+        if(env == nullptr || env == 0x0)  return;
+        
+        int status = vm->GetEnv((void**)&env, JNI_VERSION_1_6);
+        if (status == JNI_OK) {
+            vm->DetachCurrentThread();
+        }
+    };
     
     bool isVMReady();
     void SetClassPath(std::string _classPath);
@@ -63,5 +71,32 @@ public:
         return *this;  // Assignment operator returns left side.
     }
 };
+
+
+
+
+class HandleEnv {
+private:
+    JVMLoader java;
+    
+public:
+    HandleEnv(JVMLoader _java): java(_java){  };
+    
+    const JEnv& GetEnv(){
+        return java.GetJNIEnviorment();
+    };
+    
+    const JVMLoader& GetLoader(){
+        return java;
+    };
+
+    void Release() {
+        std::cout << "Dettaching JVM from Current Thread   0x00008888" << std::endl;
+        java.ReleaseThread();
+    };
+
+};
+
+
 
 #endif /* JVM_Loader */

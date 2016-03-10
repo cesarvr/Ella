@@ -20,7 +20,7 @@ template<typename T>
 struct JNIType: HandleEnv {
     T value;
     
-    JNIType(JEnv env):HandleEnv(env){};
+    JNIType(JVMLoader env):HandleEnv(env){};
     
     void SetValue(T val){
         value = val;
@@ -35,7 +35,7 @@ template<>
 struct JNIType<jint>:HandleEnv {
     jint value;
     
-    JNIType(JEnv env):HandleEnv(env){};
+    JNIType(JVMLoader env):HandleEnv(env){};
     
     void SetValue(jint val){
         value = (int)val;
@@ -48,10 +48,10 @@ struct JNIType<jint>:HandleEnv {
 
 template<>
 struct JNIType<jstring>:HandleEnv {
-   
+    
     jstring value;
     
-    JNIType(JEnv env):HandleEnv(env){};
+    JNIType(JVMLoader env):HandleEnv(env){};
     
     void SetValue(jobject val){
         value = (jstring)val;
@@ -74,21 +74,17 @@ struct JNIType<jstring>:HandleEnv {
 
 
 
-/* 
-    Make JNI call and capture possible exceptions.
+/*
+ Make JNI call and capture possible exceptions.
  */
 
 
 template <typename F, typename ...Args>
 auto Wrapper(F && f, JEnv env,  Args &&... args) ->decltype(f(env.get(), args...)) {
     try {
-        
-        
-        Utils::isNull(&f);
+        Utils::isNull(f);
         Utils::isNull(env);
-        Utils::isNull(args...);
         
-
         auto x = f(env.get(), args...);
         
         if (env->ExceptionCheck()){
@@ -103,79 +99,32 @@ auto Wrapper(F && f, JEnv env,  Args &&... args) ->decltype(f(env.get(), args...
     };
 }
 
-
-
+/*
+ Class to wrap JNI Call###Method.
+ */
 
 template <typename Fx>
 class Functor : HandleEnv {
-
+    
 private:
     JEnv env;
     Fx func;
     
 public:
     
-    Functor( JEnv _env , Fx _func ): HandleEnv(_env), func(_func) {
-
-    };
+    Functor( JVMLoader _env , Fx _func ): HandleEnv(_env), func(_func) { };
     
     template <typename ReturnType, typename... Args>
     JNIType<ReturnType>
     Call(Args... args) {
-        
         auto env = GetEnv();
+        JNIType<ReturnType> ret(GetLoader());
         
-        JNIType<ReturnType> ret(env);
+        auto value = Wrapper(func, env, args...);
+        ret.SetValue(value);
         
-        try{
-            
-            auto value = func(env.get(), args...);
-           
-           
-            if (env->ExceptionCheck()){
-                throw VMError{"error in JVM: \n"};
-                env->ExceptionDescribe();
-            }
-            
-            ret.SetValue(value);
-            
-            return ret;
-        }catch(VMError& error){
-            env->ExceptionDescribe();
-            throw error;
-        };
+        return ret;
     };
 };
-
-
-
-
-template <typename FN>
-class Wrap: HandleEnv {
-    
-public:
-    
-    FN fn;
-    
-    Wrap(JEnv env, FN _fn):HandleEnv(env), fn(_fn){};
-    
-    template <typename... Args>
-    auto call( Args... args) -> decltype(fn(args...)) {
-        
-        try{
-         //   isNull(args...);
-            Utils::isNull(args...);
-            return fn(args...);
-            
-        }catch(VMError& error){
-            GetEnv()->ExceptionDescribe();
-            throw error;
-        };
-    }
-};
-
-
-
-
 
 #endif /* jvm_type_h */

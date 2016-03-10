@@ -12,6 +12,7 @@
 #include "utils.h"
 #include "jvm_argument.hpp"
 #include "jvm_invocation.hpp"
+#include "jvm_handler.h"
 
 using ObjectInterface = jobject(*)(JNIEnv *env, jobject obj, jmethodID methodID, const jvalue * args);
 using IntegerInterface = jint(*)(JNIEnv *env, jobject obj, jmethodID methodID, const jvalue * args);
@@ -48,7 +49,7 @@ public:
     void SetClass(jobject object);
     jobject GetReflectClass();
     
-    Reflect(JEnv env);
+    Reflect(JVMLoader env);
     
     jmethodID GetMethod( std::string className, std::string method, std::string returnType );
     
@@ -79,12 +80,13 @@ private:
     Functor<IntegerInterface> intMethod;
     
 public:
-    Object(JEnv env, std::string className);
+    Object(JVMLoader env, std::string className);
     
     JavaValue Call(std::string methodName, std::vector<JavaValue> args);
     
     const std::vector<JavaMethod>& GetMembers();
     
+    void ReleaseThread(){ Release(); }
 };
 
 

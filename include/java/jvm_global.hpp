@@ -35,20 +35,8 @@ struct VMError {
     std::string errorMessage;
 };
 
-using JEnv = const std::shared_ptr<JNIEnv>;
 
-class HandleEnv {
-private:
-    JEnv env;
-    
-public:
-    HandleEnv(JEnv env): env(env){  };
-    
-    const JEnv& GetEnv(){
-
-        return env;
-    };
-};
+using JEnv  = const std::shared_ptr<JNIEnv>;
 
 
 
