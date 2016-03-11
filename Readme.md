@@ -20,7 +20,7 @@ Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS contain
 					 
 			 *   + add
        			 *   + toString
-			*   + hashCode 
+			 *   + hashCode 
 			 *   + equals , etc...
        */
 
