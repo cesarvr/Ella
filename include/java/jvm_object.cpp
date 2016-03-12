@@ -151,7 +151,7 @@ Reflect::GetMethodsDefinition() {
     };
     
     return Utils::IterateJObjectArray< decltype(Fn), JavaMethod >( GetEnv(), (jobjectArray) methodsList.GetValue(), Fn );
-};
+}
 
 
 std::string Reflect::GetName(std::string className, jobject object) {

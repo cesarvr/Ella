@@ -29,7 +29,7 @@ public:
         return Nan::New(jValue.getStringValue());
     }
     
-}
+};
 
 
 #endif /* adapter_hpp */

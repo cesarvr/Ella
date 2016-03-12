@@ -11,7 +11,7 @@
         ],
 
         "conditions": [
-            ["OS=='mac'", {
+            ['OS=="mac"', {
                     "make_global_settings": [
                         ["CC", 'usr/bin/clang'],
                         ["CXX", "/usr/bin/clang++"],
@@ -42,9 +42,6 @@
                     ],
 
                 }
-
-
-
             ]
         ]
     }]

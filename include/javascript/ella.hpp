@@ -103,10 +103,12 @@ namespace ella {
                 getValue()
             };
             
+            std::cout << "thread " << count << "finish" << std::endl;
+            
             callback->Call(1, argv);
             object.ReleaseThread();
         }
-    }
+    };
     
     MethodTopology GetMethodCall(std::string method, NArguments& args) {
         
@@ -214,7 +216,7 @@ namespace ella {
             }
             
             return false;
-        }
+        };
         
         auto whenFinish = [](Nan::Callback* callback,  bool x){
             if(x) {
@@ -229,7 +231,7 @@ namespace ella {
                 
                 callback->Call(1, argv);
             }
-        }
+        };
         
         auto queueWorker = new AsyncWrap<decltype(worker), bool, decltype(whenFinish)>(callBack, worker, whenFinish);
         Nan::AsyncQueueWorker(queueWorker);

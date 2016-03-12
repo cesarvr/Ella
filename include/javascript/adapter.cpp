@@ -15,7 +15,6 @@ JavaValue JavaValueAdapter::toJavaValue(v8::Local<v8::Value>&& object) {
     
     if (object->IsString()) {
         auto param = ObjectToString( object->ToString() );
-        //std::cout << "params :) " <<  param << std::endl;
         return JavaValue(  param  );
     }
 
