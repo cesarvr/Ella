@@ -69,7 +69,7 @@ public:
 class Object: HandleEnv {
 private:
     jobject object;
-    jclass member;
+    //jclass member;
     std::string name;
     std::vector<JavaMethod> methods;
     

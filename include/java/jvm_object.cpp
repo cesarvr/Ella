@@ -135,8 +135,6 @@ Reflect::GetMethodsDefinition() {
     
     auto methodsList = objectMethod.Call<jobject>(clazz, jmethodArray, nullptr);
     
-    using Interface = JavaMethod (*)( JEnv env, jobject& reflectObject );
-    
     auto env = GetEnv();
     
     auto Fn = [this](JEnv env, jobject& object ) {

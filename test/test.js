@@ -12,7 +12,9 @@ var http = require('http');
 var https = require('https');
 
 
+java.setClassPath('-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/');
 
+console.log('classpath->', java.getClassPath());
 
 java.start(function(jvm) {
 

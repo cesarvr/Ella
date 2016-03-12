@@ -16,6 +16,10 @@ void Init(v8::Local<v8::Object>  exports) {
     
     exports->Set(Nan::New("setClassPath").ToLocalChecked(),
                  Nan::New<v8::FunctionTemplate>(ella::SetClassPath)->GetFunction());
+    
+    exports->Set(Nan::New("getClassPath").ToLocalChecked(),
+                 Nan::New<v8::FunctionTemplate>(ella::GetClassPath)->GetFunction() );
+    
 }
 
 NODE_MODULE(ella, Init)

@@ -83,16 +83,16 @@ namespace ella {
             if (returnValue.IsArray()) {
                 
                 auto buf = returnValue.getArrayValue();
-                auto len = (uint32_t)buf.size();
-                
+                auto len = buf.size();
+             
                 // just being fancy, this could be done using Nan::CopyBuffer not need of malloc.
                 char *ptr = &buf[0];
                 char *raw = (char*)malloc(len);
                 
-                for(auto x=0; x<len; x++)
+                for(unsigned long x=0; x<len; x++)
                     raw[x] = *ptr++;
                 
-                argv[0] = Nan::NewBuffer(raw, len ).ToLocalChecked();
+                argv[0] = Nan::NewBuffer(raw, (int)len ).ToLocalChecked();
             }
             
             return argv[0];
@@ -205,7 +205,7 @@ namespace ella {
             try{
                 if(!vm.isVMReady()) {
                     
-                    vm.SetClassPath("-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/");
+                   // vm.SetClassPath("-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/");
                     
                     vm.Start();
                 }
@@ -237,16 +237,22 @@ namespace ella {
         Nan::AsyncQueueWorker(queueWorker);
     }
     
+    
+    void GetClassPath(NArguments& args) {
+        args.GetReturnValue().Set( Nan::New(vm.GetClassPath()).ToLocalChecked() );
+    }
+    
     void SetClassPath(NArguments& args){
-        if(args.Length() < 1) {
-            Nan::ThrowTypeError("Wrong number of arguments. Expected a string with the classpath.");
+ 
+        auto size = args.Length();
+        
+        std::string classpath;
+        for(auto i =0; i<size; i++) {
+            auto separator = (i<size-1)?":":"";
+            classpath += ObjectToString( args[i]->ToString() ) +  separator;
         }
         
-        if (!args[0]->IsString()) {
-            Nan::ThrowTypeError("This function expect a String.");
-        }
-        
-        vm.SetClassPath("-Djava.class.path=" + ObjectToString( args[0]->ToString() ));
+        vm.SetClassPath( "-Djava.class.path=.:" + classpath );
     }
 }
 
