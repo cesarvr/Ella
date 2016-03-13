@@ -21,12 +21,12 @@
 #endif
 
 #ifdef __linux__
+
+
   #include <memory>
   #include <dlfcn.h>
+  #include <string>
 #endif
-
-
-
 
 #include <iostream>
 #include <sstream>

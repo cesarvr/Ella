@@ -2,7 +2,15 @@
     "targets": [{
         "target_name": "ella",
         "sources": ["include/java/jvm_handler.cpp", "include/java/jvm_object.cpp", "include/java/jvm_argument.cpp", "include/java/java_value.cpp", "include/javascript/adapter.cpp", "main.cpp"],
+
+        "make_global_settings": [
+            ["CC", 'usr/bin/clang'],
+            ["CXX", "/usr/bin/clang++"],
+            ["LINK", "/usr/bin/clang++"]
+        ],
+
         "cflags_cc": ["-fexceptions"],
+
         "include_dirs": [
 
             "<!(node -e \"require('nan')\")",
@@ -12,12 +20,6 @@
 
         "conditions": [
             ['OS=="mac"', {
-                    "make_global_settings": [
-                        ["CC", 'usr/bin/clang'],
-                        ["CXX", "/usr/bin/clang++"],
-                        ["LINK", "/usr/bin/clang++"]
-                    ],
-
                     "cflags": ["-std=c++11x", "-Wall", "-pedantic", "-fexceptions"],
 
                     "defines": [
@@ -33,8 +35,8 @@
                 },
 
                 "OS=='linux'", {
-        
-                    "cflags": ['-std=gnu++0x', "-Wall", "-pedantic", "-fexceptions"],
+
+                    "cflags": ['-std=c++11', "-Wall", "-fexceptions"],
 
                     'include_dirs': [
                         'linux/java/',

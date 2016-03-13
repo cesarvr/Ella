@@ -31,7 +31,7 @@ std::string JVMLoader::Start() {
 
 #ifdef __linux__
     
-    void* handle = dlopen("./libjvm.so", RTLD_LAZY);
+    void* handle = dlopen("./linux/libjvm.so", RTLD_LAZY);
     
     if (!handle) throw VMError{ "Fatal: Can't load dynamic library libjvm.so" }; 
     

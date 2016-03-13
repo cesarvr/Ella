@@ -191,6 +191,8 @@ namespace ella {
         
         }catch(VMError& e){
             Nan::ThrowTypeError( e.errorMessage.c_str() );
+        }catch(std::exception &e){
+            Nan::ThrowTypeError( e.what() );
         }
     }
     

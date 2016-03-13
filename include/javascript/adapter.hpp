@@ -15,6 +15,7 @@
 /* http://izs.me/v8-docs/process_8cc-example.html  */
 static std::string ObjectToString( v8::Local< v8::Value > value ) {
     v8::String::Utf8Value utf8_value(value);
+    std::cout << "suspicious" << *utf8_value <<  std::endl;
     return std::string(*utf8_value);
 }
 

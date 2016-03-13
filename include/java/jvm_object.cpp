@@ -99,7 +99,7 @@ JavaValue Object::Call(std::string methodName, std::vector<JavaValue> args){
         }
     }
     
-    if (methodNotFound) throw "Method not found: " + methodName;
+    if (methodNotFound) throw VMError{"Method not found: " + methodName};
     
     return value;
 };
