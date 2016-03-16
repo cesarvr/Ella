@@ -139,10 +139,11 @@ namespace ella {
     
     
     void JSInterface(NArguments& args){
-        
+        std::cout << "calling method" << std::endl;
+
+
         try{
             std::string funcCalle = ObjectToString( args.Callee() );
-            
             
             MethodTopology mth = GetMethodCall(funcCalle, args);
             
@@ -167,7 +168,7 @@ namespace ella {
         try {
                 std::string classname = ObjectToString( args[0]->ToString() );
                 
-                Object *java_object =  new Object(vm, "pdf/P2HService");
+                Object *java_object =  new Object(vm, classname);
                 
                 NObject object = Nan::New<v8::Object>();
                 
@@ -191,9 +192,7 @@ namespace ella {
         
         }catch(VMError& e){
             Nan::ThrowTypeError( e.errorMessage.c_str() );
-        }catch(std::exception &e){
-            Nan::ThrowTypeError( e.what() );
-        }
+        }    
     }
     
     void Start(NArguments& args ){

@@ -1,6 +1,3 @@
-//var Segfault = require('segfault');
-//Segfault.registerHandler("./seg/");
-
 //var java = require('../build/Release/ella.node');
 
 var java = require('../build/Debug/ella.node') || require('./build/Debug/ella.node'); //debug mode.
@@ -14,7 +11,6 @@ var https = require('https');
 
 // macosx location of jar.
 //java.setClassPath('-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/');
-
 
 // linux location of the jars.
 java.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar');
@@ -30,35 +26,19 @@ java.start(function(jvm) {
 
     console.log('Calling PDF Generator method');
 
-    /*
-    javaObject.html2pdf("<html><body> This is my Project </body></html>", function(buffer) {
-        console.log('pdf generated... ');
-        var wstream = fs.createWriteStream('my_pdf.pdf');
-        wstream.write(buffer);
-        wstream.end();
-
-        child = exec("open -a Preview ./my_pdf.pdf", function(error, stdout, stderr) {
-            if (error !== null) {
-                console.log('exec error: ' + error);
-            }
-        });
-
-
-    });
-*/
-    /*
-    process.argv.forEach(function (val, index, array) {
-        if(index > 1) {
-          console.log(index + ': ' + val);
-          makePDF(val);
-        }
-    });
-
-    */
-
-    makePDF('www.gnu.org');
+    makePDF('http://www.gnu.org/');
+    makePDF('https://en.wikipedia.org/wiki/B2FH_paper');    
+    makePDF('https://en.wikipedia.org/wiki/Byte'); 
+  /*makePDF('https://en.wikipedia.org/wiki/Cornel_West');
+    makePDF('https://en.wikipedia.org/wiki/Malcolm_X');
+    makePDF('https://en.wikipedia.org/wiki/Steve_Wozniak');
+    makePDF('https://en.wikipedia.org/wiki/Red_giant');
+    makePDF('https://en.wikipedia.org/wiki/James_H._Clark');
+    makePDF('https://en.wikipedia.org/wiki/Red_Hat');*/
 
     function makePDF(address) {
+
+        console.log('taking snapshot of: ', address);
 
         var options = {
             host: url.parse(address).host,
@@ -80,26 +60,19 @@ java.start(function(jvm) {
             response.on('end', function() {
                 javaObject.html2pdf(str, function(buffer) {
 
+                    console.log('writting pdf to disk');
                     var name = '../pdfs/' + options.host + Math.floor(Date.now() / 1000) + '.pdf';
 
                     var wstream = fs.createWriteStream(name);
                     wstream.write(buffer);
                     wstream.end();
 
-                    /*
-                    child = exec('open -a Preview ' + name , function(error, stdout, stderr) {
-                        if (error !== null) {
-                            console.log('exec error: ' + error);
-                        }
-                    });
-
-                   */
                 });
 
             });
         }
 
-        //      https.request(options, callback).end();
+        https.request(options, callback).end();
 
     }
 

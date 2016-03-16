@@ -60,11 +60,10 @@ struct JNIType<jstring>:HandleEnv {
     std::string GetValue(){
         auto env = GetEnv();
         if(value == nullptr) return "Undefined";
-       
 
         const char *str =env->GetStringUTFChars( (jstring)value , NULL );
+        std::string tmp{str};
         env->ReleaseStringUTFChars( (jstring)value ,str );
-        std::string tmp = str;
         
         return tmp;
     };

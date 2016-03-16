@@ -8,8 +8,6 @@
 
 #include "jvm_object.hpp"
 
-
-
 std::string ReturnArrayOf(std::string className) {
     return "()[L" + className + ";";
 };
@@ -17,8 +15,6 @@ std::string ReturnArrayOf(std::string className) {
 std::string ReturnTypeOf(std::string className) {
     return "()L" + className + ";";
 };
-
-
 
 Object::Object(JVMLoader loader, std::string className):
 HandleEnv(loader),
@@ -56,9 +52,7 @@ JavaValue Object::Call(std::string methodName, std::vector<JavaValue> args){
     bool methodNotFound = true;
     
     
-    std::cout << "[claiming JNIEnv] 0xdeadbeeF" << std::endl;
     auto env = GetEnv();
-    std::cout << "[claiming JNIEnv] end :/  0xdeadbeef" << std::endl;
     
     
     JavaValue value;
@@ -144,7 +138,7 @@ Reflect::GetMethodsDefinition() {
         methd.returnType = GetReturnType(object);
         methd.arguments = JavaArguments( GetParameters(object) );
         methd.methodPTR = Wrapper(env->functions->FromReflectedMethod, env, object );
-        
+       
         return methd;
     };
     
@@ -177,7 +171,7 @@ std::string Reflect::GetReturnType(jobject object){
                                       ReturnTypeOf(JAVA_CLASS) );
     
     auto tmp = objectMethod.Call<jobject>(object, GetReflectionAPI, nullptr);
-    
+   
     return GetName(JAVA_CLASS, tmp.GetValue());
 }
 
@@ -204,9 +198,6 @@ void Reflect::SetClass(jobject object) {
     auto getClass = GetMethod(JAVA_CLASS, METHOD_GET_CLASS.c_str(), ReturnTypeOf(JAVA_CLASS) );
     clazz = objectMethod.Call<jobject>(object, getClass, nullptr).GetValue();
 }
-
-
-
 
 jobject Reflect::GetReflectClass() {
     return clazz;
