@@ -29,10 +29,15 @@ java.start(function(jvm) {
     makePDF('http://www.gnu.org/');
     makePDF('https://en.wikipedia.org/wiki/B2FH_paper');    
     makePDF('https://en.wikipedia.org/wiki/Byte'); 
+    makePDF('https://en.wikipedia.org/wiki/Red_Hat');
+    makePDF('https://en.wikipedia.org/wiki/Red_giant');
+    makePDF('https://en.wikipedia.org/wiki/DNA');
+    makePDF('https://en.wikipedia.org/wiki/Tensor');
+	  makePDF('https://en.wikipedia.org/wiki/Paul_Dirac');	
+    makePDF('https://en.wikipedia.org/wiki/Richard_Feynman')
   /*makePDF('https://en.wikipedia.org/wiki/Cornel_West');
     makePDF('https://en.wikipedia.org/wiki/Malcolm_X');
     makePDF('https://en.wikipedia.org/wiki/Steve_Wozniak');
-    makePDF('https://en.wikipedia.org/wiki/Red_giant');
     makePDF('https://en.wikipedia.org/wiki/James_H._Clark');
     makePDF('https://en.wikipedia.org/wiki/Red_Hat');*/
 

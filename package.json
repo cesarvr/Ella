@@ -11,5 +11,8 @@
   "dependencies": {
     "nan": "^2.2.0",
     "segfault": "^0.3.0"
+  },
+  "devDependencies": {
+    "express": "^4.13.4"
   }
 }

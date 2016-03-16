@@ -103,7 +103,7 @@ namespace ella {
                 getValue()
             };
             
-            std::cout << "thread " << count << "finish" << std::endl;
+            //std::cout << "thread " << count << "finish" << std::endl;
             
             callback->Call(1, argv);
             object.ReleaseThread();
@@ -139,7 +139,7 @@ namespace ella {
     
     
     void JSInterface(NArguments& args){
-        std::cout << "calling method" << std::endl;
+        //std::cout << "calling method" << std::endl;
 
 
         try{
