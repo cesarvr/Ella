@@ -1,6 +1,7 @@
 //var java = require('../build/Release/ella.node');
 
-var java = require('../build/Debug/ella.node') || require('./build/Debug/ella.node'); //debug mode.
+var java = require('./build/Debug/ella.node');
+  //require('../build/Debug/ella.node') || require('./build/Debug/ella.node'); //debug mode.
 
 var fs = require('fs');
 var exec = require('child_process').exec;
@@ -33,8 +34,9 @@ java.start(function(jvm) {
     makePDF('https://en.wikipedia.org/wiki/Red_giant');
     makePDF('https://en.wikipedia.org/wiki/DNA');
     makePDF('https://en.wikipedia.org/wiki/Tensor');
-	  makePDF('https://en.wikipedia.org/wiki/Paul_Dirac');	
-    makePDF('https://en.wikipedia.org/wiki/Richard_Feynman')
+//    makePDF('https://en.wikipedia.org/wiki/Commodore_64');
+	  //makePDF('https://en.wikipedia.org/wiki/Paul_Dirac');	
+    //makePDF('https://en.wikipedia.org/wiki/Richard_Feynman')
   /*makePDF('https://en.wikipedia.org/wiki/Cornel_West');
     makePDF('https://en.wikipedia.org/wiki/Malcolm_X');
     makePDF('https://en.wikipedia.org/wiki/Steve_Wozniak');
