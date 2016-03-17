@@ -1,6 +1,6 @@
 //var java = require('../build/Release/ella.node');
 
-var java = require('../build/Debug/ella.node') || require('./build/Debug/ella.node'); //debug mode.
+var java = require('./build/Debug/ella.node'); //debug mode.
 
 var fs = require('fs');
 var exec = require('child_process').exec;

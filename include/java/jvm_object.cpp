@@ -57,10 +57,13 @@ JavaValue Object::Call(std::string methodName, std::vector<JavaValue> args){
     
     JavaValue value;
     
+    std::cout << "JavaValue:Call [init]" << std::endl;
+
     for(auto& method: methods ){
         
         if( methodName == method.name ){
             methodNotFound = false;
+            std::cout << "JavaValue:Call [running...]" << std::endl;
             
             
             if( method.returnType == JSTRING ){
@@ -95,6 +98,8 @@ JavaValue Object::Call(std::string methodName, std::vector<JavaValue> args){
     
     if (methodNotFound) throw VMError{"Method not found: " + methodName};
     
+    std::cout << "JavaValue:Call [end]" << std::endl;
+
     return value;
 };
 
