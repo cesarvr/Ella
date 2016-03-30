@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.13.4",
     "nan": "^2.2.0",
-    "segfault": "^0.3.0"
+    "segfault": "^0.3.0",
+    "underscore": "^1.8.3"
   }
 }

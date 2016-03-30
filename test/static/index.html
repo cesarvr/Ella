@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Hello PDF</title>
+
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+
+
+    </head>
+    <body>
+        <h1>PDF Search</h1>
+			<form class="form-horizontal">
+			<fieldset>
+
+			<!-- Form Name -->
+			<legend>Form Name</legend>
+
+			<!-- Search input-->
+			<div class="form-group">
+			<label class="col-md-4 control-label" for="search">Search</label>
+			<div class="col-md-5">
+			<input id="search" name="search" type="search" placeholder="search into the pdf" class="form-control input-md">
+			</div>
+			</div>
+
+			</fieldset>
+
+			</form>
+
+			<div class="grid">
+			</div>					
+	
+		</div>
+		
+	    </body>
+
+
+
+
+		<script type="text/template" id="cell">
+				<% for(var i in pdfs ){ var obj = pdfs[i]; %>
+				<div class="media">
+
+					<div class="media-left"> 
+
+						<a href="#" > 
+							<img class="media-object" id="jom-<%=obj.file%>" data-src="holder.js/64x64" alt="64x64" src="" data-holder-rendered="true" style="width: 64px; height: 64px;"/> 
+						</a> 
+					</div>
+
+					<div class="media-body">
+						<h4 class="media-heading"> <%= obj.file %> </h4>
+						<p> <%= obj.block %> </p>
+					</div>
+
+					</div>
+					<% } %>
+					</script>
+
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+	
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+		<script>
+				
+			var tmpl = _.template($('#cell').html());
+
+
+			$('#search').keyup(function(evt){
+				//evt.preventDefault();
+					setTimeout(function(){
+						console.log('->', $('#search').val() );
+						var query = $('#search').val();
+
+						$.get( "/look", {query:query})
+						.done(function(obj) {
+  						console.log( "success" );
+							$('.grid').html(tmpl({pdfs:obj})); 			
+								
+								
+							obj.forEach(function(o){
+								
+								var fx = function(){	
+									var tmp = o.file;
+									$.get( "/preview", {pdf:o.file}).done(function(res){
+										var el = document.getElementById('jom-' + tmp);
+										if( el || el !==null ){
+											el.setAttribute('src', 'data:image/png;base64,' + res.img);
+										}
+
+										console.log(res);
+									});
+							}();
+
+
+							});								
+								
+						});
+							
+					},250);
+
+			});
+
+
+	   </script>
+
+
+
+
+</html>

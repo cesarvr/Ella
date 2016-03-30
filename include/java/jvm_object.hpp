@@ -86,6 +86,8 @@ public:
     
     const std::vector<JavaMethod>& GetMembers();
     
+    std::string GetClassName();
+    
     void ReleaseThread(){ Release(); }
 };
 

@@ -10,10 +10,10 @@ var http = require('http');
 var https = require('https');
 
 // macosx location of jar.
-//java.setClassPath('-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/');
+java.setClassPath('-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/');
 
 // linux location of the jars.
-java.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar');
+//java.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar');
 
 console.log('classpath->', java.getClassPath());
 
@@ -29,12 +29,12 @@ java.start(function(jvm) {
     makePDF('http://www.gnu.org/');
     makePDF('https://en.wikipedia.org/wiki/B2FH_paper');    
     makePDF('https://en.wikipedia.org/wiki/Byte'); 
-  /*makePDF('https://en.wikipedia.org/wiki/Cornel_West');
+    makePDF('https://en.wikipedia.org/wiki/Cornel_West');
     makePDF('https://en.wikipedia.org/wiki/Malcolm_X');
     makePDF('https://en.wikipedia.org/wiki/Steve_Wozniak');
     makePDF('https://en.wikipedia.org/wiki/Red_giant');
     makePDF('https://en.wikipedia.org/wiki/James_H._Clark');
-    makePDF('https://en.wikipedia.org/wiki/Red_Hat');*/
+    makePDF('https://en.wikipedia.org/wiki/Red_Hat');
 
     function makePDF(address) {
 

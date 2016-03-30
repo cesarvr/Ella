@@ -13,29 +13,25 @@
 
 namespace Utils {
     
-    template<typename... T>
-    void isNull() {}
+
     
     template<typename T>
-    void isNull(T v) {
-        if (v == nullptr || v == 0x0) {
-            throw VMError{"Error: arguments can't be null." };
-        }
+    void chkNull(T& param){
+        if ( param == nullptr || param == 0x0 || !param )
+             throw VMError{"Error: arguments can't be null." };
     }
     
-    template<typename T, typename R, typename... Args>
-    void isNull(T v1, R v2, Args... args ) {
-        if (v1 == nullptr ||  v2 == nullptr || v1 == 0x0 || v2 == 0x0) {
-            throw VMError{"Error: arguments can't be null. v1 or v2 (line 30 utils.h)" };
-        }
+    template<typename T>
+    void isNull(T& first) {
+        chkNull(first);
+    }
+    
+    template<typename T, typename... Args>
+    void isNull(T& first, Args... args) {
+        chkNull(first);
         
-        Utils::isNull(args...);
+        nisNull(args...);
     }
-    
-    
-
-
-    
     
     template <typename T, typename R>
     std::vector<R> IterateJObjectArray( JEnv env, jobjectArray array, T cb ) {

@@ -102,6 +102,10 @@ const std::vector<JavaMethod>& Object::GetMembers(){
     return methods;
 }
 
+std::string Object::GetClassName(){
+    return name;
+};
+
 
 
 Reflect::Reflect(JVMLoader loader):

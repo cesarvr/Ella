@@ -27,23 +27,15 @@ public:
         int status = vm->GetEnv((void**)&env, JNI_VERSION_1_6);
        
         if (status == JNI_EDETACHED) {
-         //   std::cout << "GetJNIEnviorment-> Attaching.." << std::endl;
-           // std::cout << "GetEnv: not attached" << std::endl;
             if (vm->AttachCurrentThread((void **) &env, NULL) != 0) {
                 std::cout << "GetJNIEnviorment-> Failed to attach" << std::endl;
             }
             
-        } else if (status == JNI_OK) {
-         //   std::cout << "GetJNIEnviorment-> JNI_OK" << std::endl;
+        } else if (status == JNI_OK)
             return env;
-        } else if (status == JNI_EVERSION) {
+         else if (status == JNI_EVERSION)
             throw VMError{"GetEnv: version not supported"};
-        }
         
-        
-        // std::cout << "getting an JEnv for this thread" << std::endl;
-        
-       // if(env == nullptr || env == 0x0) throw VMError{"JVM: has not been initialize. "};
         return env;
     };
     

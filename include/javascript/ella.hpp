@@ -56,6 +56,7 @@ namespace ella {
         {};
         
         
+        
         void Execute(){
             try{
                 returnValue = object.Call(method.method, method.arguments);
@@ -98,6 +99,17 @@ namespace ella {
             return argv[0];
         }
         
+        
+        void HandleErrorCallback() {
+            
+            std::cout << "boom" << std::endl;
+            
+            v8::Local<v8::Value> argv[] = {
+                v8::Exception::Error(Nan::New<v8::String>(ErrorMessage()).ToLocalChecked())
+            };
+            callback->Call(1, argv);
+        }
+        
         void HandleOKCallback () {
             v8::Local<v8::Value> argv[] = {
                 getValue()
@@ -106,7 +118,7 @@ namespace ella {
             std::cout << "thread " << count << "finish" << std::endl;
             
             callback->Call(1, argv);
-            object.ReleaseThread();
+            //object.ReleaseThread();
         }
     };
     
@@ -139,9 +151,7 @@ namespace ella {
     
     
     void JSInterface(NArguments& args){
-        std::cout << "calling method" << std::endl;
-
-
+        
         try{
             std::string funcCalle = ObjectToString( args.Callee() );
             
