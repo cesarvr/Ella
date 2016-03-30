@@ -16,6 +16,10 @@
 static std::string ObjectToString( v8::Local< v8::Value > value ) {
     
     v8::String::Utf8Value utf8_value(value);
+<<<<<<< HEAD
+=======
+//    std::cout << "suspicious" << *utf8_value <<  std::endl;
+>>>>>>> 92c28c724677d56876de6feed1e7ff7153354789
     return std::string(*utf8_value);
 }
 

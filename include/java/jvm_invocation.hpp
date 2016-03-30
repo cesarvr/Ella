@@ -12,10 +12,6 @@
 #include "jvm_global.hpp"
 #include "utils.h"
 
-
-
-
-
 template<typename T>
 struct JNIType: HandleEnv {
     T value;
