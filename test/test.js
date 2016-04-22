@@ -1,82 +1,88 @@
-//var java = require('../build/Release/ella.node');
-
-var java = require('./build/Debug/ella.node'); //debug mode.
-
-var fs = require('fs');
-var exec = require('child_process').exec;
-var url = require('url');
-
-var http = require('http');
-var https = require('https');
-
-// macosx location of jar.
-java.setClassPath('-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/');
-
-// linux location of the jars.
-//java.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar');
-
-console.log('classpath->', java.getClassPath());
-
-java.start(function(jvm) {
-
-    console.log(jvm);
-
-    console.log('loading->')
-    var javaObject = jvm.New("pdf/P2HService");
-
-    console.log('Calling PDF Generator method');
-
-    makePDF('http://www.gnu.org/');
-    makePDF('https://en.wikipedia.org/wiki/B2FH_paper');    
-    makePDF('https://en.wikipedia.org/wiki/Byte'); 
-    makePDF('https://en.wikipedia.org/wiki/Cornel_West');
-    makePDF('https://en.wikipedia.org/wiki/Malcolm_X');
-    makePDF('https://en.wikipedia.org/wiki/Steve_Wozniak');
-    makePDF('https://en.wikipedia.org/wiki/Red_giant');
-    makePDF('https://en.wikipedia.org/wiki/James_H._Clark');
-    makePDF('https://en.wikipedia.org/wiki/Red_Hat');
-
-    function makePDF(address) {
-
-        console.log('taking snapshot of: ', address);
-
-        var options = {
-            host: url.parse(address).host,
-            path: url.parse(address).pathname,
-            port: 443
-        };
+var assert = require('chai').assert;
 
 
-        console.log('->', options);
-        var str = '';
-        var callback = function(response) {
+var java;
 
-            //another chunk of data has been recieved, so append it to `str`
-            response.on('data', function(chunk) {
-                str += chunk;
-            });
+try {
+    console.log('trying [release]')
+    //RELEASE
+    java = require('../build/Release/ella.node'); //debug mode.
+} catch (e) {
+    console.log('fail: trying [debug]')
+    //DEBUG
+    java = require('../build/Debug/ella.node'); //debug mode.
+}
 
-            //the whole response has been recieved, so we just print it out here
-            response.on('end', function() {
-                javaObject.html2pdf(str, function(buffer) {
+describe('ella', function() {
 
-                    console.log('writting pdf to disk');
-                    var name = '../pdfs/' + options.host + Math.floor(Date.now() / 1000) + '.pdf';
+    it('creating object and checking members', function() {
+        assert.isObject(java, '');
 
-                    var wstream = fs.createWriteStream(name);
-                    wstream.write(buffer);
-                    wstream.end();
+        assert.isFunction(java.getClassPath, 'getClassPath function');
+        assert.isFunction(java.start, 'start function');
+        assert.isFunction(java.setClassPath, 'setClassPath function');
+    });
 
-                });
 
-            });
-        }
+    it('java#setClassPath', function() {
+        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/',
+            '/Users/cvaldez/Desktop/NWR/java/lib/pdfbox/',
+            '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/'
+        ]);
 
-        https.request(options, callback).end();
+        assert.isNotNull(java.getClassPath(), 'should show the classpath.');
+        //  console.log(java.getClassPath());
 
-    }
+    });
 
-    console.log('generating pdf....');
-});
+    var vm;
+    it('loading vm', function(done) {
+        this.timeout(14000);
+        java.start(function(_vm) {
+            assert.isObject(_vm, 'vm should be a object');
+            vm = _vm;
+            done();
+        });
 
-console.log("if Async is working this should be show in first :-] ");
+    });
+
+    var strBuffer;
+    it('loading class', function() {
+
+        assert.isObject(vm, 'vm should be a object');
+        console.log('vm->', vm);
+        strBuffer = vm.New('java/lang/StringBuffer');
+
+
+        assert.isObject(strBuffer, 'loading  java->StringBuffer');
+    });
+
+
+
+    /*
+
+
+
+
+            var strBuffer;
+        it('loading class', function() {
+        
+            assert.isObject(vm, 'vm should be a object');
+            console.log('vm->', vm);
+            strBuffer = vm.New('java/lang/StringBuffer');
+
+
+            assert.isObject(strBuffer, 'loading  java->StringBuffer');
+        });
+
+        it('calling a method with string arg:  [java] StringBuffer -> append', function() {
+        
+            assert.isFunction(strBuffer.append, 'StringBuffer.append');
+            assert.isFunction(strBuffer.toString, 'StringBuffer.toString');
+
+            strBuffer.append('Hello World');
+
+            console.log('o -> ', strBuffer.toString());
+        });
+    */
+})

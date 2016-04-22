@@ -16,9 +16,8 @@ namespace Utils {
 
     
     template<typename T>
-    void chkNull(T& param){
-        if ( param == nullptr || param == 0x0 || !param )
-             throw VMError{"Error: arguments can't be null." };
+    void chkNull(T&& param){
+        assert(param != nullptr);
     }
     
     template<typename T>
@@ -30,7 +29,7 @@ namespace Utils {
     void isNull(T& first, Args... args) {
         chkNull(first);
         
-        nisNull(args...);
+        isNull(args...);
     }
     
     template <typename T, typename R>
@@ -39,12 +38,11 @@ namespace Utils {
         isNull(array);
         
         std::vector<R> list;
-        jint i;
         
         
         jint count = env->GetArrayLength( array );
         
-        for (i=0; i < count; i++) {
+        for (int i=0; i < count; i++) {
             
             jobject element = env->GetObjectArrayElement(array, i);
             
@@ -52,10 +50,8 @@ namespace Utils {
             
             list.push_back(ret);
             
-            if(env->ExceptionOccurred()) {
+            if(env->ExceptionOccurred())
                 env->ExceptionDescribe();
-                break;
-            }
             
             env->DeleteLocalRef( element );
         }

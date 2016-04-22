@@ -31,13 +31,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-
-
-const std::string JAVA_METHOD_CLASS("java/lang/reflect/Method");
-const std::string JAVA_STRING_CLASS("java/lang/String");
-
-const std::string CLASS_DEFAULT_CTS("<init>");
-const std::string VOID_RETURN("()V");
+#include <assert.h>
 
 struct VMError {
     std::string errorMessage;
