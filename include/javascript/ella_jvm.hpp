@@ -11,10 +11,13 @@
 
 #include "nan.h"
 #include "jvm_handler.h"
+#include "values.hpp"
+#include "ella_utils.hpp"
+
 
 namespace  ella {
     
-    
+
     template <typename Fn>
     class JVM : public Nan::AsyncWorker {
     public:
@@ -26,7 +29,7 @@ namespace  ella {
         
         void Execute(){
             try{
-                if(!vm.isVMReady())  //only one vm for now.
+                if(!vm.isVMReady()) //only one vm for now.
                     vm.Start();
                 
             }catch(VMError& _error){
@@ -52,7 +55,7 @@ namespace  ella {
         }
         
     private:
-        JVMLoader vm;
+        JVMLoader &vm;
         Fn& fn;
         VMError error;
     };

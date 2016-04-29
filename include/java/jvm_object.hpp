@@ -20,6 +20,10 @@
 #include "args.hpp"
 
 
+namespace LibJNI {
+    
+
+
 using ObjectInterface = jobject(*)(JNIEnv *env, jobject obj, jmethodID methodID, const jvalue * args);
 using IntegerInterface = jint(*)(JNIEnv *env, jobject obj, jmethodID methodID, const jvalue * args);
 
@@ -115,5 +119,7 @@ public:
     
     void ReleaseThread(){ Release(); }
 };
+    
+}
 
 #endif /* jvm_reflect_hpp */

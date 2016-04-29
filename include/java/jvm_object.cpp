@@ -8,6 +8,10 @@
 
 #include "jvm_object.hpp"
 
+
+using namespace LibJNI;
+
+
 std::string ReturnArrayOf(std::string className) {
     return "()[L" + className + ";";
 };
