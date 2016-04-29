@@ -20,8 +20,13 @@ using V8Value = v8::Local<v8::Value>;
 // Algoritms for transformation from V8 Type to JVM Type.
 
 JNIValue GetString(V8Value value) {
-    if (value->IsString())
-        return  std::move( new LibJNI::Value<std::string>(ella::Utils::ObjectToString( value )) );
+    std::cout << "GET_STRING" << std::endl;
+    if (value->IsString()){
+         std::cout << "VALUE:GET:STRING" << std::endl;
+        v8::String::Utf8Value utf8_value(value);
+        return  std::move( new LibJNI::Value<std::string>( *utf8_value ));
+    }
+    
     return nullptr;
 }
 
@@ -67,8 +72,14 @@ struct StringCall: BaseCall {
                               std::shared_ptr<LibJNI::Object> object,
                               std::vector<LibJNI::BaseJavaValue *> args) {
         
+        
+        std::cout << "CALL_STRING" << methodName << std::endl;
+
+        
         auto obj = object->Call<std::string>(methodName, args);
         
+        std::cout << "CALL:RETURN'S: >" << obj.Get() << std::endl;
+
         return Nan::New( obj.Get() ).ToLocalChecked();
     };
 };

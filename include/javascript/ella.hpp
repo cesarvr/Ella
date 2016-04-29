@@ -57,11 +57,20 @@ namespace ella {
             auto jniWorker =  new JNIWorker<InvocationList<BaseCall>>(supportedInvocations,
                                                                       fnHandler,
                                                                       objectsMap[fnHandler.HashCode()]);
-           
-            if(!jniWorker->isAsync())
-                args.GetReturnValue().Set( jniWorker->call() );
-            else
+            
+            
+            
+            std::cout << "calling mode=>" << jniWorker->isAsync()  << std::endl;
+            if(!jniWorker->isAsync()){
+                std::cout << "[sync]" <<std::endl;
+                auto x = jniWorker->call();
+                std::cout <<  "RET V8: "  << Utils::ObjectToString(x) << std::endl;
+                
+                args.GetReturnValue().Set( x );
+            }else{
+                std::cout << "[async]" <<std::endl;
                 Nan::AsyncQueueWorker(jniWorker);
+            }
             
         }catch(VMError& error) {
             Nan::ThrowTypeError( error.errorMessage.c_str() );
@@ -126,18 +135,25 @@ namespace ella {
      */
     
     void SetClassPath(V8Args& args ){
-        std::vector<std::string> dirs;
-        bool recursive = false;
         
-        if( args[0]->IsArray() ){
-            auto list = Nan::New<v8::Array>()->Cast(*args[0]);
-            dirs = ella::Utils::IterCollection< decltype(list), std::string>(list, ella::Utils::ObjectToString);
+        try{
+            std::vector<std::string> dirs;
+            bool recursive = false;
+            
+            if( args[0]->IsArray() ){
+                auto list = Nan::New<v8::Array>()->Cast(*args[0]);
+                dirs = ella::Utils::IterCollection< decltype(list), std::string>(list, ella::Utils::ObjectToString);
+            }
+            
+            if( args[1]->IsBoolean() )
+                recursive = args[1]->ToBoolean()->Value();
+            
+            vm.SetClassPath( ClassPath::LocateLibraries(dirs, recursive) );
+            
+        }catch(VMError& error){
+            Nan::ThrowTypeError( error.errorMessage.c_str() );
         }
         
-        if( args[1]->IsBoolean() )
-            recursive = args[1]->ToBoolean()->Value();
-        
-        vm.SetClassPath( ClassPath::LocateLibraries(dirs, recursive) );
     }
     
     void GetClassPath(V8Args& args ){

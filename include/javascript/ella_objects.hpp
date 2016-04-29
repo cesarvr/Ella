@@ -80,7 +80,7 @@ namespace  ella {
     
     template <typename SupportedInvocation>
     class JNIWorker : public Nan::AsyncWorker {
-    
+        
     public:
         JNIWorker(
                   SupportedInvocation _supported,
@@ -98,7 +98,6 @@ namespace  ella {
             v8::Local<v8::Value> argv[] = {
                 retValue
             };
-        
             
             callback->Call(1, argv);
         };
@@ -110,15 +109,20 @@ namespace  ella {
         };
         
         v8::Local<v8::Value> call(){
-            return supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
+            try{
+                return supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
+            }catch(VMError& error){
+                throw error;
+            }
         }
         
         bool isAsync() {
-            return callback == nullptr;
+            return callback != nullptr;
         }
         
     private:
         void LookForReturnType(std::shared_ptr<LibJNI::Object>& _javaObject) {
+            
             auto method = _javaObject->LookupMethod(fn.GetName(), fn.GetArguments());
             returnType = method.GetReturnTypeInfo();
         }
@@ -129,7 +133,7 @@ namespace  ella {
         std::shared_ptr<LibJNI::Object>& javaObject;
         v8::Local<v8::Value> retValue;
     };
- 
+    
     
     
     

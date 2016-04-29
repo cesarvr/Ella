@@ -18,14 +18,14 @@ java.start(function(jvm) {
     console.log(jvm);
 
     console.log('loading->')
-    var pdf = jvm.New('java/lang/String'); //("pdf/P2HService");
+    var str = jvm.New('java.lang.String'); //("pdf/P2HService");
 
     console.log('Calling PDF Generator method');
 
     console.log('jvm->', jvm);
-    console.log('pdf->', pdf);
+    console.log('pdf->', str);
 
-    console.log('String::hashcode-> ', pdf.hashCode() );
+    console.log('String::hashcode-> ', str.hashCode() );
 
 });
 

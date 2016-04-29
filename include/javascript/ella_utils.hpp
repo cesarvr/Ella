@@ -39,6 +39,7 @@ namespace ella {
         }
         
         static std::string GetClassName(v8::Local< v8::Value > value) {
+            
             std::string classname = Utils::ObjectToString( value );
             std::replace( classname.begin(), classname.end(), '.', '/');
             
