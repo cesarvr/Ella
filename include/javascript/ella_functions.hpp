@@ -9,6 +9,8 @@
 #ifndef ella_functions_h
 #define ella_functions_h
 
+#include <memory.h>
+
 using namespace ella;
 
 
@@ -43,6 +45,8 @@ Nan::Callback* GetFunctionCallback(V8Value value) {
  
  Handling different return types supported by Java
  
+ Create a class that derivate from this base class to handle a new Java type.
+ 
 */
 
 struct BaseCall {
@@ -70,6 +74,7 @@ struct StringCall: BaseCall {
 };
 
 
+// int Return type
 struct IntCall: BaseCall {
     
     
@@ -85,6 +90,13 @@ struct IntCall: BaseCall {
     };
     
 };
+
+
+
+
+
+
+
 
 
 

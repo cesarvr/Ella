@@ -2,7 +2,7 @@
     "targets": [{
         "target_name": "ella",
         "sources": ["include/java/jvm_handler.cpp", "include/java/jvm_object.cpp", "include/java/args.cpp",
-                    "include/java/classpath.cpp", "include/javascript/ella_utils.cpp", "include/javascript/ella_jvm.cpp", 
+                    "include/java/classpath.cpp", "include/javascript/ella_utils.cpp", "include/javascript/ella_objects.cpp", 
                      "include/java/values.cpp", "ella.cpp"],
 
         "make_global_settings": [

@@ -23,6 +23,31 @@ describe('ella', function() {
         assert.isFunction(java.setClassPath, 'setClassPath function');
     });
 
+   var vm = null; 
+    it('turning on the jvm', function(done) {
+        java.start(function(_vm){
+          vm = _vm;
+          assert.isObject(vm, 'vm should be a object');
+          done();
+        });
+
+    });
+
+
+
+
+    var strBuffer;
+    it('loading class', function() {
+
+        assert.isObject(vm, 'vm should be a object');
+        console.log('vm->', vm);
+        strBuffer = vm.New('java.lang.StringBuffer');
+
+
+        assert.isObject(strBuffer, 'loading  java->StringBuffer');
+    });
+
+
 
     it('calling a method with string arg:  [java] StringBuffer -> append', function() {
 
@@ -41,18 +66,7 @@ describe('ella', function() {
 
 
 
-            var strBuffer;
-        it('loading class', function() {
-        
-            assert.isObject(vm, 'vm should be a object');
-            console.log('vm->', vm);
-            strBuffer = vm.New('java/lang/StringBuffer');
-
-
-            assert.isObject(strBuffer, 'loading  java->StringBuffer');
-        });
-
-        it('calling a method with string arg:  [java] StringBuffer -> append', function() {
+            it('calling a method with string arg:  [java] StringBuffer -> append', function() {
         
             assert.isFunction(strBuffer.append, 'StringBuffer.append');
             assert.isFunction(strBuffer.toString, 'StringBuffer.toString');

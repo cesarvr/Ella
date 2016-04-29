@@ -37,8 +37,35 @@ namespace ella {
     
     
     void MakeCallToJNI(V8Args& args) {
-        FunctionHandler fnHandler( args );
         
+        try {
+            FunctionHandler fnHandler( args );
+            
+            
+            //functions dedicated to transform from v8 -> LibJNI::BaseJavaValue in ella_functions.
+            fnHandler.SetArguments(args, {GetString, GetInteger});
+            fnHandler.DetectAndGetCallback(args, GetFunctionCallback);
+            
+            
+            //supported class are declared in ella_functions.
+            InvocationList<BaseCall> supportedInvocations;
+            
+            supportedInvocations.Create<StringCall>();
+            supportedInvocations.Create<IntCall>();
+            
+            
+            auto jniWorker =  new JNIWorker<InvocationList<BaseCall>>(supportedInvocations,
+                                                                      fnHandler,
+                                                                      objectsMap[fnHandler.HashCode()]);
+           
+            if(!jniWorker->isAsync())
+                args.GetReturnValue().Set( jniWorker->call() );
+            else
+                Nan::AsyncQueueWorker(jniWorker);
+            
+        }catch(VMError& error) {
+            Nan::ThrowTypeError( error.errorMessage.c_str() );
+        }
     }
     
     
@@ -65,6 +92,17 @@ namespace ella {
     }
     
     
+    /*
+     Start (callback)
+     ==================================
+     
+     Start a new JVM instance.
+     
+     callback: a function where to callback when instance has finish startup.
+     
+     */
+    
+    
     void Start(V8Args& args ){
         
         if (!args[0]->IsFunction())
@@ -77,6 +115,16 @@ namespace ella {
         Nan::AsyncQueueWorker(vmInitWorker);
     }
     
+    
+    /*
+     SetClassPath (Array, isRecursive)
+     ==================================
+     
+     Array -> a list of paths where to find your [ .jars .class ].
+     isRecursive -> true look recursively, false it wont.
+     
+     */
+    
     void SetClassPath(V8Args& args ){
         std::vector<std::string> dirs;
         bool recursive = false;
@@ -84,7 +132,6 @@ namespace ella {
         if( args[0]->IsArray() ){
             auto list = Nan::New<v8::Array>()->Cast(*args[0]);
             dirs = ella::Utils::IterCollection< decltype(list), std::string>(list, ella::Utils::ObjectToString);
-        
         }
         
         if( args[1]->IsBoolean() )
@@ -96,7 +143,7 @@ namespace ella {
     void GetClassPath(V8Args& args ){
         args.GetReturnValue().Set( Nan::New(vm.GetClassPath()).ToLocalChecked() );
     }
-
+    
 }
 
 #endif /* js_vm_h */

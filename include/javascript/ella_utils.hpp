@@ -72,8 +72,8 @@ namespace ella {
         }
         
         template <typename V8Collection, typename Fn>
-        static typename std::result_of<Fn(v8::Local<v8::Value>)>::type
-        Search(V8Collection& v8collection, Fn& callback) {
+        static auto
+        Search(V8Collection& v8collection, Fn& callback) ->decltype(callback(v8collection[0])) {
             
             auto len = v8collection.Length();
             
@@ -82,6 +82,7 @@ namespace ella {
                 if(!isEmpty(tmp))
                     return tmp;
             }
+            return nullptr;
         }
         
  

@@ -27,6 +27,8 @@ void FunctionHandler::SetArguments(const Nan::FunctionCallbackInfo<v8::Value>& f
     
     for(auto function : functions)
         Utils::SaveEach(func, args, function);
+    
+    std::cout <<  "args: " << args.size() << std::endl;
 }
 
 

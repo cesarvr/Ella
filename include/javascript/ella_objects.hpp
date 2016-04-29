@@ -54,44 +54,80 @@ namespace  ella {
     
     
     
-    template <typename CallObject>
+    template <typename Base>
+    class InvocationList {
+    public:
+        
+        std::map<std::string, Base* > callers;
+        
+        template <typename T>
+        void Create() {
+            auto caller = new T;
+            
+            callers[ caller->Type() ] = caller;
+        }
+        
+        Base* operator()(std::string type){
+            auto tmp = callers[type];
+            if( tmp == nullptr )
+                throw VMError{"No caller implemented for return type: " + type};
+            
+            return tmp;
+        }
+    };
+    
+    
+    
+    template <typename SupportedInvocation>
     class JNIWorker : public Nan::AsyncWorker {
     
     public:
         JNIWorker(
-                  std::vector<CallObject *> _caller,
+                  SupportedInvocation _supported,
                   FunctionHandler _fn,
-                  LibJNI::Object& _javaObject
+                  std::shared_ptr<LibJNI::Object>& _javaObject
                   ):
         AsyncWorker( _fn.GetCallback() ),
-        caller( _caller ),
+        supported(_supported),
         fn( _fn ),
         javaObject( _javaObject ) {
             LookForReturnType(javaObject);
         };
         
         void HandleOKCallback () {
+            v8::Local<v8::Value> argv[] = {
+                retValue
+            };
+        
+            
+            callback->Call(1, argv);
         };
         
-        void execute() {
-            call();
+        
+        /* Calling V8 here is illegal */
+        void Execute() {
+            retValue = call();
         };
         
-        void call(){
-            for(auto call: caller )
-                if(returnType == call->Type())
-                    call->Call(fn.GetName(), javaObject, fn.GetArguments());
+        v8::Local<v8::Value> call(){
+            return supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
+        }
+        
+        bool isAsync() {
+            return callback == nullptr;
         }
         
     private:
-        void LookForReturnType(LibJNI::Object& _javaObject) {
-            returnType = _javaObject.LookupMethod(fn.GetName(), fn.GetArguments());
+        void LookForReturnType(std::shared_ptr<LibJNI::Object>& _javaObject) {
+            auto method = _javaObject->LookupMethod(fn.GetName(), fn.GetArguments());
+            returnType = method.GetReturnTypeInfo();
         }
         
-        std::vector<CallObject *> caller;
+        SupportedInvocation supported;
         std::string returnType;
         FunctionHandler fn;
-        LibJNI::Object& javaObject;
+        std::shared_ptr<LibJNI::Object>& javaObject;
+        v8::Local<v8::Value> retValue;
     };
  
     
