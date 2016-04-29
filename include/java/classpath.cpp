@@ -23,8 +23,7 @@ void listAllFilesInDirectory(std::string directory, std::string& classPath, bool
     DIR *directory_strt;
     struct dirent *dir_ent;
     
-    if(isDotDirectory(directory)) return;
-    
+        
     if ((directory_strt = opendir (directory.c_str())) != NULL) {
         
         // print all the files and directories within directory
@@ -33,8 +32,8 @@ void listAllFilesInDirectory(std::string directory, std::string& classPath, bool
             if(checkExtension(dir_ent->d_name, "jar") || checkExtension(dir_ent->d_name, "class") )
                 classPath += directory  + dir_ent->d_name + ":";
         
-            if(dir_ent->d_type == DT_DIR && recursive)
-                listAllFilesInDirectory(directory  + dir_ent->d_name, classPath, true);
+            if(dir_ent->d_type == DT_DIR && !isDotDirectory(dir_ent->d_name) && recursive)
+                listAllFilesInDirectory(directory + dir_ent->d_name + '/', classPath, true);
         }
         
         classPath += directory+ ":";
