@@ -11,6 +11,7 @@
 
 using namespace ella;
 
+
 using JNIValue = LibJNI::BaseJavaValue*;
 using V8Value = v8::Local<v8::Value>;
 

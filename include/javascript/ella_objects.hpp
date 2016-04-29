@@ -12,13 +12,14 @@
 #include "nan.h"
 #include "jvm_object.hpp"
 #include "ella_utils.hpp"
-#include "ella_functions.hpp"
+
 #include <regex>
 #include <map>
 
 namespace  ella {
     
-    using Algorithm = JNIValue (*)(V8Value value);
+    
+    using Algorithm =  LibJNI::BaseJavaValue* (*)(v8::Local<v8::Value>);
     
     class FunctionHandler {
     public:
@@ -26,51 +27,71 @@ namespace  ella {
         
         //accessors
         std::string GetName(){ return name; }
+        
         int HashCode() {return hashcode; }
+        
         Nan::Callback* GetCallback() {return callback; }
         
-        void GetArguments(const Nan::FunctionCallbackInfo<v8::Value>& func,
+        void SetArguments(const Nan::FunctionCallbackInfo<v8::Value>& func,
                           std::initializer_list<Algorithm> functions );
         
+        std::vector <LibJNI::BaseJavaValue*>& GetArguments(){ return args; }
+        // ========
+        
+        
         template <typename F>
-        void GetCallback( const Nan::FunctionCallbackInfo<v8::Value>& func, F& fn) {
+        void DetectAndGetCallback( const Nan::FunctionCallbackInfo<v8::Value>& func, F& fn) {
             callback = Utils::Search(func, fn);
         }
         
         
     private:
-        Nan::Callback* callback;
         std::string name;
         int hashcode;
-        std::vector <LibJNI::BaseJavaValue *> args;
+        Nan::Callback* callback;
+        std::vector <LibJNI::BaseJavaValue*> args;
     };
     
+    
+    
+    template <typename CallObject>
     class JNIWorker : public Nan::AsyncWorker {
     
     public:
-        JNIWorker(Nan::Callback *callback,
-                  std::vector<BaseCall *> _caller,
+        JNIWorker(
+                  std::vector<CallObject *> _caller,
                   FunctionHandler _fn,
-                  std::string _returnType,
-                  std::shared_ptr<LibJNI::Object> _javaObject
+                  LibJNI::Object& _javaObject
                   ):
-        AsyncWorker(callback),
-        caller(_caller),
-        returnType(_returnType),
-        fn(_fn),
-        javaObject(_javaObject) {};
+        AsyncWorker( _fn.GetCallback() ),
+        caller( _caller ),
+        fn( _fn ),
+        javaObject( _javaObject ) {
+            LookForReturnType(javaObject);
+        };
         
-        void execute();
-        void call();
-        void HandleOKCallback();
+        void HandleOKCallback () {
+        };
+        
+        void execute() {
+            call();
+        };
+        
+        void call(){
+            for(auto call: caller )
+                if(returnType == call->Type())
+                    call->Call(fn.GetName(), javaObject, fn.GetArguments());
+        }
         
     private:
-        std::vector<BaseCall *> caller;
+        void LookForReturnType(LibJNI::Object& _javaObject) {
+            returnType = _javaObject.LookupMethod(fn.GetName(), fn.GetArguments());
+        }
+        
+        std::vector<CallObject *> caller;
         std::string returnType;
         FunctionHandler fn;
-        std::shared_ptr<LibJNI::Object> javaObject;
-        std::vector<LibJNI::BaseJavaValue *> args;
-        
+        LibJNI::Object& javaObject;
     };
  
     

@@ -19,12 +19,10 @@ FunctionHandler::FunctionHandler(const Nan::FunctionCallbackInfo<v8::Value>& _fu
     
     name = cm[1];
     hashcode = std::stoi(cm[2]);
-
-
 };
 
 
-void FunctionHandler::GetArguments(const Nan::FunctionCallbackInfo<v8::Value>& func,
+void FunctionHandler::SetArguments(const Nan::FunctionCallbackInfo<v8::Value>& func,
                                    std::initializer_list<Algorithm> functions) {
     
     for(auto function : functions)
@@ -34,20 +32,7 @@ void FunctionHandler::GetArguments(const Nan::FunctionCallbackInfo<v8::Value>& f
 
 
 
-void JNIWorker::HandleOKCallback () {
-    
-    
-};
 
-void JNIWorker::execute() {
-    call();
-};
-
-void JNIWorker::call(){
-    for(auto call: caller )
-        if(returnType == call->Type())
-            call->Call(fn.GetName(), javaObject, args);
-}
 
 
 
