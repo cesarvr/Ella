@@ -99,7 +99,7 @@ describe('ella', function() {
     it('calling methods with Args(String...)', function() {
 
         assert.isObject(pdf, 'loading  pdf');
-        assert.isFunction(pdf.concat, 'StringBuffer.concat');
+        assert.isFunction(pdf.concat, 'pdf.concat');
 
         var s = pdf.concat("hello", "world")
         assert.isString(s, 'concat return string');
@@ -108,21 +108,43 @@ describe('ella', function() {
     it('calling methods with Args(Int...)', function() {
 
         assert.isObject(pdf, 'loading  pdf');
-        assert.isFunction(pdf.add, 'StringBuffer.add');
+        assert.isFunction(pdf.add, 'pdf.add');
 
         var s = pdf.add(5000, 5000);
         assert.equal(s, 5000 + 5000, 'equals ' + (5000 + 5000));
     });
 
 
-    it('calling methods with Args(Int...)  [async]', function() {
+    it('calling methods with Args(Int...)  [async]', function(done) {
 
         assert.isObject(pdf, 'loading  pdf');
-        assert.isFunction(pdf.add, 'StringBuffer.add');
+        assert.isFunction(pdf.add, 'pdf.add');
 
         pdf.add(5000, 5000, function(s) {
-          console.log('r-->', s);
             assert.equal(s, 5000 + 5000, 'equals ' + (5000 + 5000));
+            done();
+        });
+    });
+
+    it('calling methods with Args(String...)  [async]', function(done) {
+
+        assert.isObject(pdf, 'loading  pdf');
+        assert.isFunction(pdf.add, 'pdf.concat');
+
+        pdf.concat("hello", "world", function(s) {
+            assert.isString(s, 'concat return string');
+            done();
+        });
+    });
+
+    it('calling methods with Args(String...): Sleep Thread in Java side.  [async]', function(done) {
+
+        assert.isObject(pdf, 'loading  pdf');
+        assert.isFunction(pdf.add, 'pdf.concat');
+
+        pdf.concatHeavy("hello", "world", 1000, function(s) {
+            assert.isString(s, 'concat return string');
+            done();
         });
     });
 

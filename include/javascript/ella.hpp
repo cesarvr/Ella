@@ -58,15 +58,11 @@ namespace ella {
                                                                       fnHandler,
                                                                       objectsMap[fnHandler.HashCode()]);
             
-            
-            
-            if(!jniWorker->isAsync()){
-                std::cout << "[sync]" <<std::endl;
-                args.GetReturnValue().Set( jniWorker->call() );
-            }else{
-                std::cout << "[async]" <<std::endl;
+            if(!jniWorker->isAsync())
+                args.GetReturnValue().Set( jniWorker->call().Get() );
+            else
                 Nan::AsyncQueueWorker(jniWorker);
-            }
+            
             
         }catch(VMError& error) {
             Nan::ThrowTypeError( error.errorMessage.c_str() );

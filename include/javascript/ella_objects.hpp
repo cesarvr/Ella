@@ -96,24 +96,30 @@ namespace  ella {
         
         void HandleOKCallback () {
             v8::Local<v8::Value> argv[] = {
-                retValue
+                Get()
             };
             
             callback->Call(1, argv);
         };
         
+        v8::Local<v8::Value> Get(){
+            return supported(returnType)->Get();
+        }
+        
         
         /* Calling V8 here is illegal */
         void Execute() {
-            retValue = call();
+            call();
         };
         
-        v8::Local<v8::Value> call(){
+        JNIWorker& call(){
             try{
-                return supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
+                supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
             }catch(VMError& error){
                 throw error;
             }
+            
+            return *this;
         }
         
         bool isAsync() {
