@@ -12,8 +12,8 @@ using namespace ella;
 
 FunctionHandler::FunctionHandler(const Nan::FunctionCallbackInfo<v8::Value>& _func) {
     
-    auto fname = Utils::ObjectToString(_func.Callee());
-    std::regex e ("function (.*)@(.*)\\(\\).+");
+    auto fname = Utils::ObjectToString(_func.Callee()->GetName());
+    std::regex e ("(.*)@(.*)");
     std::cmatch cm;
     std::regex_match (fname.c_str(),cm,e);
     
@@ -27,8 +27,6 @@ void FunctionHandler::SetArguments(const Nan::FunctionCallbackInfo<v8::Value>& f
     
     for(auto function : functions)
         Utils::SaveEach(func, args, function);
-    
-    std::cout <<  "args: " << args.size() << std::endl;
 }
 
 

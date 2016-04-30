@@ -23,18 +23,33 @@ describe('ella', function() {
         assert.isFunction(java.setClassPath, 'setClassPath function');
     });
 
-   var vm = null; 
-    it('turning on the jvm', function(done) {
+    var vm = null;
 
-        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib/', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/' ], true);
+    it(' testing jar files search: ', function() {
+
+        console.time('recursive search');
+        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
+        console.timeEnd('recursive search');
 
         assert.notEqual(java.getClassPath(), '', 'should expect something here.');
-        console.log('classpath ->' ,java.getClassPath());
+        //console.log('classpath ->' ,java.getClassPath());
+    });
 
-        java.start(function(_vm){
-          vm = _vm;
-          assert.isObject(vm, 'vm should be a object');
-          done();
+
+
+
+
+    it('turning on the jvm', function(done) {
+
+        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib/', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/'], true);
+
+        assert.notEqual(java.getClassPath(), '', 'should expect something here.');
+        //console.log('classpath ->' ,java.getClassPath());
+
+        java.start(function(_vm) {
+            vm = _vm;
+            assert.isObject(vm, 'vm should be a object');
+            done();
         });
 
     });
@@ -44,51 +59,74 @@ describe('ella', function() {
 
     var strBuffer;
     var pdf;
-    it('loading class', function() {
+    var str;
+
+    it('loading class, and checking hashcode method call', function() {
 
         assert.isObject(vm, 'vm should be a object');
         console.log('vm->', vm);
         strBuffer = vm.New('java.lang.StringBuffer');
-        var str = vm.New('java.lang.String');
+        str = vm.New('java.lang.String');
         pdf = vm.New('pdf.P2HService');
-        console.log('hashcode->', strBuffer);
-        console.log('hashcode->', str);
-        console.log('hashcode->', pdf);
+
+        assert.isNumber(strBuffer.hashCode(), 'type number expected');
+        assert.isNumber(str.hashCode(), 'type number expected');
+        assert.isNumber(pdf.hashCode(), 'type number expected');
 
         assert.isObject(strBuffer, 'loading  java->StringBuffer');
     });
 
 
+    it('loading an array of 1000 java objects', function() {
+        var pdfs = [];
 
-    it('calling a method with string arg:  [java] StringBuffer -> append', function() {
+        console.time("object allocation");
+        for (var i = 0; i < 1000; i++) {
+            pdfs.push(vm.New('pdf.P2HService'));
+        }
+        console.timeEnd("object allocation");
 
-        assert.isObject(strBuffer, 'loading  java->StringBuffer');
-        assert.isFunction(strBuffer.append, 'StringBuffer.append');
-        assert.isFunction(strBuffer.toString, 'StringBuffer.toString');
-        
-        console.log('pdf->', pdf);
+        for (var i = 0; i < 999; i++) {
+            var pdf = pdfs[i];
+            assert.isObject(pdf, 'object needed here');
+            assert.isNumber(pdf.hashCode(), 'type number expected');
+            //assert.equals(pdfs.length, 1000 , '1000 objects');
+        }
+
+
+    });
+
+    it('calling methods with Args(String...)', function() {
+
+        assert.isObject(pdf, 'loading  pdf');
+        assert.isFunction(pdf.concat, 'StringBuffer.concat');
+
         var s = pdf.concat("hello", "world")
-        console.log('JS LAND->', s);
-        //assert.isString(s, 'concat return string');
+        assert.isString(s, 'concat return string');
+    });
 
-        //console.log(strBuffer.append('Hello World'));
-        //console.log('o -> ', strBuffer.hashCode() );
+    it('calling methods with Args(Int...)', function() {
+
+        assert.isObject(pdf, 'loading  pdf');
+        assert.isFunction(pdf.add, 'StringBuffer.add');
+
+        var s = pdf.add(5000, 5000);
+        assert.equal(s, 5000 + 5000, 'equals ' + (5000 + 5000));
     });
 
 
-    /*
+    it('calling methods with Args(Int...)  [async]', function() {
 
+        assert.isObject(pdf, 'loading  pdf');
+        assert.isFunction(pdf.add, 'StringBuffer.add');
 
-
-
-            it('calling a method with string arg:  [java] StringBuffer -> append', function() {
-        
-            assert.isFunction(strBuffer.append, 'StringBuffer.append');
-            assert.isFunction(strBuffer.toString, 'StringBuffer.toString');
-
-            strBuffer.append('Hello World');
-
-            console.log('o -> ', strBuffer.toString());
+        pdf.add(5000, 5000, function(s) {
+          console.log('r-->', s);
+            assert.equal(s, 5000 + 5000, 'equals ' + (5000 + 5000));
         });
-    */
+    });
+
+
+
+
 })

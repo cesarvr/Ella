@@ -44,6 +44,7 @@ private:
     
 public:
     
+    /* Accessors */
     void SetName(std::string _name){ name = _name; };
     std::string GetName(){ return name; };
     

@@ -60,13 +60,9 @@ namespace ella {
             
             
             
-            std::cout << "calling mode=>" << jniWorker->isAsync()  << std::endl;
             if(!jniWorker->isAsync()){
                 std::cout << "[sync]" <<std::endl;
-                auto x = jniWorker->call();
-                std::cout <<  "RET V8: "  << Utils::ObjectToString(x) << std::endl;
-                
-                args.GetReturnValue().Set( x );
+                args.GetReturnValue().Set( jniWorker->call() );
             }else{
                 std::cout << "[async]" <<std::endl;
                 Nan::AsyncQueueWorker(jniWorker);
