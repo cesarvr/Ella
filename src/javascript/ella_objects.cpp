@@ -10,8 +10,10 @@
 
 using namespace ella;
 
+
 FunctionHandler::FunctionHandler(const Nan::FunctionCallbackInfo<v8::Value>& _func) {
     
+    //Extract function_name@hashcode.
     auto fname = Utils::ObjectToString(_func.Callee()->GetName());
     std::regex e ("(.*)@(.*)");
     std::cmatch cm;
@@ -24,7 +26,8 @@ FunctionHandler::FunctionHandler(const Nan::FunctionCallbackInfo<v8::Value>& _fu
 
 void FunctionHandler::SetArguments(const Nan::FunctionCallbackInfo<v8::Value>& func,
                                    std::initializer_list<Algorithm> functions) {
-    
+   
+    //map each v8 arguemnt to an jvalue argument. 
     for(auto function : functions)
         Utils::SaveEach(func, args, function);
 }

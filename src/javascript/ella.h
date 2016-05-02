@@ -35,7 +35,8 @@ namespace ella {
     
     using V8Args = const Nan::FunctionCallbackInfo<v8::Value>;
     
-    
+   
+   //here we extract the functions body, arguments and callback and proceed to call the JVM.  
     void MakeCallToJNI(V8Args& args) {
         
         try {
@@ -70,7 +71,8 @@ namespace ella {
         }
     }
     
-    
+   
+   // Class loader, instanciation and cache in dictionary using the hashcode as key.  
     void ClassLoader(V8Args& args) {
         
         try{
@@ -94,16 +96,13 @@ namespace ella {
     }
     
     
-    /*
-     Start (callback)
-     ==================================
-     
-     Start a new JVM instance.
-     
-     callback: a function where to callback when instance has finish startup.
-     
-     */
     
+    // Start (callback)
+    // ==================================
+     
+    // Start a new JVM instance.
+     
+    // callback: a function where to callback when instance has finish startup.
     
     void Start(V8Args& args ){
         
@@ -118,14 +117,13 @@ namespace ella {
     }
     
     
-    /*
-     SetClassPath (Array, isRecursive)
-     ==================================
+    
+    // SetClassPath (Array, isRecursive)
+    // ==================================
      
-     Array -> a list of paths where to find your [ .jars .class ].
-     isRecursive -> true look recursively, false it wont.
-     
-     */
+     // Array -> a list of paths where to find your [ .jars .class ].
+     // isRecursive -> true look recursively, false it wont.
+    
     
     void SetClassPath(V8Args& args ){
         
@@ -149,6 +147,7 @@ namespace ella {
         
     }
     
+   
     void GetClassPath(V8Args& args ){
         args.GetReturnValue().Set( Nan::New(vm.GetClassPath()).ToLocalChecked() );
     }

@@ -20,7 +20,8 @@ namespace  ella {
     
     
     using Algorithm =  LibJNI::BaseJavaValue* (*)(v8::Local<v8::Value>);
-    
+   
+
     class FunctionHandler {
     public:
         FunctionHandler(const Nan::FunctionCallbackInfo<v8::Value>& func);
@@ -53,7 +54,10 @@ namespace  ella {
     };
     
     
-    
+   
+
+
+    // this class is an strategy pattern matcher, it match a JVM return type with a class(strategy) to handle that return type. 
     template <typename Base>
     class InvocationList {
     public:
@@ -77,6 +81,7 @@ namespace  ella {
     };
     
     
+    // This is the class that defines an Asynchronous Worker, for now works in queue. 
     
     template <typename SupportedInvocation>
     class JNIWorker : public Nan::AsyncWorker {
@@ -110,7 +115,8 @@ namespace  ella {
         void Execute() {
             call();
         };
-        
+   
+             
         JNIWorker& call(){
             try{
                 supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
@@ -120,7 +126,8 @@ namespace  ella {
     
             return *this;
         }
-        
+    
+      // if the user provide a callback we transform this his call in an async call.    
         bool isAsync() {
             return callback != nullptr;
         }
@@ -138,9 +145,6 @@ namespace  ella {
         std::shared_ptr<Object>& javaObject;
         v8::Local<v8::Value> retValue;
     };
-    
-    
-    
     
 }
 

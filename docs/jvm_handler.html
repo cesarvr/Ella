@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>jvm_handler.cpp</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="args.html">
+                  args.cpp
+                </a>
+              
+                
+                <a class="source" href="classpath.html">
+                  classpath.cpp
+                </a>
+              
+                
+                <a class="source" href="jvm_handler.html">
+                  jvm_handler.cpp
+                </a>
+              
+                
+                <a class="source" href="jvm_object.html">
+                  jvm_object.cpp
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>jvm_handler.cpp</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string">"jvm_handler.h"</span></span>
+
+JVMLoader::JVMLoader() {
+    
+    SetClassPath(<span class="hljs-string">"-Djava.class.path=*:."</span>); <span class="hljs-comment">//use current directory as classpath.</span>
+}
+
+<span class="hljs-keyword">void</span> JVMLoader::SetClassPath(<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> _classPath) {
+    
+    classPath = <span class="hljs-string">"-Djava.class.path=.:"</span> +  _classPath;
+}
+
+<span class="hljs-keyword">bool</span> JVMLoader::isVMReady() {
+    
+    return jvmStatus;
+}
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> JVMLoader::VMStatus(<span class="hljs-keyword">int</span> status) {
+    <span class="hljs-keyword">if</span>(status != JNI_ERR) {
+        jvmStatus = <span class="hljs-literal">true</span>;
+        return <span class="hljs-string">"[jvm]: started successfully."</span>;
+    } <span class="hljs-keyword">else</span> {
+        jvmStatus = <span class="hljs-literal">false</span>;
+        return <span class="hljs-string">"[jvm]: error starting virtual machine."</span>;
+    }
+}
+
+<span class="hljs-keyword">void</span> JVMLoader::ReleaseThread(){
+    vm-&gt;DetachCurrentThread();
+};
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> JVMLoader::GetClassPath() {
+    return classPath;
+};
+
+
+<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">shared_ptr</span>&lt;JNIEnv&gt;&amp; JVMLoader::GetJNIEnviorment() {
+    
+    <span class="hljs-keyword">if</span>(env == <span class="hljs-literal">nullptr</span> || env == <span class="hljs-number">0x0</span>) throw VMError{<span class="hljs-string">"JVM: has not been initialize. "</span>};
+    
+    <span class="hljs-keyword">int</span> status = vm-&gt;GetEnv((void**)&amp;env, JNI_VERSION_1_6);
+    
+    <span class="hljs-keyword">if</span> (status == JNI_EDETACHED) {
+        <span class="hljs-keyword">if</span> (vm-&gt;AttachCurrentThread((void **) &amp;env, NULL) != <span class="hljs-number">0</span>) {
+            <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"GetJNIEnviorment-&gt; Failed to attach"</span> &lt;&lt; <span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+        }
+        
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (status == JNI_OK)
+        return env;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (status == JNI_EVERSION)
+        throw VMError{<span class="hljs-string">"GetEnv: version not supported"</span>};
+    
+    return env;
+};
+
+
+<span class="hljs-comment">/* use the one loaded */</span>
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> JVMLoader::Start() {
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> __linux__</span>
+    
+    <span class="hljs-keyword">void</span>* handle = dlopen(<span class="hljs-string">"./linux/jdk8/libjvm.so"</span>, RTLD_LAZY);
+    
+    <span class="hljs-keyword">if</span> (!handle) throw VMError{ <span class="hljs-string">"Fatal: Can't load dynamic library libjvm.so"</span> }; 
+    
+    create_vm = (CreateJVM) dlsym(handle, <span class="hljs-string">"JNI_CreateJavaVM"</span>);
+    
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *dlsym_error = dlerror();
+    
+    <span class="hljs-keyword">if</span> (dlsym_error) {
+        <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> msg = <span class="hljs-string">"Cannot find symbol: JNI_CreateJavaVM || msg: "</span>;
+        msg = msg + dlsym_error;
+        
+        dlclose(handle);
+        throw VMError{<span class="hljs-string">"Fatal: "</span>+ msg };
+    }
+    
+<span class="hljs-meta">#<span class="hljs-meta-keyword">else</span></span>
+	create_vm = JNI_CreateJavaVM;
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+
+    
+    JavaVMOption options[<span class="hljs-number">1</span>];
+    JavaVMInitArgs vm_args;
+    
+    vm_args.version = JNI_VERSION_1_8;
+    vm_args.nOptions = <span class="hljs-number">1</span>;
+    
+    options[<span class="hljs-number">0</span>].optionString = (char *)classPath.c_str();
+    vm_args.options = options;
+    
+    <span class="hljs-keyword">int</span> status = create_vm((JavaVM**)&amp;vm, (void**)&amp;env, &amp;vm_args);
+    
+    return VMStatus(status);
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

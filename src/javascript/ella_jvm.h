@@ -18,6 +18,8 @@
 namespace  ella {
     
 
+
+    // This is the class that defines an Asynchronous Worker, for now works in queue. 
     template <typename Fn>
     class JVM : public Nan::AsyncWorker {
     public:
@@ -26,7 +28,7 @@ namespace  ella {
         vm(_vm),
         fn(_fn) {};
         
-        
+       // this method is called by the Nan::AsyncQueue. this spawn a new thread so calling v8 from here is a SEGENV.
         void Execute(){
             try{
                 if(!vm.isVMReady()) //only one vm for now.
@@ -37,6 +39,7 @@ namespace  ella {
             }
         };
         
+        // everything is fine the this method get called.
         void HandleOKCallback () {
             auto object = Nan::New<v8::Object>();
             object->Set(Nan::New("New").ToLocalChecked(),

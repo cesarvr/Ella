@@ -38,6 +38,7 @@ namespace ella {
             return std::string(*utf8_value);
         }
         
+
         static std::string GetClassName(v8::Local< v8::Value > value) {
             
             std::string classname = Utils::ObjectToString( value );
@@ -61,6 +62,8 @@ namespace ella {
             return tmp;
         }
         
+
+        //Takes collection and apply a function to that. 
         template <typename Collection, typename V8Collection, typename Fn>
         static void SaveEach(V8Collection& v8collection, Collection& collection, Fn& callback){
             auto len = v8collection.Length();
@@ -71,7 +74,7 @@ namespace ella {
                     collection.push_back(tmp);
             }
         }
-        
+       
         template <typename V8Collection, typename Fn>
         static auto
         Search(V8Collection& v8collection, Fn& callback) ->decltype(callback(v8collection[0])) {
@@ -108,13 +111,6 @@ namespace ella {
         };
         
     };
-    
-
-    
-    
 }
-
-
-
 
 #endif /* ella_utils_hpp */

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>jvm_object.cpp</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="args.html">
+                  args.cpp
+                </a>
+              
+                
+                <a class="source" href="classpath.html">
+                  classpath.cpp
+                </a>
+              
+                
+                <a class="source" href="jvm_handler.html">
+                  jvm_handler.cpp
+                </a>
+              
+                
+                <a class="source" href="jvm_object.html">
+                  jvm_object.cpp
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>jvm_object.cpp</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p> jvm_reflect.cpp
+ LibJNI</p>
+<p> Created by Cesar Valdez on 26/02/2016.
+ Copyright © 2016 Cesar Valdez. All rights reserved.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string">"jvm_object.hpp"</span></span>
+
+<span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span> <span class="hljs-title">ReturnArrayOf</span><span class="hljs-params">(<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> className)</span> </span>{
+    return <span class="hljs-string">"()[L"</span> + className + <span class="hljs-string">";"</span>;
+};
+
+<span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span> <span class="hljs-title">ReturnTypeOf</span><span class="hljs-params">(<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> className)</span> </span>{
+    return <span class="hljs-string">"()L"</span> + className + <span class="hljs-string">";"</span>;
+};
+
+Object::Object(JVMLoader loader, <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> className):
+HandleEnv(loader),
+reflect(loader),
+invoke(loader) {
+    
+    <span class="hljs-keyword">auto</span> &amp;env = GetEnv();
+    name = className;
+    
+    <span class="hljs-keyword">auto</span> member = Wrapper(env-&gt;functions-&gt;FindClass, GetEnv(), className.c_str() );
+    
+    
+    <span class="hljs-keyword">auto</span> constructor = Wrapper(env-&gt;functions-&gt;GetMethodID,
+                               env, member,
+                               CLASS_DEFAULT_CTS.c_str(),
+                               VOID_RETURN.c_str() );
+    
+    object = Wrapper(env-&gt;functions-&gt;NewObject,
+                     env,
+                     member,
+                     constructor );
+    
+    reflect.SetClass(object);
+    
+    
+    
+    methods = reflect.GetMethodsDefinition();
+};
+
+
+JavaMethod Object::FindFirstMethod( <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> methodName ) {
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span>&amp; method: methods ){
+        <span class="hljs-keyword">if</span> (method.GetName() == methodName) {
+            return method;
+        }
+    }
+    
+    throw VMError({ <span class="hljs-string">"Method not found: "</span> + methodName });
+} 
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;JavaMethod&gt; Object::FindMethod( <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> methodName ) {
+
+    <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;JavaMethod&gt; methodsList;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span>&amp; method: methods ){
+        <span class="hljs-keyword">if</span> (method.GetName() == methodName)
+            methodsList.push_back(method);
+    }
+    
+    <span class="hljs-keyword">if</span>(methodsList.size() == <span class="hljs-number">0</span>)
+        throw VMError({ <span class="hljs-string">"Method not found: "</span> + methodName });
+
+    return methodsList;
+}
+
+
+
+<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;JavaMethod&gt;&amp; Object::GetMembers(){
+    return methods;
+};
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> Object::GetClassName(){
+    return name;
+};
+
+
+JavaMethod Object::LookupMethod(<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> methodName, <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;LibJNI::BaseJavaValue *&gt;&amp; arguments ) {
+    
+    <span class="hljs-keyword">auto</span> methodCollection = FindMethod(methodName);
+    
+
+    <span class="hljs-keyword">auto</span> validateArguments = [arguments](JavaMethod&amp; method){
+        <span class="hljs-keyword">int</span> index = <span class="hljs-number">0</span>;
+        
+        <span class="hljs-keyword">if</span>(arguments.size() != method.ArgumentsType().GetNumberOfArguments())
+            return <span class="hljs-literal">false</span>;
+        
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> arg: arguments)
+            <span class="hljs-keyword">if</span>(arg-&gt;GetType() != method.ArgumentsType()[index++])
+                return <span class="hljs-literal">false</span>;
+        
+        return <span class="hljs-literal">true</span>;
+    };
+    
+    <span class="hljs-keyword">auto</span> iter = <span class="hljs-built_in">std</span>::find_if(methodCollection.begin(), methodCollection.end(), validateArguments);
+    
+    <span class="hljs-keyword">if</span>(iter == methodCollection.end())
+        throw VMError({ <span class="hljs-string">"Method found but arguments are incorrect for "</span> + methodName });
+    
+    return *iter;
+};
+
+
+
+
+Reflect::Reflect(JVMLoader loader):
+HandleEnv(loader),
+invoke(loader)
+{
+  
+    assert(GetEnv() != <span class="hljs-literal">nullptr</span>);
+    
+};
+
+
+
+
+jmethodID Reflect::GetMethod( <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> className, <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> method, <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> returnType) {
+    <span class="hljs-keyword">auto</span> env = GetEnv();
+    
+    <span class="hljs-keyword">auto</span> member = Wrapper(env-&gt;functions-&gt;FindClass, env, className.c_str() );
+    return Wrapper(env-&gt;functions-&gt;GetMethodID, env, member, method.c_str(), returnType.c_str() );
+}
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;JavaMethod&gt;
+Reflect::GetMethodsDefinition() {
+    
+    <span class="hljs-keyword">auto</span> jmethodArray = GetMethod(JAVA_CLASS,
+                                  METHOD_GET_METHODS,
+                                  ReturnArrayOf(METHOD_CLASS));
+    
+    <span class="hljs-keyword">auto</span> methodsList = invoke.Call&lt;ObjectArray&gt;(clazz, jmethodArray, nullptr);
+    
+    <span class="hljs-keyword">auto</span> Fn = [<span class="hljs-keyword">this</span>](JEnv env, jobject&amp; object ) {
+        JavaMethod javaMethod(GetLoader());
+        
+        javaMethod.SetName( GetName(METHOD_CLASS, object) );
+       
+        javaMethod.SetReturnTypeInfo( GetReturnType(object) );
+        javaMethod.ArgumentsType().Set( GetParameters(object));
+        
+        <span class="hljs-keyword">auto</span> methodId = Wrapper(GetEnv()-&gt;functions-&gt;FromReflectedMethod, GetEnv(), object );
+        javaMethod.SetMethodByReference(methodId);
+    
+        return javaMethod;
+    };
+    
+    return Utils::IterateJObjectArray&lt; <span class="hljs-keyword">decltype</span>(Fn), JavaMethod &gt;( GetEnv(), methodsList.Get(), Fn );
+}
+
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> Reflect::GetName(<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> className, jobject object) {
+    
+    <span class="hljs-keyword">auto</span> _tmp = GetMethod(className,
+                          METHOD_GET_NAME,
+                          ReturnTypeOf(JAVA_STRING_CLASS) );
+    
+    return invoke.Call&lt;StringValue&gt;(object, _tmp, nullptr).Get();
+}
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> Reflect::ToString(<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> className, jobject object){
+    
+    <span class="hljs-keyword">auto</span> _tmp = GetMethod(METHOD_CLASS,
+                          METHOD_TOSTRING,
+                          ReturnTypeOf(JAVA_STRING_CLASS) );
+    
+    return invoke.Call&lt;StringValue&gt;(object, _tmp, nullptr).Get();
+}
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> Reflect::GetReturnType(jobject object){
+    
+    <span class="hljs-keyword">auto</span> GetReflectionAPI = GetMethod(METHOD_CLASS,
+                                      METHOD_RETURN_TYPE,
+                                      ReturnTypeOf(JAVA_CLASS) );
+    
+    <span class="hljs-keyword">auto</span> tmp = invoke.Call&lt;JObject&gt;(object, GetReflectionAPI, nullptr);
+   
+    return GetName(JAVA_CLASS, tmp.Get());
+}
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>&gt;
+Reflect::GetParameters(jobject object) {
+    
+    <span class="hljs-keyword">auto</span> GetParametersArray = GetMethod(METHOD_CLASS,
+                                        METHOD_GET_PARAMETER,
+                                        ReturnArrayOf(JAVA_CLASS) );
+    
+    <span class="hljs-keyword">auto</span> <span class="hljs-built_in">array</span> = invoke.Call&lt;JObject&gt;(object, GetParametersArray, nullptr);
+    
+    
+    <span class="hljs-keyword">auto</span> Fn = [<span class="hljs-keyword">this</span>](JEnv env, jobject&amp; object ) {
+        return GetName(JAVA_CLASS, object);
+    };
+    
+    return Utils::IterateJObjectArray&lt; <span class="hljs-keyword">decltype</span>(Fn), <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &gt;( GetEnv(), (jobjectArray) array.Get(), Fn );
+}
+
+<span class="hljs-comment">/* Class &lt; Object &gt; &lt;-- GetClass() */</span>
+<span class="hljs-keyword">void</span> Reflect::SetClass(jobject object) {
+    
+    <span class="hljs-keyword">auto</span> getClass = GetMethod(JAVA_CLASS, METHOD_GET_CLASS.c_str(), ReturnTypeOf(JAVA_CLASS) );
+    clazz = invoke.Call&lt;JObject&gt;(object, getClass, nullptr).Get();
+}
+
+jobject Reflect::GetReflectClass() {
+    return clazz;
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

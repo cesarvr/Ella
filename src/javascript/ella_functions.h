@@ -64,6 +64,8 @@ struct BaseCall {
 };
 
 
+
+// This class try to solve the type inference in runtime, by executing the right code for the specific type.
 template <typename ValueType>
 class JSType: public BaseCall {
 public:
@@ -109,7 +111,7 @@ public:
     }
 };
 
-// int Return type
+// void Return type
 struct VoidCall: public JSType<JObject> {
 public: 
     VoidCall(): JSType("void") {};
