@@ -36,7 +36,7 @@ std::string JVMLoader::GetClassPath() {
 
 const std::shared_ptr<JNIEnv>& JVMLoader::GetJNIEnviorment() {
     
-    if(env == nullptr || env == 0x0) throw VMError{"JVM: has not been initialize."};
+    if(env == nullptr || env == 0x0) throw VMError{"JVM: has not been initialize. "};
     
     int status = vm->GetEnv((void**)&env, JNI_VERSION_1_6);
     

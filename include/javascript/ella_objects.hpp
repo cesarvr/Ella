@@ -70,7 +70,7 @@ namespace  ella {
         Base* operator()(std::string type){
             auto tmp = callers[type];
             if( tmp == nullptr )
-                throw VMError{"No caller implemented for return type: " + type};
+                tmp = callers["void"]; //throw VMError{"No caller implemented for return type: " + type};
             
             return tmp;
         }
@@ -85,7 +85,7 @@ namespace  ella {
         JNIWorker(
                   SupportedInvocation _supported,
                   FunctionHandler _fn,
-                  std::shared_ptr<LibJNI::Object>& _javaObject
+                  std::shared_ptr<Object>& _javaObject
                   ):
         AsyncWorker( _fn.GetCallback() ),
         supported(_supported),
@@ -127,7 +127,7 @@ namespace  ella {
         }
         
     private:
-        void LookForReturnType(std::shared_ptr<LibJNI::Object>& _javaObject) {
+        void LookForReturnType(std::shared_ptr<Object>& _javaObject) {
             
             auto method = _javaObject->LookupMethod(fn.GetName(), fn.GetArguments());
             returnType = method.GetReturnTypeInfo();
@@ -136,7 +136,7 @@ namespace  ella {
         SupportedInvocation supported;
         std::string returnType;
         FunctionHandler fn;
-        std::shared_ptr<LibJNI::Object>& javaObject;
+        std::shared_ptr<Object>& javaObject;
         v8::Local<v8::Value> retValue;
     };
     

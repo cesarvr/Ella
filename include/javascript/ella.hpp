@@ -30,7 +30,7 @@
 
 namespace ella {
     JVMLoader vm;
-    std::map< int, std::shared_ptr<LibJNI::Object> > objectsMap;
+    std::map< int, std::shared_ptr<Object> > objectsMap;
     
     
     using V8Args = const Nan::FunctionCallbackInfo<v8::Value>;
@@ -52,6 +52,7 @@ namespace ella {
             
             supportedInvocations.Create<StringCall>();
             supportedInvocations.Create<IntCall>();
+            supportedInvocations.Create<VoidCall>();
             
             
             auto jniWorker =  new JNIWorker<InvocationList<BaseCall>>(supportedInvocations,
@@ -76,10 +77,10 @@ namespace ella {
             
             auto classname = Utils::GetClassName(args[0]);
             
-            std::shared_ptr<LibJNI::Object> clazz(new LibJNI::Object(vm, classname));
+            std::shared_ptr<Object> clazz(new Object(vm, classname));
             
             auto methods  = clazz->GetMembers();
-            auto hashcode = clazz->Call<int>("hashCode").Get();
+            auto hashcode = clazz->Call<IntValue>("hashCode").Get();
             
             auto jsObject = Utils::CreateJSObject<decltype(methods), decltype(MakeCallToJNI)>(methods,hashcode, MakeCallToJNI);
             

@@ -14,13 +14,15 @@
 #include "values.hpp"
 
 
+using namespace LibJNI;
 
 template <typename Function, typename ...Args>
 auto Wrapper(Function&& func, JEnv env, Args&&... args)
 -> decltype(func(env.get(), args...))
 {
     try {
-        Utils::isNull(func);
+        
+        assert(func != nullptr);
         assert(env != nullptr);
         
         auto retValue = func(env.get(), args...);
@@ -48,7 +50,7 @@ struct Fn{
 };
 
 template <class JE>
-struct Fn<JE, jint > {
+struct Fn<JE, IntValue > {
     
     static auto GetInterface(JE& env) ->decltype(env->functions->CallIntMethodA) {
         return env->functions->CallIntMethodA;
@@ -56,26 +58,46 @@ struct Fn<JE, jint > {
 };
 
 
+template <class JE>
+struct Fn<JE, FloatValue > {
+    
+    static auto GetInterface(JE& env) ->decltype(env->functions->CallFloatMethodA) {
+        return env->functions->CallFloatMethodA;
+    }
+};
+
+
+template <class JE>
+struct Fn<JE, jbyte > {
+    
+    using ReturnType = jbyte;
+    
+    static auto GetInterface(JE& env) ->decltype(env->functions->CallByteMethodA) {
+        return env->functions->CallByteMethodA;
+    }
+};
+
+
+
+
 struct Invoke: HandleEnv {
     
     Invoke(JVMLoader env): HandleEnv(env) {};
     
+    
     template <typename T, typename... Args>
-    LibJNI::Value<T> Call(Args... args) {
+    T Call(Args... args) {
        
         auto env = GetEnv();
         auto I =  Fn<JEnv, T>::GetInterface(env);
         
-        LibJNI::Value<T> retValue;
-        using RetType = typename LibJNI::Value<T>::JType;
+        T value;
         
-      //  Utils::isNull(args...);
+        auto ret = Wrapper(I, env, args...);
         
+        value.Set(env, ret);
         
-        RetType ret = (RetType) Wrapper(I, env, args...);
-        retValue.Set(env, ret);
-        
-        return retValue;
+        return value;
     }
 };
 

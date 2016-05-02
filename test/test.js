@@ -149,6 +149,13 @@ describe('ella', function() {
     });
 
 
+    it('calling void<method> ', function(){
+    
+        var str = vm.New('java.lang.StringBuffer');
+        assert.isObject(str, 'object instanciated'); 
+        str.append('Hello World');
 
+        assert.equal(str.toString(),'Hello World', 'should return a string');
+    });
 
 })

@@ -23,7 +23,7 @@ JNIValue GetString(V8Value value) {
     
     if (value->IsString()){
         v8::String::Utf8Value utf8_value(value);
-        return  std::move( new LibJNI::Value<std::string>( *utf8_value ));
+        return  std::move( new StringValue( *utf8_value ));
     }
     
     return nullptr;
@@ -31,7 +31,7 @@ JNIValue GetString(V8Value value) {
 
 JNIValue GetInteger(V8Value value) {
     if (value->IsInt32())
-        return std::move( new LibJNI::Value<int> ( value->Int32Value() ) );
+        return std::move( new IntValue ( value->Int32Value() ) );
     return nullptr;
 }
 
@@ -57,7 +57,7 @@ struct BaseCall {
     
     virtual std::string Type() =0;
     virtual void Call(std::string methodName,
-                      std::shared_ptr<LibJNI::Object> object,
+                      std::shared_ptr<Object> object,
                       std::vector<LibJNI::BaseJavaValue *>)=0;
     
     virtual v8::Local<v8::Value> Get() = 0;
@@ -74,10 +74,10 @@ struct StringCall: BaseCall {
     std::string Type() { return "java.lang.String"; };
     
     void Call(std::string methodName,
-              std::shared_ptr<LibJNI::Object> object,
+              std::shared_ptr<Object> object,
               std::vector<LibJNI::BaseJavaValue *> args) {
         
-        value = object->Call<std::string>(methodName, args);
+        value = object->Call<StringValue>(methodName, args);
     };
     
     v8::Local<v8::Value> Get() {
@@ -85,7 +85,7 @@ struct StringCall: BaseCall {
     }
     
 private:
-    LibJNI::Value<std::string> value;
+    StringValue value;
     
 };
 
@@ -96,10 +96,10 @@ struct IntCall: BaseCall {
     std::string Type() { return "int"; };
     
     void Call(std::string methodName,
-              std::shared_ptr<LibJNI::Object> object,
+              std::shared_ptr<Object> object,
               std::vector<LibJNI::BaseJavaValue *> args) {
         
-        value = object->Call<int>(methodName, args);
+        value = object->Call<IntValue>(methodName, args);
     };
     
     v8::Local<v8::Value> Get() {
@@ -107,8 +107,26 @@ struct IntCall: BaseCall {
     }
     
 private:
-    LibJNI::Value<int> value;
+    IntValue value;
     
+};
+
+
+// int Return type
+struct VoidCall: BaseCall {
+    
+    std::string Type() { return "void"; };
+    
+    void Call(std::string methodName,
+              std::shared_ptr<Object> object,
+              std::vector<LibJNI::BaseJavaValue *> args) {
+        
+        object->Call<JObject>(methodName, args);
+    };
+    
+    v8::Local<v8::Value> Get() {
+        return  Nan::New( true );
+    }
 };
 
 

@@ -12,18 +12,12 @@
 
 #include <algorithm>
 #include "utils.h"
-//#include "jvm_argument.hpp"
 #include "values.hpp"
-//#include "jvm_invocation.hpp"
 #include "jvm_handler.h"
 #include "jinvoke.hpp"
 #include "args.hpp"
 
-
-namespace LibJNI {
-    
-
-
+using namespace LibJNI;
 using ObjectInterface = jobject(*)(JNIEnv *env, jobject obj, jmethodID methodID, const jvalue * args);
 using IntegerInterface = jint(*)(JNIEnv *env, jobject obj, jmethodID methodID, const jvalue * args);
 
@@ -92,26 +86,32 @@ public:
     JavaMethod FindFirstMethod( std::string methodName );
     std::vector<JavaMethod> FindMethod( std::string methodName );
     
-    JavaMethod LookupMethod(std::string methodName, std::vector<LibJNI::BaseJavaValue *>& arguments );
+    JavaMethod LookupMethod(std::string methodName, std::vector<BaseJavaValue *>& arguments );
     
+   
     
     template <typename T>
-    LibJNI::Value<T> Call(std::string methodName) {
-        std::vector<LibJNI::BaseJavaValue *> empty;
+    T Call(std::string methodName) {
+        std::vector<BaseJavaValue *> empty;
         return Call<T>(methodName, empty);
     }
     
+    
+    
     template <typename T>
-    LibJNI::Value<T> Call(std::string methodName, std::vector<LibJNI::BaseJavaValue *>& arguments) {
+    T Call(std::string methodName, std::vector<BaseJavaValue *>& arguments) {
         
         auto method = LookupMethod(methodName, arguments);
         
         
         auto javaValues = Arguments::Create(GetEnv(), arguments);
         
+        T tmp;
+        if(tmp.GetType() != method.GetReturnTypeInfo() && tmp.GetType() != "object" )
+            throw VMError{"Not supported type using " +tmp.GetType()+ " expected " +  method.GetReturnTypeInfo()  };
+        
         return invoke.Call<T>(object, method.GetMethodRef(), (jvalue*)&javaValues[0]);
     }
-
     
     const std::vector<JavaMethod>& GetMembers();
     
@@ -119,7 +119,5 @@ public:
     
     void ReleaseThread(){ Release(); }
 };
-    
-}
 
 #endif /* jvm_reflect_hpp */
