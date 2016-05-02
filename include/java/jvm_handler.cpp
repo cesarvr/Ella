@@ -59,7 +59,7 @@ std::string JVMLoader::Start() {
 
 #ifdef __linux__
     
-    void* handle = dlopen("./linux/libjvm.so", RTLD_LAZY);
+    void* handle = dlopen("./linux/jdk8/libjvm.so", RTLD_LAZY);
     
     if (!handle) throw VMError{ "Fatal: Can't load dynamic library libjvm.so" }; 
     
@@ -83,7 +83,7 @@ std::string JVMLoader::Start() {
     JavaVMOption options[1];
     JavaVMInitArgs vm_args;
     
-    vm_args.version = JNI_VERSION_1_6;
+    vm_args.version = JNI_VERSION_1_8;
     vm_args.nOptions = 1;
     
     options[0].optionString = (char *)classPath.c_str();

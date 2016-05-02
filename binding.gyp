@@ -40,8 +40,8 @@
                     "cflags": ['-std=c++11', "-Wall", "-fexceptions"],
 
                     'include_dirs': [
-                        'linux/java/',
-                        'linux/java/linux'
+                        'linux/jdk8/java/',
+                        'linux/jdk8/java/linux'
                     ],
 
                 }
