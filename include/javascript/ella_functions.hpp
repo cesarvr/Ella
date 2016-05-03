@@ -20,21 +20,17 @@ using V8Value = v8::Local<v8::Value>;
 // Algoritms for transformation from V8 Type to JVM Type.
 
 JNIValue GetString(V8Value value) {
-    
     if (value->IsString()){
         v8::String::Utf8Value utf8_value(value);
         return  std::move( new StringValue( *utf8_value ));
     }
-    
+
     return nullptr;
 }
 
 JNIValue GetInteger(V8Value value) {
-   
-    if (value->IsInt32()){
-        std::cout << "n: " << value->Int32Value() << std::endl;
+    if (value->IsInt32())
         return std::move( new IntValue ( value->Int32Value() ) );
-    }
     
     return nullptr;
 }
@@ -69,8 +65,8 @@ struct BaseCall {
 
 
 template <typename ValueType>
-struct JSType: public BaseCall {
-    
+class JSType: public BaseCall {
+public:
     JSType(std::string _type){
         type = _type;
     };
@@ -86,46 +82,36 @@ struct JSType: public BaseCall {
         value = object->Call<ValueType>(methodName, args);
     };
     
-private:
+protected:
     std::string type;
     ValueType value;
 };
 
 
-
-
 // java.lang.String Return type
-struct StringCall: JSType<StringValue> {
-    
+class StringCall: public JSType<StringValue> {
+public: 
     StringCall(): JSType("java.lang.String") {};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( value.Get() ).ToLocalChecked();
     }
-    
-private:
-    StringValue value;
 };
 
 
 // int Return type
-struct IntCall: JSType<IntValue> {
-    
+class IntCall: public JSType<IntValue> {
+public: 
     IntCall(): JSType("int") {};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( value.Get() );
     }
-    
-private:
-    IntValue value;
 };
 
-
-
 // int Return type
-struct VoidCall: JSType<JObject> {
-    
+struct VoidCall: public JSType<JObject> {
+public: 
     VoidCall(): JSType("void") {};
     
     v8::Local<v8::Value> Get() {
