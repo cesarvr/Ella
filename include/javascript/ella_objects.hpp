@@ -104,8 +104,7 @@ namespace  ella {
         
         v8::Local<v8::Value> Get(){
             return supported(returnType)->Get();
-        }
-        
+        };
         
         /* Calling V8 here is illegal */
         void Execute() {
@@ -118,7 +117,7 @@ namespace  ella {
             }catch(VMError& error){
                 throw error;
             }
-            
+    
             return *this;
         }
         

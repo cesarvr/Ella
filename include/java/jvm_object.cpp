@@ -18,8 +18,9 @@ std::string ReturnTypeOf(std::string className) {
 
 Object::Object(JVMLoader loader, std::string className):
 HandleEnv(loader),
-invoke(loader),
-reflect(loader) {
+reflect(loader),
+invoke(loader) {
+    
     auto &env = GetEnv();
     name = className;
     

@@ -141,6 +141,7 @@ describe('ella', function() {
 
         assert.isObject(pdf, 'loading  pdf');
         assert.isFunction(pdf.add, 'pdf.concat');
+        assert.isFunction(pdf.concatHeavy, 'pdf.concatHeavy');
 
         pdf.concatHeavy("hello", "world", 1000, function(s) {
             assert.isString(s, 'concat return string');

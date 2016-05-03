@@ -58,24 +58,5 @@ namespace Utils {
         return list;
     };
     
-    
-    template <typename Data>
-    std::vector <Data> GetArrayFromJVM(std::shared_ptr<JNIEnv> env, jarray arrayObject ) {
-        
-        isNull(arrayObject);
-        
-        std::vector <Data> data;
-        jint count = env->GetArrayLength( (jbyteArray) arrayObject );
-        
-        data.resize(count);
-        
-        std::unique_ptr<Data[]> buffer (new Data[count]);
-        
-        env->GetByteArrayRegion ( (jbyteArray) arrayObject , 0, count, (jbyte*)&data[0] );
-        
-        return data;
-    }
-    
-    
 }
 #endif /* utils.h */

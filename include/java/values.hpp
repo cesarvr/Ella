@@ -42,9 +42,8 @@ namespace LibJNI {
         Value(std::string _type): type(_type) {};
         
         Value(std::string _type, NativeType _value):
-        type(_type),
-        value(_value) {
-        }
+        value(_value),
+        type(_type){}
         
         typedef JNIType Type;
         
@@ -124,35 +123,47 @@ namespace LibJNI {
         
     };
 
-    /*  ====== Arrays =======    */
+    /*  ====== ArrayValue =======    */
 
-    struct ByteArrayValue : public Value<jbyteArray, std::vector<signed char> > {
+    template <typename T>
+    struct ArrayValue: public T {
+        typedef typename T::Type Type;
+        ArrayValue(std::string type): T(type) {};
+        
+        
+        template <typename F>
+        void Set(F& fn, JEnv& env, jobject _array) {
+            Type array = (Type) _array;
+           
+            jint count = env->GetArrayLength( array );
+            this->value.resize(count);
+            
+            fn (env.get(), array , 0, count, &this->value[0] );
+            env->DeleteLocalRef(array);
+        }
+    };
     
-        ByteArrayValue(): Value("[B") {};
+    
+    class IntArrayValue : public ArrayValue< Value<jintArray, std::vector<int>> > {
+    public:
+        IntArrayValue(): ArrayValue("[I") {};
         
         void Set(JEnv& env, jobject _array) {
-            jbyteArray array = (jbyteArray) _array;
-            jint count = env->GetArrayLength( array );
-            value.resize(count);
-            env->GetByteArrayRegion ( array , 0, count, &value[0] );
-            
-            env->DeleteLocalRef(array);
-        }
+            ArrayValue::Set(env->functions->GetIntArrayRegion, env, _array);
+        };
     };
 
-    struct IntArrayValue : public Value<jintArray, std::vector<int> >  {
-        
-        IntArrayValue(): Value("[I") {};
+    
+    class ByteArrayValue : public ArrayValue< Value<jbyteArray, std::vector<signed char>> > {
+    public:
+        ByteArrayValue(): ArrayValue("[B") {};
         
         void Set(JEnv& env, jobject _array) {
-            jintArray array = (jintArray) _array;
-            jint count = env->GetArrayLength( array );
-            value.resize(count);
-            env->GetIntArrayRegion ( array , 0, count, &value[0] );
-            
-            env->DeleteLocalRef(array);
-        }
+            ArrayValue::Set(env->functions->GetByteArrayRegion, env, _array);
+        };
     };
+    
+    
 }
 
 

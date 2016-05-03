@@ -30,8 +30,12 @@ JNIValue GetString(V8Value value) {
 }
 
 JNIValue GetInteger(V8Value value) {
-    if (value->IsInt32())
+   
+    if (value->IsInt32()){
+        std::cout << "n: " << value->Int32Value() << std::endl;
         return std::move( new IntValue ( value->Int32Value() ) );
+    }
+    
     return nullptr;
 }
 
@@ -61,24 +65,39 @@ struct BaseCall {
                       std::vector<LibJNI::BaseJavaValue *>)=0;
     
     virtual v8::Local<v8::Value> Get() = 0;
-    
-    
-protected:
-    
 };
 
 
-// java.lang.String Return type
-struct StringCall: BaseCall {
+template <typename ValueType>
+struct JSType: public BaseCall {
     
-    std::string Type() { return "java.lang.String"; };
+    JSType(std::string _type){
+        type = _type;
+    };
+    
+    std::string Type(){
+        return type;
+    };
     
     void Call(std::string methodName,
               std::shared_ptr<Object> object,
               std::vector<LibJNI::BaseJavaValue *> args) {
         
-        value = object->Call<StringValue>(methodName, args);
+        value = object->Call<ValueType>(methodName, args);
     };
+    
+private:
+    std::string type;
+    ValueType value;
+};
+
+
+
+
+// java.lang.String Return type
+struct StringCall: JSType<StringValue> {
+    
+    StringCall(): JSType("java.lang.String") {};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( value.Get() ).ToLocalChecked();
@@ -86,21 +105,13 @@ struct StringCall: BaseCall {
     
 private:
     StringValue value;
-    
 };
 
 
 // int Return type
-struct IntCall: BaseCall {
+struct IntCall: JSType<IntValue> {
     
-    std::string Type() { return "int"; };
-    
-    void Call(std::string methodName,
-              std::shared_ptr<Object> object,
-              std::vector<LibJNI::BaseJavaValue *> args) {
-        
-        value = object->Call<IntValue>(methodName, args);
-    };
+    IntCall(): JSType("int") {};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( value.Get() );
@@ -108,21 +119,14 @@ struct IntCall: BaseCall {
     
 private:
     IntValue value;
-    
 };
 
 
+
 // int Return type
-struct VoidCall: BaseCall {
+struct VoidCall: JSType<JObject> {
     
-    std::string Type() { return "void"; };
-    
-    void Call(std::string methodName,
-              std::shared_ptr<Object> object,
-              std::vector<LibJNI::BaseJavaValue *> args) {
-        
-        object->Call<JObject>(methodName, args);
-    };
+    VoidCall(): JSType("void") {};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( true );
