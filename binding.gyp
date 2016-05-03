@@ -2,7 +2,8 @@
     "targets": [{
         "target_name": "ella",
         "sources": ["src/java/jvm_handler.cpp", "src/java/jvm_object.cpp", "src/java/args.cpp",
-                    "src/java/classpath.cpp", "src/javascript/ella_objects.cpp", "src/ella.cpp"],
+            "src/java/classpath.cpp", "src/javascript/ella_objects.cpp", "src/ella.cpp"
+        ],
 
         "make_global_settings": [
             ["CC", 'usr/bin/clang'],
@@ -41,10 +42,10 @@
 
                     "cflags": ['-std=c++11', "-Wall", "-fexceptions"],
 
-                    'include_dirs': [
-                        'linux/jdk8/java/',
-                        'linux/jdk8/java/linux'
-                    ],
+                    'include_dirs': [ '<!(echo ./jdk/include/ )', '<!(echo ./jdk/include/linux )' ],
+                    
+                    #"./jdk/include/",
+                    #"./jdk/include/linux"
                 }
             ]
         ]
