@@ -1,6 +1,17 @@
 //var java = require('../build/Release/ella.node');
 
-var java = require('../build/Debug/ella.node'); //debug mode.
+var java;
+
+try {
+    console.log('trying [release]')
+        //RELEASE
+    java = require('./build/Debug/ella.node'); //debug mode.
+} catch (e) {
+    console.log('fail: trying [debug]')
+        //DEBUG
+    java = require('../build/Debug/ella.node'); //debug mode.
+}
+
 
 var fs = require('fs');
 var exec = require('child_process').exec;
@@ -13,16 +24,15 @@ var https = require('https');
 //java.setClassPath('-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/');
 
 // linux location of the jars.
-java.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar');
+java.setClassPath(['../demo/lib/', '../demo/PDFHtml'], true);
 
 console.log('classpath->', java.getClassPath());
-
 java.start(function(jvm) {
 
     console.log(jvm);
 
     console.log('loading->')
-    var javaObject = jvm.New("pdf/P2HService");
+    var javaObject = jvm.New("pdf.P2HService");
 
     console.log('Calling PDF Generator method');
 
@@ -80,7 +90,6 @@ java.start(function(jvm) {
         https.request(options, callback).end();
 
     }
-
     console.log('generating pdf....');
 });
 
