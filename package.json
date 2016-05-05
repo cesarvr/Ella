@@ -1,6 +1,6 @@
 {
     "name": "ella",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "description": "",
     "main": "ella.node",
     "scripts": {
@@ -9,11 +9,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "express": "^4.13.4",
         "file-tools": "^1.0.0",
-        "nan": "^2.3.3",
-        "recursive-readdir": "^2.0.0",
-        "segfault": "^0.3.0"
+        "nan": "^2.3.3"
     },
 
     "keywords": [
