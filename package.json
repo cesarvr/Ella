@@ -1,26 +1,21 @@
 {
-    "name": "ella",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "express": "^4.13.4",
-        "nan": "^2.2.0",
-        "recursive-readdir": "^2.0.0",
-        "segfault": "^0.3.0"
-    },
-    "devDependencies": {
-        "chai": "^3.5.0"
-    },
-
-    "scripts": {
-        "preinstall": "node scripts/install.js"
-    }
-
-
+  "name": "ella",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "npm install file-tools --save &&  node scripts/install.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "file-tools": "^1.0.0",
+    "nan": "^2.2.0",
+    "recursive-readdir": "^2.0.0",
+    "segfault": "^0.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0"
+  }
 }
