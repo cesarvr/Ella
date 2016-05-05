@@ -44,7 +44,7 @@ $ npm install ella
 
 #### setClassPath ( path: string, recursive: true)
 
-path: path where to find the .jars/.class
+path: array, paths where to find the .jars/.class
 
 recursive: true/false, if true look for jar/classes recursively. 
 
@@ -53,7 +53,7 @@ This method allow us to configure the classpath,
 
 ```sh
 	var ella = require('ella');
-	ella.setClassPath('/folder/with/.jars/.class', true);   
+	ella.setClassPath(['/folder/with/.jars/.class', ...], true);   
 ```
 
 
