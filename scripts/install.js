@@ -83,10 +83,12 @@ var look_user_folder = function() {
 
     console.log('looking in user folder for jdk');
 
+    var path = process.env['PWD'];
     var options = {};
     options.exclude = ['.git', 'www', 'build', 'node_modules', 'docs', 'src'];
 
-    return search_jdk(app_folder, options);
+
+    return search_jdk(path + '/', options);
 };
 
 
@@ -112,7 +114,7 @@ var pre_install = function() {
 
 var install = function() {
 
-    var steps = [pre_install, lookup_jvm, jdk_debug, look_user_folder, look_java_home, download];
+    var steps = [pre_install, lookup_jvm, /*jdk_debug,*/ look_user_folder, look_java_home, download];
 
     for (var i = 0; i < steps.length; i++)
         if (steps[i]()) break;
