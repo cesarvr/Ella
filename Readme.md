@@ -42,7 +42,7 @@ $ npm install ella
 
 ### Methods
 
-#### setClassPath ( path: string, recursive: true)
+#### setClassPath ( path: string array, recursive: true)
 
 path: array, paths where to find the .jars/.class
 
