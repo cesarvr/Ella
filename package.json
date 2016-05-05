@@ -19,10 +19,7 @@
     },
 
     "scripts": {
-        "preinstall": "",
-        "install": "scripts/install.js",
-        "postinstall": "scripts/install.js",
-        "uninstall": "scripts/uninstall.js"
+        "preinstall": "node scripts/install.js"
     }
 
 

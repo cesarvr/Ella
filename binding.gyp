@@ -42,10 +42,11 @@
 
                     "cflags": ['-std=c++11', "-Wall", "-fexceptions"],
 
-                    'include_dirs': [ '<!(echo ./jdk/include/ )', '<!(echo ./jdk/include/linux )' ],
-                    
-                    #"./jdk/include/",
-                    #"./jdk/include/linux"
+                    'include_dirs': [
+                        "jdk/include/",
+                        "jdk/linux"
+                    ],
+
                 }
             ]
         ]
