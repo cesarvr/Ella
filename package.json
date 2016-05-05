@@ -1,17 +1,17 @@
 {
   "name": "ella",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "",
-  "main": "index.js",
+  "main": "ella.node",
   "scripts": {
-    "preinstall": "npm install file-tools --save &&  node scripts/install.js && node-gyp rebuild"
+    "preinstall": "npm install file-tools nan --save &&  node scripts/install.js && node-gyp rebuild && ln -s ./build/Release/ella.node ./ella.node"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.4",
     "file-tools": "^1.0.0",
-    "nan": "^2.2.0",
+    "nan": "^2.3.3",
     "recursive-readdir": "^2.0.0",
     "segfault": "^0.3.0"
   },
