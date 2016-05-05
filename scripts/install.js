@@ -5,7 +5,7 @@ var file = require('file-tools');
 var path = require('path');
 var install_dir = './jdk';
 var jdk6 = [install_dir + '/include', install_dir + '/linux', install_dir + '/libjvm.so'];
-
+var os = require('os');
 
 var app_folder = path.dirname(require.main.filename);
 
@@ -105,6 +105,9 @@ var lookup_jvm = function() {
     return false;
 };
 
+var handle_macosx = function(){
+  return os.platform() === 'darwin'
+}
 
 var pre_install = function() {
     if (!fs.existsSync(install_dir)) {
@@ -114,7 +117,7 @@ var pre_install = function() {
 
 var install = function() {
 
-    var steps = [pre_install, lookup_jvm, /*jdk_debug,*/ look_user_folder, look_java_home, download];
+    var steps = [pre_install, handle_macosx, lookup_jvm, /*jdk_debug,*/ look_user_folder, look_java_home, download];
 
     for (var i = 0; i < steps.length; i++)
         if (steps[i]()) break;
