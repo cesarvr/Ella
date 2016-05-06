@@ -1,5 +1,5 @@
 //
-//  jvm_reflect.hpp
+//  jvm_reflect.h
 //  LibJNI
 //
 //  Created by Cesar Valdez on 26/02/2016.
@@ -12,10 +12,10 @@
 
 #include <algorithm>
 #include "utils.h"
-#include "values.hpp"
+#include "values.h"
 #include "jvm_handler.h"
-#include "jinvoke.hpp"
-#include "args.hpp"
+#include "jinvoke.h"
+#include "args.h"
 
 using namespace LibJNI;
 using ObjectInterface = jobject(*)(JNIEnv *env, jobject obj, jmethodID methodID, const jvalue * args);
@@ -27,14 +27,8 @@ const std::string JAVA_STRING_CLASS("java/lang/String");
 const std::string CLASS_DEFAULT_CTS("<init>");
 const std::string VOID_RETURN("()V");
 
-/*
-struct JavaMethod {
-    std::string name;
-    std::string returnType;
-    Arguments arguments;
-    jmethodID methodPTR;
-}; */
 
+// Reflectio class, this encapsulate all cool Java reflection functionality.
 class Reflect: HandleEnv {
 private:
     
@@ -71,6 +65,8 @@ public:
 };
 
 
+
+// Object encapsulate the java object and a list of methods structures. 
 class Object: HandleEnv {
 private:
     jobject object;
@@ -95,8 +91,6 @@ public:
         std::vector<BaseJavaValue *> empty;
         return Call<T>(methodName, empty);
     }
-    
-    
     
     template <typename T>
     T Call(std::string methodName, std::vector<BaseJavaValue *>& arguments) {

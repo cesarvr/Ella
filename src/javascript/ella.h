@@ -14,14 +14,14 @@
 #include "nan.h"
 
 #include "jvm_handler.h"
-#include "jvm_object.hpp"
-#include "classpath.hpp"
+#include "jvm_object.h"
+#include "classpath.h"
 
 
-#include "ella_utils.hpp"
-#include "ella_jvm.hpp"
-#include "ella_objects.hpp"
-#include "ella_functions.hpp"
+#include "ella_utils.h"
+#include "ella_jvm.h"
+#include "ella_objects.h"
+#include "ella_functions.h"
 
 
 #include <map>

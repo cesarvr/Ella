@@ -2,7 +2,7 @@
 #define jvm_loader_h
 
 
-#include "jvm_global.hpp"
+#include "jvm_global.h"
 #include "utils.h"
 
 #ifdef _WIN32
@@ -11,8 +11,20 @@ using CreateJVM = jint(__stdcall*) (JavaVM **pvm, void **penv, void *args);
 using CreateJVM = jint(*) (JavaVM **pvm, void **penv, void *args);
 #endif
 
+
+
+  // Here we take care of the JVM.
+ 
+  // From here we take care of initialization and state.
+
+
+
 class JVMLoader {
 protected:
+
+    // vm: represents the virtual machine functionality.
+    //  env: is the environment created by JVM, this variable are the one encapsulated almost all JNI API.
+
     std::shared_ptr<JavaVM> vm = nullptr;
     std::shared_ptr<JNIEnv> env= nullptr;
     std::string classPath;
@@ -33,7 +45,7 @@ public:
 
 
 
-
+// This just try to handle the JEnv in an elegant way.
 class HandleEnv {
 private:
     JVMLoader java;

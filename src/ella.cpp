@@ -6,7 +6,7 @@
 //  Copyright © 2016 Cesar Valdez. All rights reserved.
 //
 
-#include "ella.hpp"
+#include "ella.h"
 
 
 void Init(v8::Local<v8::Object>  exports) {

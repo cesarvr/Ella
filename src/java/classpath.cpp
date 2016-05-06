@@ -3,12 +3,13 @@
 //  LibJNI
 //
 //  Created by Cesar Valdez on 20/04/2016.
-//  Copyright © 2016 Cesar Valdez. All rights reserved.
-//
-
-#include "classpath.hpp"
 
 
+#include "classpath.h"
+
+
+
+/* Helper functions  */
 bool checkExtension(std::string fileName, std::initializer_list<std::string> extensions) {
  
     for(auto extension: extensions)
@@ -36,6 +37,8 @@ void addFileSeparator(std::string& path) {
 }
 
 
+
+/* List all files and directories recursively, and look for .jars and .class */
 
 void listAllFilesInDirectory(std::string directory, std::string& classPath, bool recursive){
     DIR *directory_strt;

@@ -9,7 +9,7 @@
 #ifndef utils_h
 #define utils_h
 
-#include "jvm_global.hpp"
+#include "jvm_global.h"
 
 namespace Utils {
     

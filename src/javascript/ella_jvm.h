@@ -1,5 +1,5 @@
 //
-//  ella_jvm.hpp
+//  ella_jvm.h
 //  nanProject
 //
 //  Created by Cesar Valdez on 21/04/2016.
@@ -11,8 +11,8 @@
 
 #include "nan.h"
 #include "jvm_handler.h"
-#include "values.hpp"
-#include "ella_utils.hpp"
+#include "values.h"
+#include "ella_utils.h"
 
 
 namespace  ella {

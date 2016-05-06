@@ -1,5 +1,5 @@
 //
-//  java_invoke.hpp
+//  java_invoke.h
 //  LibJNI
 //
 //  Created by Cesar Valdez on 14/04/2016.
@@ -11,10 +11,17 @@
 
 #include "jvm_handler.h"
 #include "utils.h"
-#include "values.hpp"
+#include "values.h"
 
 
 using namespace LibJNI;
+
+
+
+//    Wraps the call with:
+  //      - Execption handling.
+  //      - Nullpointer checking.
+  //      - Check VM status.
 
 template <typename Function, typename ...Args>
 auto Wrapper(Function&& func, JEnv env, Args&&... args)
@@ -39,7 +46,7 @@ auto Wrapper(Function&& func, JEnv env, Args&&... args)
 }
 
 
-
+// Return the right function to call the JVM depending on the template parameter.
 template <class JE, typename T>
 struct Fn{
     //handle this JNI calls.
@@ -79,12 +86,19 @@ struct Fn<JE, jbyte > {
 
 
 
-
+// This take charge of the invocation.
 struct Invoke: HandleEnv {
     
     Invoke(JVMLoader env): HandleEnv(env) {};
     
     
+    
+   
+     
+       // Make the call to the JVM with the right method, then it use the method Set with the following
+       // signature Set(JEN, value) and place the value inside the object, the object can be any object that
+       // that agreed with that method, this make this class flexible for other value implementation.
+     
     template <typename T, typename... Args>
     T Call(Args... args) {
        

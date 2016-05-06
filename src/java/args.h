@@ -1,5 +1,5 @@
 //
-//  args.hpp
+//  args.h
 //  LibJNI
 //
 //  Created by Cesar Valdez on 20/04/2016.
@@ -9,7 +9,13 @@
 #ifndef args_hpp
 #define args_hpp
 
-#include "values.hpp"
+#include "values.h"
+
+
+ 
+// This defines list the arguments/types and the size.
+ 
+
 
 class ArgumentTypeInfo {
 public:
@@ -23,6 +29,8 @@ private:
 };
 
 
+
+// Take care of the transformation between (C++)Data to (JNI) jvalue
 class Arguments {
 private:
     std::vector<LibJNI::BaseJavaValue *> arguments;
@@ -34,6 +42,13 @@ public:
            std::vector<LibJNI::BaseJavaValue *> arguments );
 };
 
+
+
+
+ 
+//    This defines what a method structure.
+ 
+ 
 
 class JavaMethod: HandleEnv {
 private:

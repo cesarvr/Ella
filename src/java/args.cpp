@@ -6,7 +6,7 @@
 //  Copyright © 2016 Cesar Valdez. All rights reserved.
 //
 
-#include "args.hpp"
+#include "args.h"
 
 void ArgumentTypeInfo::Set(std::vector<std::string> argsTypeList) {
     listTypes = argsTypeList;

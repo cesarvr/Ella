@@ -157,9 +157,11 @@ describe('ella', function() {
     
         var str = vm.New('java.lang.StringBuffer');
         assert.isObject(str, 'object instanciated'); 
-        str.append('Hello World');
+        str.append('Hello');
+        str.append(' World');
+        str.append(' StringBuffer');
 
-        assert.equal(str.toString(),'Hello World', 'should return a string');
+        assert.equal(str.toString(),'Hello World StringBuffer', 'should return a string');
     });
 
 })

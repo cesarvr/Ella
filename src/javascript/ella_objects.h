@@ -1,5 +1,5 @@
 //
-//  ella_objects.hpp
+//  ella_objects.h
 //  nanProject
 //
 //  Created by Cesar Valdez on 22/04/2016.
@@ -10,8 +10,8 @@
 #define ella_objects_hpp
 
 #include "nan.h"
-#include "jvm_object.hpp"
-#include "ella_utils.hpp"
+#include "jvm_object.h"
+#include "ella_utils.h"
 
 #include <regex>
 #include <map>

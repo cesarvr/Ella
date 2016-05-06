@@ -1,5 +1,5 @@
 //
-//  values.hpp
+//  values.h
 //  LibJNI
 //
 //  Created by Cesar Valdez on 06/04/2016.
@@ -9,7 +9,7 @@
 #ifndef values_hpp
 #define values_hpp
 
-#include "jvm_global.hpp"
+#include "jvm_global.h"
 #include "jvm_handler.h"
 #include "utils.h"
 
@@ -19,13 +19,9 @@ class Arguments;
 
 namespace LibJNI {
     
-    /*
-     * Value : BaseValue
-     *
-     * Class in charge of handling the differents type between JAVA and C++, to implement a new type just need
-     *  to make a template-specialization of the type you want to handle.
-     *
-     */
+     // We need to check the arguments at runtime so this class create a common interface, for interacting
+     //with the Value class.
+    
     class BaseJavaValue {
     public:
         // Override with the value expected by JNI for java Argument.
@@ -35,10 +31,16 @@ namespace LibJNI {
         virtual jvalue GetJavaValue(JEnv& env) { throw VMError{"GetJavaValue not implemented yet for this type."}; };
     };
 
+
+    
+    
+    //This class is in charge to handle the arguments and the return type. Here are implemented the basic
+    //accessors and trivials constructors.
     
     template <class JNIType, class NativeType>
     class Value: public BaseJavaValue {
     public:
+        
         Value(std::string _type): type(_type) {};
         
         Value(std::string _type, NativeType _value):
@@ -67,14 +69,23 @@ namespace LibJNI {
     };
     
     
-    
+    // dealing with jobjects this is just reusing the accessors.
     struct JObject : public Value<jobject, jobject> {
         JObject(): Value("object") {}
     };
     
+    
+     //   reusing accessors and mapping types < JNI, JNI >, types get cast in Set(Native),
+     //   so if you need more sophisticated treatment override that method.
+    
     struct ObjectArray : public Value<jobject, jobjectArray> {
         ObjectArray(): Value("object") {}
     };
+    
+    
+    
+     // Here we override the BaseJavaValue::GetJavaValue, cause this data need some treatment.
+    
     
     struct IntValue : public Value<jint, int> {
 
@@ -99,6 +110,8 @@ namespace LibJNI {
     };
     
     
+    
+     //   We override Set and GetJavaValue.
     
     struct StringValue : public Value<jstring, std::string> {
 
@@ -125,11 +138,20 @@ namespace LibJNI {
 
     /*  ====== ArrayValue =======    */
 
+    
+    
+    //    ArrayValue: T
+        
+      //  this one is cool, cause it inherit for a generic type. In reality we want from this class the method
+      //  [ Set ] cause it contain a general algorithm to iterate Java native arrays and allow you to choose your
+      //  function pointer.
+     
+    
+    
     template <typename T>
     struct ArrayValue: public T {
         typedef typename T::Type Type;
         ArrayValue(std::string type): T(type) {};
-        
         
         template <typename F>
         void Set(F& fn, JEnv& env, jobject _array) {
@@ -144,6 +166,16 @@ namespace LibJNI {
     };
     
     
+    
+    // IntArrayValue
+     
+      //  I treat here Java native int[] arrays, so we mix [ArrayValue, Object] and then inherit their members
+      //  overriding the Set method that is the one we specialize before.
+        
+     
+     
+    
+    
     class IntArrayValue : public ArrayValue< Value<jintArray, std::vector<int>> > {
     public:
         IntArrayValue(): ArrayValue("[I") {};
@@ -153,6 +185,12 @@ namespace LibJNI {
         };
     };
 
+  
+    
+    //    ByteArrayValue
+     
+      //  Same as before but we change the function callback.
+     
     
     class ByteArrayValue : public ArrayValue< Value<jbyteArray, std::vector<signed char>> > {
     public:
@@ -162,7 +200,6 @@ namespace LibJNI {
             ArrayValue::Set(env->functions->GetByteArrayRegion, env, _array);
         };
     };
-    
     
 }
 

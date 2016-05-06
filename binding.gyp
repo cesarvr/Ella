@@ -1,8 +1,8 @@
 {
     "targets": [{
         "target_name": "ella",
-        "sources": ["include/java/jvm_handler.cpp", "include/java/jvm_object.cpp", "include/java/args.cpp",
-                    "include/java/classpath.cpp", "include/javascript/ella_objects.cpp", "ella.cpp"],
+        "sources": ["src/java/jvm_handler.cpp", "src/java/jvm_object.cpp", "src/java/args.cpp",
+                    "src/java/classpath.cpp", "src/javascript/ella_objects.cpp", "src/ella.cpp"],
 
         "make_global_settings": [
             ["CC", 'usr/bin/clang'],
@@ -15,8 +15,8 @@
         "include_dirs": [
 
             "<!(node -e \"require('nan')\")",
-            "include/java/",
-            "include/javascript/"
+            "src/java/",
+            "src/javascript/"
         ],
 
         "conditions": [
@@ -26,7 +26,9 @@
                     "defines": [
                         "__MACOSX_CORE__"
                     ],
+
                     "libraries": ["-framework", "JavaVM"],
+
                     "xcode_settings": {
                         "OTHER_CPLUSPLUSFLAGS": ["-std=c++11", "-stdlib=libc++"],
                         "OTHER_LDFLAGS": ["-stdlib=libc++"],
@@ -43,7 +45,6 @@
                         'linux/jdk8/java/',
                         'linux/jdk8/java/linux'
                     ],
-
                 }
             ]
         ]

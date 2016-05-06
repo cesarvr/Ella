@@ -1,5 +1,5 @@
 //
-//  classpath.hpp
+//  classpath.h
 //  LibJNI
 //
 //  Created by Cesar Valdez on 20/04/2016.
@@ -17,8 +17,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "jvm_global.hpp"
+#include "jvm_global.h"
 
+
+/* Classpath handle here allowing recursive search for .jar and .class */
 
 class ClassPath {
 

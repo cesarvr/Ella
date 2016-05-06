@@ -6,8 +6,10 @@
 //  Copyright © 2016 Cesar Valdez. All rights reserved.
 //
 
-#include "jvm_object.hpp"
+#include "jvm_object.h"
 
+
+// Helper classes  
 std::string ReturnArrayOf(std::string className) {
     return "()[L" + className + ";";
 };
@@ -16,11 +18,16 @@ std::string ReturnTypeOf(std::string className) {
     return "()L" + className + ";";
 };
 
+
+
+
+//    Represent an object in java.
+
+
 Object::Object(JVMLoader loader, std::string className):
 HandleEnv(loader),
 reflect(loader),
 invoke(loader) {
-    
     auto &env = GetEnv();
     name = className;
     
@@ -45,6 +52,9 @@ invoke(loader) {
 };
 
 
+    //Find the first method by a given name.
+
+
 JavaMethod Object::FindFirstMethod( std::string methodName ) {
     for(auto& method: methods ){
         if (method.GetName() == methodName) {
@@ -53,8 +63,12 @@ JavaMethod Object::FindFirstMethod( std::string methodName ) {
     }
     
     throw VMError({ "Method not found: " + methodName });
-} 
+}
 
+
+
+ //Find the first method by a given name.
+ 
 std::vector<JavaMethod> Object::FindMethod( std::string methodName ) {
 
     std::vector<JavaMethod> methodsList;
@@ -79,6 +93,13 @@ std::string Object::GetClassName(){
     return name;
 };
 
+
+
+
+   //  Find the first method given name and a number of type/values.
+  //   It will try to find the right match, if he fails returns an exception.
+  //   if succeed then it return a iter pointer to the location of the JavaMethod object.
+ 
 
 JavaMethod Object::LookupMethod(std::string methodName, std::vector<LibJNI::BaseJavaValue *>& arguments ) {
     
@@ -109,15 +130,24 @@ JavaMethod Object::LookupMethod(std::string methodName, std::vector<LibJNI::Base
 
 
 
+
+
+
+
+
+
+ 
+ //Reflect class contains the reflection mechanism, that allow the API to instrospect the require Java object
+ //garther information about the methods the user wants to execute.
+ 
+ 
+
 Reflect::Reflect(JVMLoader loader):
 HandleEnv(loader),
 invoke(loader)
 {
-  
     assert(GetEnv() != nullptr);
-    
 };
-
 
 
 
