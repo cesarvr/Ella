@@ -1,31 +1,111 @@
 # Ella
 
-Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS container. Is done in C++11 so I implement a lot of nice feature for error handling, type inference, lambdas , etc...
-   
+Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS container. Is done in C++11 to make use of object oriented design.
 
-
-
-##Why 
+###Why 
 
 - because Java have very good ecosystem of libraries like PDFBox, iText, Solr, etc.., all mature and useful.
-
+- the objective is to create wrappers around the library you want and use it in your Node app.
  
-## Features 
+### Features 
   
-  - the JVM run in the same NodeJS process as a native add-on. 
+  - The JVM run in the same NodeJS process as a native add-on so comunication between each other is fast. 
   - Allow you to load jar/classes and use them inside NodeJS like Javascript objects literals.  
-  - You can send heavy Java methods calls to the background thread and assign a javascript callback when it finish.  
+  - You can send blocking Java calls to a background thread and assign a callback to continue when finished.
+  - The API can choose the right method giving a set of arguments, so it solves the method overloading in Java. [experimental]. 
+  - Exception handling, exception thrown by JVM are translated to Javascript [exception](http://www.w3schools.com/js/js_errors.asp). 
+ 
+### Things to be added soon. 
 	
+  - support to static classes.
+  - support to non-void constructor. 
+  - support for java Object args/return.
+ 
+ 
+### Supported types [for now] 
 
-## Things that work for now. 
+  - int
+  - java.lang.String 
+  
+  
+### Installation
 
-- Object with single constructor, instantiation.  
-- Method Calling. 
-- Async calls are little buggy for know for more than 15+ concurrent threads. 
+Ella requires [Node.js](https://nodejs.org/) v4+ to run.
+
+```sh
+$ export JAVA_HOME=/jdk/location/     # the installer do a recursive search to locate dependencies.
+$ npm install ella
+```
+
+### Methods
+
+#### setClassPath ( path: string, recursive: true)
+
+path: path where to find the .jars/.class
+
+recursive: true/false, if true look for jar/classes recursively. 
 
 
-## Things that don't work.
+This method allow us to configure the classpath,  
 
-- Instancianting objects with N>1 arguments. 
-- Method overloading, this doens't exist in javascript. 
-- Method only accept for now int/string/float.  
+```sh
+	var ella = require('ella');
+	ella.setClassPath('/folder/with/.jars/.class', true);   
+```
+
+
+
+#### setClassPath ( path: string, recursive: true)
+
+path: path where to find the .jars/.class
+
+recursive: true/false, if true look for jar/classes recursively. 
+
+
+This method allow us to configure the classpath,  
+
+```sh
+	var ella = require('ella');
+	ella.setClassPath('/folder/with/.jars/.class', true);   
+```
+
+#### getClassPath ( void )
+
+return the classpath configuration. 
+
+This method allow us to configure the classpath.
+
+```sh
+	ella.getClassPath();  //myjar1.jar:myjar2.jar   
+```
+
+
+#### start ( callback )
+
+create an JVM instance asynchronously.
+ 
+callback(instance): function take as parameter an instance of the JVM. 
+
+This method allow us to configure the classpath.
+
+```sh
+	ella.start(function(vm){  /* do some work with vm */   })
+```
+
+
+
+#### vm.new (string qualified classname)
+
+given a classname create a new object.
+
+```sh
+	var stringBuffer = ella.new('java.lang.StringBuffer');
+	
+	// stringBuffer.append
+	// stringBuffer.insert
+	// stringBuffer.substring 
+	// ....
+```
+
+
+
