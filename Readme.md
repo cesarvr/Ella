@@ -33,7 +33,7 @@ Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS contain
 Ella requires [Node.js](https://nodejs.org/) v4+ to run.
 
 ```sh
-$ export JAVA_HOME=/jdk/location/     # the installer do a recursive search to locate dependencies.
+$ export JAVA_HOME=/jdk/location/     #finish with / is important here, there is a bug in the installer :(
 $ npm install ella
 ```
 
