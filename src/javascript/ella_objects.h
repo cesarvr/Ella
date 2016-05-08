@@ -124,7 +124,6 @@ namespace  ella {
              
         JNIWorker& call(){
             try{
-                std::cout << "name: " << fn.GetName() << std::endl;
                 supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
             }catch(VMError& error){
                 throw error;

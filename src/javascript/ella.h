@@ -42,9 +42,8 @@ namespace ella {
     // initializing the Server & Call strategies.
     void Initialize(){
         
-        cout << "vm->" << endl;
-        if(supportedInvocations.ready()){
-            
+        if(!supportedInvocations.ready()){
+            cout << "vm->" << endl;
             // call flavors.
             supportedInvocations.Create<StringCall>();
             supportedInvocations.Create<IntCall>();
@@ -86,7 +85,6 @@ namespace ella {
     void ClassLoader(V8Args& args) {
         
         try{
-            Initialize();
             server.SetJVM(vm);
             auto classname = Utils::GetClassName(args[0]);
             
@@ -117,6 +115,8 @@ namespace ella {
     
     void Start(V8Args& args ){
         
+        Initialize();
+
         if (!args[0]->IsFunction())
             Nan::ThrowTypeError("Callback required.");
         

@@ -5,5 +5,5 @@ ella.start(function(o){
   s.append('hello');
   s.append('world');
   s.reverse();
-  console.log('->',s);
+  console.log('->',s.toString());
 })

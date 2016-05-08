@@ -40,7 +40,7 @@
 
                 "OS=='linux'", {
 
-                    "cflags": ['-std=c++11', "-Wall", "-fexceptions", "-j 4"],
+                    "cflags": ['-std=c++11', "-Wall", "-fexceptions" ],
 
                     'include_dirs': [
                         "jdk/include/",

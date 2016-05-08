@@ -43,9 +43,9 @@ describe('ella', function() {
     it(' testing jar files search: ', function() {
 
         console.time('recursive search');
-        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
+        //java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
 
-        //java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
+        java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
         console.timeEnd('recursive search');
 
         assert.notEqual(java.getClassPath(), '', 'should expect something here.');
@@ -58,9 +58,9 @@ describe('ella', function() {
 
     it('turning on the jvm', function(done) {
 
-        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib/', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/'], true);
+        //java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib/', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/'], true);
 
-        //java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
+        java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
         assert.notEqual(java.getClassPath(), '', 'should expect something here.');
         //console.log('classpath ->' ,java.getClassPath());
 
@@ -82,9 +82,9 @@ describe('ella', function() {
 
         assert.isObject(vm, 'vm should be a object');
         console.log('vm->', vm);
-        strBuffer = vm.New('java.lang.StringBuffer');
-        str = vm.New('java.lang.String');
-        pdf = vm.New('pdf.P2HService');
+        strBuffer = vm.new('java.lang.StringBuffer');
+        str = vm.new('java.lang.String');
+        pdf = vm.new('pdf.P2HService');
 
         assert.isNumber(strBuffer.hashCode(), 'type number expected');
         assert.isNumber(str.hashCode(), 'type number expected');
@@ -97,7 +97,7 @@ describe('ella', function() {
 
             console.time("object allocation");
             for (var i = 0; i < 1000; i++) {
-                pdfs.push(vm.New('pdf.P2HService'));
+                pdfs.push(vm.new('pdf.P2HService'));
             }
             console.timeEnd("object allocation");
 
@@ -120,7 +120,6 @@ describe('ella', function() {
             assert.isString(s, 'concat return string');
         });
 
-/*
         it('calling methods with Args(Int...)', function() {
 
             assert.isObject(pdf, 'loading  pdf');
@@ -152,7 +151,6 @@ describe('ella', function() {
             });
         });
 
-/*
         it('calling methods with Args(String...): Sleep Thread in Java side.  [async]', function(done) {
 
             assert.isObject(pdf, 'loading  pdf');
@@ -167,7 +165,7 @@ describe('ella', function() {
 
         it('calling void<method> ', function(){
         
-            var str = vm.New('java.lang.StringBuffer');
+            var str = vm.new('java.lang.StringBuffer');
             assert.isObject(str, 'object instanciated'); 
             str.append('Hello');
             str.append(' World');
@@ -187,7 +185,6 @@ describe('ella', function() {
         });
     });
 
-*/
     it('calling methods with Args(doubles...)  [async]', function(done) {
 
         assert.isObject(pdf, 'loading  pdf');
