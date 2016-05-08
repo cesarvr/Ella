@@ -85,7 +85,7 @@ This method allow us to configure the classpath.
 given a classname create a new object.
 
 ```sh
-	var stringBuffer = ella.new('java.lang.StringBuffer');
+	var stringBuffer = vm.new('java.lang.StringBuffer');
 	
 	// stringBuffer.append
 	// stringBuffer.insert
@@ -109,7 +109,8 @@ Just call the method as normal and add a function callback as an extra parameter
 
 ```sh
 	
-	var pdf = ella.new('com.pdf.Library'); // method signature  byte[] createPDF(string); 
+	var pdf = vm.new('com.pdf.Library'); // method signature  byte[] createPDF(string); 
+	
 	var buffer = pdf.createPDF('my_blocking.pdf');   // this call will block the interpreter in this position. 
 	
 	// the addition of an anonymous function make this method async.
