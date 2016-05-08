@@ -93,5 +93,35 @@ given a classname create a new object.
 	// ....
 ```
 
+### sync call 
+
+To make an sync call just call the method.
+
+```sh
+	stringBuffer.append('hello'); 
+	console.log(stringBuffer.toString() );  //hello. 
+```
+
+
+### async call 
+
+Just call the method as normal and add a function callback as an extra parameter this extra parameter transform the call to async. 
+
+```sh
+	
+	var pdf = ella.new('com.pdf.Library'); // method signature createPDF(string); 
+	pdf.createPDF('my_blocking.pdf');   // this call will block the interpreter in this position until it finish. 
+	
+	// the addition of an anonymous function make this method async.
+	pdf.createPDF('my_async.pdf', function(pdf){  /* do some work with pdf data */ }); // interpreter execute this and continues.
+	
+	//js code.......
+```
+
+
+
+
+
+
 
 
