@@ -13,16 +13,17 @@
 #include <utility>
 #include <map>
 #include "reflect.h"
-#include "jvm_handler.h"
 
 using namespace std;
+
+
 
 class Server {
 public:
     Server(){};
     void SetJVM(JVMLoader loader){ jvm = loader; };
 
-    vector<string> GetMethods(ObjectValue object);
+    vector<string>& GetMethods(ObjectValue object);
     ObjectArray GetMethodsNative(ObjectValue object);
 
     Method MethodDescription(ObjectValue object, string methodName, vector<BaseJavaValue* >&& args );
@@ -39,6 +40,8 @@ private:
     
     map<string, ObjectArray> mcache;
     map<string, Method> icache;
+    map<string, vector<string>> names_cache;
+    
     
     JVMLoader jvm;
 };

@@ -93,7 +93,7 @@ namespace ella {
         
         
         template <typename Methods, typename Fn>
-        static auto CreateJSObject(Methods& methods, int hashcode, Fn& callback ) ->decltype(Nan::New<v8::Object>()) {
+        static auto CreateJSObject(Methods& methods, uint32_t hashcode, Fn& callback ) ->decltype(Nan::New<v8::Object>()) {
             auto object = Nan::New<v8::Object>();
             
             for(auto method: methods) {

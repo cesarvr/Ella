@@ -1,12 +1,11 @@
 var fs = require('fs');
 
+
 var java;
 try {
-    console.log('trying [release]')
         //RELEASE
-    java = require('../build/Release/ella.node'); //debug mode.
+    java = require('./build/Debug/ella.node'); //debug mode.
 } catch (e) {
-    console.log('fail: trying [debug]')
         //DEBUG
     java = require('../build/Debug/ella.node'); //debug mode.
 
@@ -14,7 +13,6 @@ try {
 
         java = require('ella');
     } catch (e) {
-        console.log('cant load library: ella');
     }
 }
 
@@ -29,10 +27,10 @@ java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
 java.start(function(_vm) {
     vm = _vm;
 
-    pdf = vm.New('pdf.P2HService');
+    pdf = vm.new('pdf.P2HService');
 
     var things = ['Rock', 'Paper', 'Scissor'];
-    var s = "", size =2100;
+    var s = "", size = 2000;
 
     console.time("string class [concat]");
 
@@ -48,13 +46,12 @@ java.start(function(_vm) {
     
    console.time("object allocation.");
   
-    size = 5000;
+    size = 10000;
     var pdfs = []; 
     for (var i = 0; i < size; i++) {
-      pdfs[i] = vm.New('pdf.P2HService');
+      pdfs[i] = vm.new('pdf.P2HService');
     }
 
    console.timeEnd("object allocation.");
    console.log('objs number: ', pdfs.length, ' iterations: ',size );
-
 });

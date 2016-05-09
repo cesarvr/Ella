@@ -32,6 +32,7 @@ namespace ella {
     JVMLoader vm;
     std::map< int, std::shared_ptr< Object<Server> > > objectsMap;
     Server server;
+    uint32_t hash_code =0;
     
     using V8Args = const Nan::FunctionCallbackInfo<v8::Value>;
     
@@ -43,7 +44,6 @@ namespace ella {
     void Initialize(){
         
         if(!supportedInvocations.ready()){
-            cout << "vm->" << endl;
             // call flavors.
             supportedInvocations.Create<StringCall>();
             supportedInvocations.Create<IntCall>();
@@ -91,11 +91,11 @@ namespace ella {
             std::shared_ptr<Object<Server>> clazz(new Object<Server>(vm,server, classname));
             
             auto methods  = clazz->MethodsNames();
-            auto hashcode = clazz->Call<IntValue>("hashCode",{}).Get();
+            hash_code++;
+
+            auto jsObject = Utils::CreateJSObject<decltype(methods), decltype(MakeCallToJNI)>(methods,hash_code, MakeCallToJNI);
             
-            auto jsObject = Utils::CreateJSObject<decltype(methods), decltype(MakeCallToJNI)>(methods,hashcode, MakeCallToJNI);
-            
-            objectsMap[hashcode] = clazz;
+            objectsMap[hash_code] = clazz;
             
             args.GetReturnValue().Set(jsObject);
             

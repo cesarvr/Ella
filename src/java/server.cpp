@@ -35,11 +35,18 @@ Method Server::GetMethodFromCache(JEnv &env, string name, vector<LibJNI::BaseJav
     return icache[CreateSignature(name, args)];
 }
 
-vector<string> Server::GetMethods(ObjectValue object){
+vector<string>& Server::GetMethods(ObjectValue object){
     auto jni = Env();
     auto obj = GetMethodsNative(object);
     
-    return Reflect::GetMethodsNames(jni, obj);
+    auto& list = names_cache[object.GetType()];
+    
+    if(list.empty()){
+        list = Reflect::GetMethodsNames(jni, obj);
+        cout << "non-optimize" << endl;    
+    }
+
+    return list;
 }
 
 ObjectArray Server::GetMethodsNative(ObjectValue object) {
