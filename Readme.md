@@ -27,7 +27,7 @@ Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS contain
     - int
     - java.lang.String 
     - double 
-    - byte[]
+    - byte[] - to Buffer to handle binaries.
 
   - Object [comming soon...]
 
