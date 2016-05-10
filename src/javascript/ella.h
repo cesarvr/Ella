@@ -21,7 +21,7 @@
 #include "ella_utils.h"
 #include "ella_jvm.h"
 #include "ella_objects.h"
-#include "ella_functions.h"
+#include "ella_types.h"
 
 
 #include <map>
@@ -44,7 +44,7 @@ namespace ella {
             
             
             //functions dedicated to transform from v8 -> LibJNI::BaseJavaValue in ella_functions.
-            fnHandler.SetArguments(args, {GetString, GetInteger});
+            fnHandler.SetArguments(args, {GetString, GetNumber});
             fnHandler.DetectAndGetCallback(args, GetFunctionCallback);
             
             
@@ -53,7 +53,10 @@ namespace ella {
             
             supportedInvocations.Create<StringCall>();
             supportedInvocations.Create<IntCall>();
+            supportedInvocations.Create<DoubleCall>();
             supportedInvocations.Create<VoidCall>();
+            supportedInvocations.Create<ByteArrayCall>();
+            
             
             
             auto jniWorker =  new JNIWorker<InvocationList<BaseCall>>(supportedInvocations,

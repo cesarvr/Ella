@@ -113,7 +113,7 @@ JavaMethod Object::LookupMethod(std::string methodName, std::vector<LibJNI::Base
             return false;
         
         for(auto arg: arguments)
-            if(arg->GetType() != method.ArgumentsType()[index++])
+            if( !arg->CheckType( method.ArgumentsType()[index++] ) )
                 return false;
         
         return true;

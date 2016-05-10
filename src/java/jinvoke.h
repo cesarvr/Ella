@@ -75,6 +75,16 @@ struct Fn<JE, FloatValue > {
 
 
 template <class JE>
+struct Fn<JE, DoubleValue > {
+    
+    static auto GetInterface(JE& env) ->decltype(env->functions->CallDoubleMethodA) {
+        return env->functions->CallDoubleMethodA;
+    }
+};
+
+
+
+template <class JE>
 struct Fn<JE, jbyte > {
     
     using ReturnType = jbyte;

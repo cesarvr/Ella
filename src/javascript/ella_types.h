@@ -9,7 +9,9 @@
 #ifndef ella_functions_h
 #define ella_functions_h
 
+#include <algorithm>
 #include <memory.h>
+#include "ella_jni_value.h"
 
 using namespace ella;
 
@@ -24,14 +26,20 @@ JNIValue GetString(V8Value value) {
         v8::String::Utf8Value utf8_value(value);
         return  std::move( new StringValue( *utf8_value ));
     }
-
+    
     return nullptr;
 }
 
 JNIValue GetInteger(V8Value value) {
     if (value->IsInt32())
         return std::move( new IntValue ( value->Int32Value() ) );
+    return nullptr;
+}
+
+JNIValue GetNumber(V8Value value) {
     
+    if (value->IsNumber())
+        return std::move( new NumbersValue ( value->NumberValue() ) );
     return nullptr;
 }
 
@@ -69,12 +77,9 @@ struct BaseCall {
 template <typename ValueType>
 class JSType: public BaseCall {
 public:
-    JSType(std::string _type){
-        type = _type;
-    };
     
     std::string Type(){
-        return type;
+        return value.GetType();
     };
     
     void Call(std::string methodName,
@@ -92,19 +97,38 @@ protected:
 
 // java.lang.String Return type
 class StringCall: public JSType<StringValue> {
-public: 
-    StringCall(): JSType("java.lang.String") {};
+public:
+    StringCall(): JSType() {};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( value.Get() ).ToLocalChecked();
     }
 };
 
-
 // int Return type
 class IntCall: public JSType<IntValue> {
-public: 
-    IntCall(): JSType("int") {};
+public:
+    IntCall(): JSType(){};
+    
+    v8::Local<v8::Value> Get() {
+        return  Nan::New( value.Get() );
+    }
+};
+
+// Native ByteArray
+class ByteArrayCall: public JSType<ByteArrayValue> {
+public:
+    ByteArrayCall(): JSType() {};
+    
+    v8::Local<v8::Value> Get() {
+        return Nan::CopyBuffer((char*)&value.Get()[0], (int)value.Get().size()).ToLocalChecked();
+    }
+};
+
+// double Return type
+class DoubleCall: public JSType<DoubleValue> {
+public:
+    DoubleCall(): JSType(){};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( value.Get() );
@@ -113,8 +137,8 @@ public:
 
 // void Return type
 struct VoidCall: public JSType<JObject> {
-public: 
-    VoidCall(): JSType("void") {};
+public:
+    VoidCall(): JSType(){};
     
     v8::Local<v8::Value> Get() {
         return  Nan::New( true );

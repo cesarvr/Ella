@@ -27,6 +27,9 @@ namespace LibJNI {
         // Override with the value expected by JNI for java Argument.
         virtual std::string GetType() { throw VMError{"Type not implemented yet."}; return ""; };
         
+        // Check Type compatibility, so some Type classes can downgrade or upgrade accordly. //ex => float->long vice-versa.
+        virtual bool CheckType(std::string) =0;
+        
         //Override with the handling behavior for Native to JNI type.
         virtual jvalue GetJavaValue(JEnv& env) { throw VMError{"GetJavaValue not implemented yet for this type."}; };
     };
@@ -50,6 +53,8 @@ namespace LibJNI {
         typedef JNIType Type;
         
         std::string GetType() { return type; };
+        
+        bool CheckType(std::string _type) { return type == _type; };
         
         void Set(JEnv& env, JNIType object) {
             value = (NativeType) object;
@@ -109,7 +114,16 @@ namespace LibJNI {
         }
     };
     
-    
+    struct DoubleValue : public Value<jdouble, double> {
+        
+        DoubleValue(): Value("double") {}
+        DoubleValue(double x): Value("double", x) {}
+        
+        jvalue GetJavaValue(JEnv& env) {
+            jniValue.d = value;
+            return jniValue;
+        }
+    };
     
      //   We override Set and GetJavaValue.
     
@@ -169,12 +183,8 @@ namespace LibJNI {
     
     // IntArrayValue
      
-      //  I treat here Java native int[] arrays, so we mix [ArrayValue, Object] and then inherit their members
-      //  overriding the Set method that is the one we specialize before.
-        
-     
-     
-    
+    //  I treat here Java native int[] arrays, so we mix [ArrayValue, Object] and then inherit their members
+    //  overriding the Set method that is the one we specialize before.
     
     class IntArrayValue : public ArrayValue< Value<jintArray, std::vector<int>> > {
     public:
@@ -187,11 +197,9 @@ namespace LibJNI {
 
   
     
-    //    ByteArrayValue
-     
-      //  Same as before but we change the function callback.
-     
-    
+    //  ByteArrayValue
+    //  Same as before but we change the function callback.
+
     class ByteArrayValue : public ArrayValue< Value<jbyteArray, std::vector<signed char>> > {
     public:
         ByteArrayValue(): ArrayValue("[B") {};
