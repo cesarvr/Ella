@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ella_objects.h</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="ella.html">
+                  ella.h
+                </a>
+              
+                
+                <a class="source" href="ella_jni_value.html">
+                  ella_jni_value.h
+                </a>
+              
+                
+                <a class="source" href="ella_jvm.html">
+                  ella_jvm.h
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.cpp
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.h
+                </a>
+              
+                
+                <a class="source" href="ella_types.html">
+                  ella_types.h
+                </a>
+              
+                
+                <a class="source" href="ella_utils.html">
+                  ella_utils.h
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ella_objects.h</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p> ella_objects.h
+ nanProject</p>
+<p> Created by Cesar Valdez on 22/04/2016.
+ Copyright © 2016 Cesar Valdez. All rights reserved.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-meta">#ifndef ella_objects_hpp</span>
+<span class="hljs-meta">#define ella_objects_hpp</span>
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">"nan.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"jvm_object.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"ella_utils.h"</span></span>
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;regex&gt;</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;map&gt;</span></span>
+
+namespace  ella {
+    
+    
+    using Algorithm =  LibJNI::BaseJavaValue* (*)(v8::Local&lt;v8::Value&gt;);
+   
+
+    class FunctionHandler {
+    public:
+        FunctionHandler(<span class="hljs-keyword">const</span> Nan::FunctionCallbackInfo&lt;v8::Value&gt;&amp; func);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>accessors</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        std::string GetName(){ <span class="hljs-keyword">return</span> name; }
+        
+        <span class="hljs-keyword">int</span> HashCode() {<span class="hljs-keyword">return</span> hashcode; }
+        
+        Nan::Callback* GetCallback() {<span class="hljs-keyword">return</span> callback; }
+        
+        <span class="hljs-keyword">void</span> SetArguments(<span class="hljs-keyword">const</span> Nan::FunctionCallbackInfo&lt;v8::Value&gt;&amp; func,
+                          std::initializer_list&lt;Algorithm&gt; functions );
+        
+        std::vector &lt;LibJNI::BaseJavaValue*&gt;&amp; GetArguments(){ <span class="hljs-keyword">return</span> args; }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>========</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        
+        
+        template &lt;<span class="hljs-keyword">typename</span> F&gt;
+        <span class="hljs-keyword">void</span> DetectAndGetCallback( <span class="hljs-keyword">const</span> Nan::FunctionCallbackInfo&lt;v8::Value&gt;&amp; func, F&amp; fn) {
+            callback = Utils::Search(func, fn);
+        }
+        
+        
+    private:
+        std::string name;
+        <span class="hljs-keyword">int</span> hashcode;
+        Nan::Callback* callback;
+        std::vector &lt;LibJNI::BaseJavaValue*&gt; args;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>this class is an strategy pattern matcher, it match a JVM return type with a class(strategy) to handle that return type. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    template &lt;<span class="hljs-keyword">typename</span> Base&gt;
+    class InvocationList {
+    public:
+        
+        std::map&lt;std::string, Base* &gt; callers;
+        
+        template &lt;<span class="hljs-keyword">typename</span> T&gt;
+        <span class="hljs-keyword">void</span> Create() {
+            auto caller = new T;
+            
+            callers[ caller-&gt;Type() ] = caller;
+        }
+        
+        Base* operator()(std::string type){
+            auto tmp = callers[type];
+            <span class="hljs-keyword">if</span>( tmp == nullptr )
+                tmp = callers[<span class="hljs-string">"void"</span>]; <span class="hljs-comment">//throw VMError{"No caller implemented for return type: " + type};</span>
+            
+            <span class="hljs-keyword">return</span> tmp;
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>This is the class that defines an Asynchronous Worker, for now works in queue. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    
+    template &lt;<span class="hljs-keyword">typename</span> SupportedInvocation&gt;
+    class JNIWorker : public Nan::AsyncWorker {
+        
+    public:
+        JNIWorker(
+                  SupportedInvocation _supported,
+                  FunctionHandler _fn,
+                  std::shared_ptr&lt;Object&gt;&amp; _javaObject
+                  ):
+        AsyncWorker( _fn.GetCallback() ),
+        supported(_supported),
+        fn( _fn ),
+        javaObject( _javaObject ) {
+            LookForReturnType(javaObject);
+        };
+        
+        <span class="hljs-keyword">void</span> HandleOKCallback () {
+            v8::Local&lt;v8::Value&gt; argv[] = {
+                Get()
+            };
+            
+            callback-&gt;Call(<span class="hljs-number">1</span>, argv);
+        };
+        
+        v8::Local&lt;v8::Value&gt; Get(){
+            <span class="hljs-keyword">return</span> supported(returnType)-&gt;Get();
+        };
+        
+        <span class="hljs-comment">/* Calling V8 here is illegal */</span>
+        <span class="hljs-keyword">void</span> Execute() {
+            call();
+        };
+   
+             
+        JNIWorker&amp; call(){
+            try{
+                supported(returnType)-&gt;Call(fn.GetName(), javaObject, fn.GetArguments());
+            }catch(VMError&amp; error){
+                throw error;
+            }
+    
+            <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>if the user provide a callback we transform this his call in an async call.    </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">bool</span> isAsync() {
+            <span class="hljs-keyword">return</span> callback != nullptr;
+        }
+        
+    private:
+        <span class="hljs-keyword">void</span> LookForReturnType(std::shared_ptr&lt;Object&gt;&amp; _javaObject) {
+            
+            auto method = _javaObject-&gt;LookupMethod(fn.GetName(), fn.GetArguments());
+            returnType = method.GetReturnTypeInfo();
+        }
+        
+        SupportedInvocation supported;
+        std::string returnType;
+        FunctionHandler fn;
+        std::shared_ptr&lt;Object&gt;&amp; javaObject;
+        v8::Local&lt;v8::Value&gt; retValue;
+    };
+    
+}
+
+<span class="hljs-meta">#endif /* ella_objects_hpp */</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

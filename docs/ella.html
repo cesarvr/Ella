@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ella.h</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="ella.html">
+                  ella.h
+                </a>
+              
+                
+                <a class="source" href="ella_jni_value.html">
+                  ella_jni_value.h
+                </a>
+              
+                
+                <a class="source" href="ella_jvm.html">
+                  ella_jvm.h
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.cpp
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.h
+                </a>
+              
+                
+                <a class="source" href="ella_types.html">
+                  ella_types.h
+                </a>
+              
+                
+                <a class="source" href="ella_utils.html">
+                  ella_utils.h
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ella.h</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p> js_vm.h
+ nanProject</p>
+<p> Created by Cesar Valdez on 11/02/2016.
+ Copyright © 2016 Cesar Valdez. All rights reserved.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-meta">#ifndef js_vm_h</span>
+<span class="hljs-meta">#define js_vm_h</span>
+
+
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">"nan.h"</span></span>
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">"jvm_handler.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"jvm_object.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"classpath.h"</span></span>
+
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">"ella_utils.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"ella_jvm.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"ella_objects.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"ella_types.h"</span></span>
+
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;map&gt;</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;regex&gt;</span></span>
+
+
+namespace ella {
+    JVMLoader vm;
+    std::map&lt; <span class="hljs-keyword">int</span>, std::shared_ptr&lt;Object&gt; &gt; objectsMap;
+    
+    
+    using V8Args = <span class="hljs-keyword">const</span> Nan::FunctionCallbackInfo&lt;v8::Value&gt;;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>here we extract the functions body, arguments and callback and proceed to call the JVM.  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> MakeCallToJNI(V8Args&amp; args) {
+        
+        try {
+            FunctionHandler fnHandler( args );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>functions dedicated to transform from v8 -&gt; LibJNI::BaseJavaValue in ella_functions.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            fnHandler.SetArguments(args, {GetString, GetNumber});
+            fnHandler.DetectAndGetCallback(args, GetFunctionCallback);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>supported class are declared in ella_functions.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            InvocationList&lt;BaseCall&gt; supportedInvocations;
+            
+            supportedInvocations.Create&lt;StringCall&gt;();
+            supportedInvocations.Create&lt;IntCall&gt;();
+            supportedInvocations.Create&lt;DoubleCall&gt;();
+            supportedInvocations.Create&lt;VoidCall&gt;();
+            supportedInvocations.Create&lt;ByteArrayCall&gt;();
+            
+            
+            
+            auto jniWorker =  new JNIWorker&lt;InvocationList&lt;BaseCall&gt;&gt;(supportedInvocations,
+                                                                      fnHandler,
+                                                                      objectsMap[fnHandler.HashCode()]);
+            
+            <span class="hljs-keyword">if</span>(!jniWorker-&gt;isAsync())
+                args.GetReturnValue().Set( jniWorker-&gt;call().Get() );
+            <span class="hljs-keyword">else</span>
+                Nan::AsyncQueueWorker(jniWorker);
+            
+            
+        }catch(VMError&amp; error) {
+            Nan::ThrowTypeError( error.errorMessage.c_str() );
+        }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Class loader, instanciation and cache in dictionary using the hashcode as key.  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> ClassLoader(V8Args&amp; args) {
+        
+        try{
+            
+            auto classname = Utils::GetClassName(args[<span class="hljs-number">0</span>]);
+            
+            std::shared_ptr&lt;Object&gt; clazz(new Object(vm, classname));
+            
+            auto methods  = clazz-&gt;GetMembers();
+            auto hashcode = clazz-&gt;Call&lt;IntValue&gt;(<span class="hljs-string">"hashCode"</span>).Get();
+            
+            auto jsObject = Utils::CreateJSObject&lt;decltype(methods), decltype(MakeCallToJNI)&gt;(methods,hashcode, MakeCallToJNI);
+            
+            objectsMap[hashcode] = clazz;
+            
+            args.GetReturnValue().Set(jsObject);
+            
+        }catch(VMError&amp; error){
+            Nan::ThrowTypeError( error.errorMessage.c_str() );
+        }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h1 id="start-callback-">Start (callback)</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Start a new JVM instance.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>callback: a function where to callback when instance has finish startup.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    
+    <span class="hljs-keyword">void</span> Start(V8Args&amp; args ){
+        
+        <span class="hljs-keyword">if</span> (!args[<span class="hljs-number">0</span>]-&gt;IsFunction())
+            Nan::ThrowTypeError(<span class="hljs-string">"Callback required."</span>);
+        
+        auto *jscallBack = new Nan::Callback(args[<span class="hljs-number">0</span>].As&lt;v8::Function&gt;());
+        
+        auto vmInitWorker = new ella::JVM&lt;decltype(ClassLoader)&gt; (jscallBack, vm, ClassLoader);
+        
+        Nan::AsyncQueueWorker(vmInitWorker);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h1 id="setclasspath-array-isrecursive-">SetClassPath (Array, isRecursive)</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Array -&gt; a list of paths where to find your [ .jars .class ].
+isRecursive -&gt; true look recursively, false it wont.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    
+    
+    <span class="hljs-keyword">void</span> SetClassPath(V8Args&amp; args ){
+        
+        try{
+            std::vector&lt;std::string&gt; dirs;
+            <span class="hljs-keyword">bool</span> recursive = <span class="hljs-literal">false</span>;
+            
+            <span class="hljs-keyword">if</span>( args[<span class="hljs-number">0</span>]-&gt;IsArray() ){
+                auto list = Nan::New&lt;v8::Array&gt;()-&gt;Cast(*args[<span class="hljs-number">0</span>]);
+                dirs = ella::Utils::IterCollection&lt; decltype(list), std::string&gt;(list, ella::Utils::ObjectToString);
+            }
+            
+            <span class="hljs-keyword">if</span>( args[<span class="hljs-number">1</span>]-&gt;IsBoolean() )
+                recursive = args[<span class="hljs-number">1</span>]-&gt;ToBoolean()-&gt;Value();
+            
+            vm.SetClassPath( ClassPath::LocateLibraries(dirs, recursive) );
+            
+        }catch(VMError&amp; error){
+            Nan::ThrowTypeError( error.errorMessage.c_str() );
+        }
+        
+    }
+    
+   
+    <span class="hljs-keyword">void</span> GetClassPath(V8Args&amp; args ){
+        args.GetReturnValue().Set( Nan::New(vm.GetClassPath()).ToLocalChecked() );
+    }
+    
+}
+
+
+
+
+<span class="hljs-meta">#endif /* js_vm_h */</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

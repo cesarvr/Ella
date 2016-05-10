@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ella_utils.h</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="ella.html">
+                  ella.h
+                </a>
+              
+                
+                <a class="source" href="ella_jni_value.html">
+                  ella_jni_value.h
+                </a>
+              
+                
+                <a class="source" href="ella_jvm.html">
+                  ella_jvm.h
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.cpp
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.h
+                </a>
+              
+                
+                <a class="source" href="ella_types.html">
+                  ella_types.h
+                </a>
+              
+                
+                <a class="source" href="ella_utils.html">
+                  ella_utils.h
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ella_utils.h</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p> ella_utils.h
+ nanProject</p>
+<p> Created by Cesar Valdez on 21/04/2016.
+ Copyright © 2016 Cesar Valdez. All rights reserved.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-meta">#ifndef ella_utils_hpp</span>
+<span class="hljs-meta">#define ella_utils_hpp</span>
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;vector&gt;</span></span>
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">"nan.h"</span></span>
+
+namespace ella {
+    <span class="hljs-keyword">struct</span> Utils {
+        
+        template &lt;<span class="hljs-keyword">typename</span> T&gt;
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</span> isEmpty(T&amp; t){
+            <span class="hljs-keyword">return</span> t == nullptr;
+        }
+        
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</span> isEmpty( std::string _val){
+            <span class="hljs-keyword">return</span> _val.empty();
+        }
+        
+     
+        
+        <span class="hljs-comment">/* http://izs.me/v8-docs/process_8cc-example.html  */</span>
+        <span class="hljs-keyword">static</span> std::string ObjectToString( v8::Local&lt; v8::Value &gt; value ) {
+           
+            <span class="hljs-keyword">if</span>(!value-&gt;IsString())
+                Nan::ThrowTypeError(<span class="hljs-string">"Error: String type expected."</span>);
+
+            v8::String::Utf8Value utf8_value(value);
+            <span class="hljs-keyword">return</span> std::string(*utf8_value);
+        }
+        
+
+        <span class="hljs-keyword">static</span> std::string GetClassName(v8::Local&lt; v8::Value &gt; value) {
+            
+            std::string classname = Utils::ObjectToString( value );
+            std::replace( classname.begin(), classname.end(), <span class="hljs-string">'.'</span>, <span class="hljs-string">'/'</span>);
+            
+            <span class="hljs-keyword">return</span> classname;
+        }
+        
+        template &lt;<span class="hljs-keyword">typename</span> V8Collection, <span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> Fn&gt;
+        <span class="hljs-keyword">static</span> std::vector&lt;T&gt; IterCollection(V8Collection collection, Fn&amp; callback ) {
+            
+            std::vector&lt;T&gt; tmp;
+            auto size = collection-&gt;Length();
+            
+            <span class="hljs-keyword">for</span>(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;size; i++){
+                auto val = callback(collection-&gt;Get(i));
+                <span class="hljs-keyword">if</span>(!isEmpty(val))
+                    tmp.push_back(val);
+            }
+            
+            <span class="hljs-keyword">return</span> tmp;
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Takes collection and apply a function to that. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        template &lt;<span class="hljs-keyword">typename</span> Collection, <span class="hljs-keyword">typename</span> V8Collection, <span class="hljs-keyword">typename</span> Fn&gt;
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> SaveEach(V8Collection&amp; v8collection, Collection&amp; collection, Fn&amp; callback){
+            auto len = v8collection.Length();
+            
+            <span class="hljs-keyword">for</span>(auto i=<span class="hljs-number">0</span>; i&lt;len; i++){
+               auto tmp = callback(v8collection[i]);
+                <span class="hljs-keyword">if</span>(!isEmpty(tmp))
+                    collection.push_back(tmp);
+            }
+        }
+       
+        template &lt;<span class="hljs-keyword">typename</span> V8Collection, <span class="hljs-keyword">typename</span> Fn&gt;
+        <span class="hljs-keyword">static</span> auto
+        Search(V8Collection&amp; v8collection, Fn&amp; callback) -&gt;decltype(callback(v8collection[<span class="hljs-number">0</span>])) {
+            
+            auto len = v8collection.Length();
+            
+            <span class="hljs-keyword">for</span>(auto i=<span class="hljs-number">0</span>; i&lt;len; i++){
+                auto tmp = callback(v8collection[i]);
+                <span class="hljs-keyword">if</span>(!isEmpty(tmp))
+                    <span class="hljs-keyword">return</span> tmp;
+            }
+            <span class="hljs-keyword">return</span> nullptr;
+        }
+        
+ 
+        
+        
+        template &lt;<span class="hljs-keyword">typename</span> Methods, <span class="hljs-keyword">typename</span> Fn&gt;
+        <span class="hljs-keyword">static</span> auto CreateJSObject(Methods&amp; methods, <span class="hljs-keyword">int</span> hashcode, Fn&amp; callback ) -&gt;decltype(Nan::New&lt;v8::Object&gt;()) {
+            auto object = Nan::New&lt;v8::Object&gt;();
+            
+            <span class="hljs-keyword">for</span>(auto method: methods) {
+                auto fnCallback  = Nan::New&lt;v8::FunctionTemplate&gt;(callback);
+                
+                std::string name = method.GetName() + <span class="hljs-string">"@"</span> + std::to_string(hashcode);
+                
+                fnCallback-&gt;SetClassName(Nan::New( name ).ToLocalChecked());
+                
+                object-&gt;Set(Nan::New( method.GetName() ).ToLocalChecked(),
+                            fnCallback-&gt;GetFunction() );
+            }
+            
+            <span class="hljs-keyword">return</span> object;
+        };
+        
+    };
+}
+
+<span class="hljs-meta">#endif /* ella_utils_hpp */</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

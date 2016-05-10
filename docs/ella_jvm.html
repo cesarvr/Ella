@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ella_jvm.h</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="ella.html">
+                  ella.h
+                </a>
+              
+                
+                <a class="source" href="ella_jni_value.html">
+                  ella_jni_value.h
+                </a>
+              
+                
+                <a class="source" href="ella_jvm.html">
+                  ella_jvm.h
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.cpp
+                </a>
+              
+                
+                <a class="source" href="ella_objects.html">
+                  ella_objects.h
+                </a>
+              
+                
+                <a class="source" href="ella_types.html">
+                  ella_types.h
+                </a>
+              
+                
+                <a class="source" href="ella_utils.html">
+                  ella_utils.h
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ella_jvm.h</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p> ella_jvm.h
+ nanProject</p>
+<p> Created by Cesar Valdez on 21/04/2016.
+ Copyright © 2016 Cesar Valdez. All rights reserved.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-meta">#ifndef ella_jvm_hpp</span>
+<span class="hljs-meta">#define ella_jvm_hpp</span>
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">"nan.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"jvm_handler.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"values.h"</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"ella_utils.h"</span></span>
+
+
+namespace  ella {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>This is the class that defines an Asynchronous Worker, for now works in queue. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    template &lt;<span class="hljs-keyword">typename</span> Fn&gt;
+    class JVM : public Nan::AsyncWorker {
+    public:
+        JVM(Nan::Callback* callback, JVMLoader&amp; _vm, Fn&amp; _fn ):
+        AsyncWorker(callback),
+        vm(_vm),
+        fn(_fn) {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>this method is called by the Nan::AsyncQueue. this spawn a new thread so calling v8 from here is a SEGENV.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">void</span> Execute(){
+            try{
+                <span class="hljs-keyword">if</span>(!vm.isVMReady()) <span class="hljs-comment">//only one vm for now.</span>
+                    vm.Start();
+                
+            }catch(VMError&amp; _error){
+                error = _error;
+            }
+        };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>everything is fine the this method get called.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">void</span> HandleOKCallback () {
+            auto object = Nan::New&lt;v8::Object&gt;();
+            object-&gt;Set(Nan::New(<span class="hljs-string">"New"</span>).ToLocalChecked(),
+                        Nan::New&lt;v8::FunctionTemplate&gt;(fn)-&gt;GetFunction() );
+            
+            v8::Local&lt;v8::Value&gt; argv[] = {
+                object
+            };
+            
+            callback-&gt;Call(<span class="hljs-number">1</span>, argv);
+        };
+        
+        
+        <span class="hljs-keyword">void</span> HandleErrorCallback() {
+            Nan::ThrowTypeError(Nan::New(error.errorMessage).ToLocalChecked());
+        }
+        
+    private:
+        JVMLoader &amp;vm;
+        Fn&amp; fn;
+        VMError error;
+    };
+    
+    
+}
+
+<span class="hljs-meta">#endif /* ella_jvm_hpp */</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
