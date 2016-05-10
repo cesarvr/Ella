@@ -23,11 +23,14 @@ Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS contain
  
  
 ### Supported types [for now] 
+  - Primitive
+    - int
+    - java.lang.String 
+    - double 
+    - byte[]
 
-  - int
-  - java.lang.String 
-  
-  
+  - Object [comming soon...]
+
 ### Installation
 
 Ella requires [Node.js](https://nodejs.org/) v4+ to run.
