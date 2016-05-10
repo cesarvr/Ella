@@ -35,8 +35,10 @@ namespace ella {
     
     using V8Args = const Nan::FunctionCallbackInfo<v8::Value>;
     
+    //supported class are declared in ella_functions.
+    InvocationList<BaseCall> supportedInvocations;
    
-   //here we extract the functions body, arguments and callback and proceed to call the JVM.  
+   //here we extract the functions body, arguments and callback and proceed to call the JVM.
     void MakeCallToJNI(V8Args& args) {
         
         try {
@@ -46,18 +48,6 @@ namespace ella {
             //functions dedicated to transform from v8 -> LibJNI::BaseJavaValue in ella_functions.
             fnHandler.SetArguments(args, {GetString, GetNumber});
             fnHandler.DetectAndGetCallback(args, GetFunctionCallback);
-            
-            
-            //supported class are declared in ella_functions.
-            InvocationList<BaseCall> supportedInvocations;
-            
-            supportedInvocations.Create<StringCall>();
-            supportedInvocations.Create<IntCall>();
-            supportedInvocations.Create<DoubleCall>();
-            supportedInvocations.Create<VoidCall>();
-            supportedInvocations.Create<ByteArrayCall>();
-            
-            
             
             auto jniWorker =  new JNIWorker<InvocationList<BaseCall>>(supportedInvocations,
                                                                       fnHandler,
@@ -109,6 +99,8 @@ namespace ella {
     
     void Start(V8Args& args ){
         
+    
+        
         if (!args[0]->IsFunction())
             Nan::ThrowTypeError("Callback required.");
         
@@ -117,6 +109,12 @@ namespace ella {
         auto vmInitWorker = new ella::JVM<decltype(ClassLoader)> (jscallBack, vm, ClassLoader);
         
         Nan::AsyncQueueWorker(vmInitWorker);
+        
+        supportedInvocations.Create<StringCall>();
+        supportedInvocations.Create<IntCall>();
+        supportedInvocations.Create<DoubleCall>();
+        supportedInvocations.Create<VoidCall>();
+        supportedInvocations.Create<ByteArrayCall>();
     }
     
     

@@ -78,8 +78,6 @@ describe('ella', function() {
 
         assert.isObject(strBuffer, 'loading  java->StringBuffer');
     });
-
-    /*
         it('loading an array of 1000 java objects', function() {
             var pdfs = [];
 
@@ -152,7 +150,6 @@ describe('ella', function() {
             });
         });
 
-
         it('calling void<method> ', function(){
         
             var str = vm.New('java.lang.StringBuffer');
@@ -163,7 +160,6 @@ describe('ella', function() {
 
             assert.equal(str.toString(),'Hello World StringBuffer', 'should return a string');
         });
-    */
 
     it('calling methods with Args(Int...)  [async]', function(done) {
 
@@ -206,7 +202,6 @@ describe('ella', function() {
             done();
         });
     });
-
 
 
 
