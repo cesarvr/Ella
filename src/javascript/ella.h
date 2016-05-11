@@ -45,7 +45,7 @@ namespace ella {
             FunctionHandler fnHandler( args );
             
             
-            //functions dedicated to transform from v8 -> LibJNI::BaseJavaValue in ella_functions.
+            //functions dedicated to transform from v8 -> LibJNI::BaseJavaValue in  [ella_types.h].
             fnHandler.SetArguments(args, {GetString, GetNumber});
             fnHandler.DetectAndGetCallback(args, GetFunctionCallback);
             
@@ -53,11 +53,12 @@ namespace ella {
                                                                       fnHandler,
                                                                       objectsMap[fnHandler.HashCode()]);
             
-            if(!jniWorker->isAsync())
+            if(!jniWorker->isAsync()){
                 args.GetReturnValue().Set( jniWorker->call().Get() );
-            else
+                delete jniWorker;
+            }else{
                 Nan::AsyncQueueWorker(jniWorker);
-            
+            }
             
         }catch(VMError& error) {
             Nan::ThrowTypeError( error.errorMessage.c_str() );
@@ -110,6 +111,8 @@ namespace ella {
         
         Nan::AsyncQueueWorker(vmInitWorker);
         
+        
+        // easy replacement of call implementation.
         supportedInvocations.Create<StringCall>();
         supportedInvocations.Create<IntCall>();
         supportedInvocations.Create<DoubleCall>();
@@ -140,10 +143,13 @@ namespace ella {
             if( args[1]->IsBoolean() )
                 recursive = args[1]->ToBoolean()->Value();
             
-            vm.SetClassPath( ClassPath::LocateLibraries(dirs, recursive) );
+            if(!dirs.empty())
+                vm.SetClassPath( ClassPath::LocateLibraries(dirs, recursive) );
+            else
+                throw VMError{"Array needed: SetClassPath(Array, boolean)"};
             
         }catch(VMError& error){
-            Nan::ThrowTypeError( error.errorMessage.c_str() );
+            Nan::ThrowError( error.errorMessage.c_str() );
         }
         
     }
