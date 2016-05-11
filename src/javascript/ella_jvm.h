@@ -30,13 +30,8 @@ namespace  ella {
         
        // this method is called by the Nan::AsyncQueue. this spawn a new thread so calling v8 from here is a SEGENV.
         void Execute(){
-            try{
                 if(!vm.isVMReady()) //only one vm for now.
                     vm.Start();
-                
-            }catch(VMError& _error){
-                error = _error;
-            }
         };
         
         // everything is fine the this method get called.
