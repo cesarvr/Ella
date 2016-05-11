@@ -53,7 +53,7 @@ This method allow us to configure the classpath,
 
 ```sh
 	var ella = require('ella');
-	ella.setClassPath(['/folder/with/.jars/.class', ...], true);   
+	ella.setClassPath(['/folder/with/.jars/.class', ...], true);  //if true flag, it will look recursively all jars/class. 
 ```
 
 
