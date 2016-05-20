@@ -25,6 +25,21 @@ describe('ella', function() {
 
     var vm = null;
 
+
+
+    it(' testing classpath validation: ', function() {
+        try {
+        java.setClassPath("../empty");
+        }catch(e){
+          assert.equal(e,'Error: Array needed: SetClassPath(Array, boolean)', 'execption should been thrown');
+        }
+    })
+
+  
+
+
+
+
     it(' testing jar files search: ', function() {
 
         console.time('recursive search');
@@ -56,9 +71,6 @@ describe('ella', function() {
         });
 
     });
-
-
-
 
     var strBuffer;
     var pdf;
@@ -106,6 +118,7 @@ describe('ella', function() {
             assert.isString(s, 'concat return string');
         });
 
+/*
         it('calling methods with Args(Int...)', function() {
 
             assert.isObject(pdf, 'loading  pdf');
@@ -172,7 +185,6 @@ describe('ella', function() {
         });
     });
 
-
     it('calling methods with Args(float...)  [async]', function(done) {
 
         assert.isObject(pdf, 'loading  pdf');
@@ -184,7 +196,6 @@ describe('ella', function() {
             done();
         });
     });
-
 
 
     it('calling method byte[](*)(string) --> testing byte[] return_type  [async]', function(done) {
@@ -203,6 +214,7 @@ describe('ella', function() {
         });
     });
 
+*/
 
 
 

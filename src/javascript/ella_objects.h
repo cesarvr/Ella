@@ -111,7 +111,7 @@ namespace  ella {
             return supported(returnType)->Get();
         };
         
-        /* Calling V8 here is illegal */
+        // Calling V8 here is illegal 
         void Execute() {
             call();
         };

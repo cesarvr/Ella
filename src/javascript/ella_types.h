@@ -136,7 +136,7 @@ public:
 };
 
 // void Return type
-struct VoidCall: public JSType<JObject> {
+struct VoidCall: public JSType<ObjectValue> {
 public:
     VoidCall(): JSType(){};
     

@@ -9,9 +9,11 @@
 #ifndef jvm_global_h
 #define jvm_global_h
 
-
 #ifdef _WIN32
 	#include <memory>
+#else
+	#include <dirent.h>
+	#include <unistd.h>
 #endif
 
 #ifdef __APPLE__
@@ -21,8 +23,6 @@
 #endif
 
 #ifdef __linux__
-
-
   #include <memory>
   #include <dlfcn.h>
   #include <string>

@@ -38,17 +38,18 @@ private:
 public:
     
     static std::vector<jvalue>
-    Create( JEnv jenv ,
+    GetValues( JEnv jenv ,
            std::vector<LibJNI::BaseJavaValue *> arguments );
+    
+    static std::string GetConstructorSignature( JEnv jenv ,
+                            std::vector<LibJNI::BaseJavaValue *> arguments );
 };
 
 
 
 
  
-//    This defines what a method structure.
- 
- 
+//    Method structure.
 
 class JavaMethod: HandleEnv {
 private:

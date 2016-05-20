@@ -18,10 +18,11 @@ using namespace LibJNI;
 
 
 
+
 //    Wraps the call with:
-  //      - Execption handling.
-  //      - Nullpointer checking.
-  //      - Check VM status.
+//      - Execption handling.
+//      - Nullpointer checking.
+//      - Check VM status.
 
 template <typename Function, typename ...Args>
 auto Wrapper(Function&& func, JEnv env, Args&&... args)
@@ -50,7 +51,7 @@ auto Wrapper(Function&& func, JEnv env, Args&&... args)
 template <class JE, typename T>
 struct Fn{
     //handle this JNI calls.
-
+    
     static auto GetInterface(JE& env) ->decltype(env->functions->CallObjectMethodA) {
         return env->functions->CallObjectMethodA;
     }
@@ -73,10 +74,9 @@ struct Fn<JE, FloatValue > {
     }
 };
 
-
 template <class JE>
 struct Fn<JE, DoubleValue > {
-    
+        
     static auto GetInterface(JE& env) ->decltype(env->functions->CallDoubleMethodA) {
         return env->functions->CallDoubleMethodA;
     }
@@ -103,15 +103,15 @@ struct Invoke: HandleEnv {
     
     
     
-   
-     
-       // Make the call to the JVM with the right method, then it use the method Set with the following
-       // signature Set(JEN, value) and place the value inside the object, the object can be any object that
-       // that agreed with that method, this make this class flexible for other value implementation.
-     
+    
+    
+    // Make the call to the JVM with the right method, then it use the method Set with the following
+    // signature Set(JEN, value) and place the value inside the object, the object can be any object that
+    // that agreed with that method, this make this class flexible for other value implementation.
+    
     template <typename T, typename... Args>
     T Call(Args... args) {
-       
+        
         auto env = GetEnv();
         auto I =  Fn<JEnv, T>::GetInterface(env);
         

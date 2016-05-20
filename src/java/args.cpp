@@ -15,7 +15,7 @@ void ArgumentTypeInfo::Set(std::vector<std::string> argsTypeList) {
 
 
 std::vector<jvalue>
-Arguments::Create( JEnv jenv ,
+Arguments::GetValues( JEnv jenv ,
                   std::vector<LibJNI::BaseJavaValue *> arguments ) {
     
     std::vector<jvalue> values;
@@ -24,4 +24,17 @@ Arguments::Create( JEnv jenv ,
         values.push_back( arg->GetJavaValue( jenv ) );
     
     return values;
+}
+
+std::string
+Arguments::GetConstructorSignature( JEnv jenv ,
+                        std::vector<LibJNI::BaseJavaValue *> arguments ) {
+    std::stringstream signature;
+    signature << "(";
+    
+    for(auto args: arguments){
+        signature << Utils::normalizeClassName(args->GetJVMType());
+    }
+    signature << ")V";
+    return signature.str();
 }

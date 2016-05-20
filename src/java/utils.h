@@ -1,19 +1,21 @@
 //
-//  utils.h
-//  Prueba
+//  utils.hpp
+//  LibJNI
 //
-//  Created by Cesar Valdez on 02/03/2016.
+//  Created by Cesar Valdez on 17/05/2016.
 //  Copyright © 2016 Cesar Valdez. All rights reserved.
 //
 
-#ifndef utils_h
-#define utils_h
+#ifndef utils_hpp
+#define utils_hpp
 
+#include <stdio.h>
 #include "jvm_global.h"
+
 
 namespace Utils {
     
-
+    
     
     template<typename T>
     void chkNull(T&& param){
@@ -30,6 +32,12 @@ namespace Utils {
         chkNull(first);
         
         isNull(args...);
+    }
+    
+    inline std::string normalizeClassName(std::string&& classname) {
+        std::replace(classname.begin(), classname.end(), '.', '/');
+        return std::move(classname);
+        
     }
     
     template <typename T, typename R>
@@ -59,4 +67,5 @@ namespace Utils {
     };
     
 }
-#endif /* utils.h */
+
+#endif /* utils_hpp */

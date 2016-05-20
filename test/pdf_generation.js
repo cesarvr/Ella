@@ -10,10 +10,10 @@ var http = require('http');
 var https = require('https');
 
 // macosx location of jar.
-//java.setClassPath('-Djava.class.path=.:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/itextpdf-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/lib/itext-5.5.8/xmlworker-5.5.8.jar:/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/');
+java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
 
 // linux location of the jars.
-java.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar');
+//java.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar');
 
 console.log('classpath->', java.getClassPath());
 
@@ -39,7 +39,9 @@ java.start(function(jvm) {
     makePDF('https://en.wikipedia.org/wiki/Nikola_Tesla');
     makePDF('https://en.wikipedia.org/wiki/Marie_curie');
     makePDF('https://en.wikipedia.org/wiki/Marie_curie');
-    makePDF('https://en.wikipedia.org/wiki/Stephen_Wolfram');
+    makePDF('https://en.wikipedia.org/wiki/Linux');
+    makePDF('https://en.wikipedia.org/wiki/Linux_kernel');
+    makePDF('https://en.wikipedia.org/wiki/Loadable_kernel_module');
 
     function makePDF(address) {
 
