@@ -1,12 +1,31 @@
-var jvm = require('../../build/Debug/ella.node') || require('./build/Debug/ella.node'); //debug mode.
+'use strict';
 var fs = require('fs');
+var jvm = {};
+
+try {
+    console.log('trying [release]')
+        //RELEASE
+    jvm = require('../../build/Debug/ella.node'); //debug mode.
+} catch (e) {
+    console.log('fail: trying [debug]')
+        //DEBUG
+    try {
+        jvm = require('../build/Debug/ella.node'); //debug mode.
+    } catch (e) {
+        try {
+            jvm = require('ella');
+        } catch (e) {
+            console.log('Ella not found!');
+        }
+    }
+}
+
 
 //jvm.setClassPath('../demo/lib/pdfbox-app-1.8.11.jar');
 
 //jvm.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar:../demo/lib/pdfbox-app-1.8.11.jar');
 
 
-jvm.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
 
 var PDF = function(cb) {
 
@@ -32,11 +51,11 @@ var PDF = function(cb) {
                 });
             },
 
-            previewPDF: function(pdfName, cb){
-              
-              javaObject.preview("../pdfs/" + pdfName, function(buffer) {
-                cb(buffer.toString('base64'));
-              });
+            previewPDF: function(pdfName, cb) {
+
+                javaObject.preview("../pdfs/" + pdfName, function(buffer) {
+                    cb(buffer.toString('base64'));
+                });
             }
         }
 

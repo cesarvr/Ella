@@ -43,9 +43,9 @@ describe('ella', function() {
     it(' testing jar files search: ', function() {
 
         console.time('recursive search');
-        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
+        //java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
 
-        //java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
+        java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
         console.timeEnd('recursive search');
 
         assert.notEqual(java.getClassPath(), '', 'should expect something here.');
@@ -58,9 +58,9 @@ describe('ella', function() {
 
     it('turning on the jvm', function(done) {
 
-        java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib/', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/'], true);
+        //java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib/', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin/'], true);
 
-        //java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
+        java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
         assert.notEqual(java.getClassPath(), '', 'should expect something here.');
         //console.log('classpath ->' ,java.getClassPath());
 
@@ -71,6 +71,8 @@ describe('ella', function() {
         });
 
     });
+
+
 
     var strBuffer;
     var pdf;
@@ -128,7 +130,6 @@ describe('ella', function() {
             assert.equal(s, 5000 + 5000, 'equals ' + (5000 + 5000));
         });
 
-
         it('calling methods with Args(Int...)  [async]', function(done) {
 
             assert.isObject(pdf, 'loading  pdf');
@@ -151,6 +152,7 @@ describe('ella', function() {
             });
         });
 
+/*
         it('calling methods with Args(String...): Sleep Thread in Java side.  [async]', function(done) {
 
             assert.isObject(pdf, 'loading  pdf');
@@ -185,13 +187,13 @@ describe('ella', function() {
         });
     });
 
-    it('calling methods with Args(float...)  [async]', function(done) {
+*/
+    it('calling methods with Args(doubles...)  [async]', function(done) {
 
         assert.isObject(pdf, 'loading  pdf');
         assert.isFunction(pdf.add, 'pdf.add');
 
         pdf.add(1.2, 1.2, function(s) {
-            console.log('->', s);
             assert.equal(s, 1.2 + 1.2, 'equals ' + (1.2 + 1.2));
             done();
         });
