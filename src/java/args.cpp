@@ -8,11 +8,6 @@
 
 #include "args.h"
 
-void ArgumentTypeInfo::Set(std::vector<std::string> argsTypeList) {
-    listTypes = argsTypeList;
-    parametersNumber = listTypes.size();
-}
-
 
 std::vector<jvalue>
 Arguments::GetValues( JEnv jenv ,

@@ -99,11 +99,11 @@ namespace ella {
             for(auto method: methods) {
                 auto fnCallback  = Nan::New<v8::FunctionTemplate>(callback);
                 
-                std::string name = method.GetName() + "@" + std::to_string(hashcode);
+                std::string name = method + "@" + std::to_string(hashcode);
                 
                 fnCallback->SetClassName(Nan::New( name ).ToLocalChecked());
                 
-                object->Set(Nan::New( method.GetName() ).ToLocalChecked(),
+                object->Set(Nan::New( method ).ToLocalChecked(),
                             fnCallback->GetFunction() );
             }
             

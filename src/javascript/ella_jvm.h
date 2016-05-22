@@ -42,7 +42,7 @@ namespace  ella {
         // everything is fine the this method get called.
         void HandleOKCallback () {
             auto object = Nan::New<v8::Object>();
-            object->Set(Nan::New("New").ToLocalChecked(),
+            object->Set(Nan::New("new").ToLocalChecked(),
                         Nan::New<v8::FunctionTemplate>(fn)->GetFunction() );
             
             v8::Local<v8::Value> argv[] = {

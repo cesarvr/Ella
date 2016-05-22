@@ -16,9 +16,6 @@
 
 using namespace LibJNI;
 
-
-
-
 //    Wraps the call with:
 //      - Execption handling.
 //      - Nullpointer checking.
@@ -74,15 +71,6 @@ struct Fn<JE, FloatValue > {
     }
 };
 
-template <class JE>
-struct Fn<JE, DoubleValue > {
-        
-    static auto GetInterface(JE& env) ->decltype(env->functions->CallDoubleMethodA) {
-        return env->functions->CallDoubleMethodA;
-    }
-};
-
-
 
 template <class JE>
 struct Fn<JE, jbyte > {
@@ -94,25 +82,28 @@ struct Fn<JE, jbyte > {
     }
 };
 
+template <class JE>
+struct Fn<JE, DoubleValue > {
+    
+    using ReturnType = jbyte;
+    
+    static auto GetInterface(JE& env) ->decltype(env->functions->CallDoubleMethodA) {
+        return env->functions->CallDoubleMethodA;
+    }
+};
+
 
 
 // This take charge of the invocation.
-struct Invoke: HandleEnv {
-    
-    Invoke(JVMLoader env): HandleEnv(env) {};
-    
-    
-    
-    
+struct Invoke{
     
     // Make the call to the JVM with the right method, then it use the method Set with the following
     // signature Set(JEN, value) and place the value inside the object, the object can be any object that
     // that agreed with that method, this make this class flexible for other value implementation.
     
     template <typename T, typename... Args>
-    T Call(Args... args) {
+    static T Call(JEnv& env, Args... args) {
         
-        auto env = GetEnv();
         auto I =  Fn<JEnv, T>::GetInterface(env);
         
         T value;

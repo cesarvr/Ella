@@ -10,7 +10,8 @@
 #define ella_objects_hpp
 
 #include "nan.h"
-#include "jvm_object.h"
+#include "object.h"
+#include "server.h"
 #include "ella_utils.h"
 
 #include <regex>
@@ -36,7 +37,7 @@ namespace  ella {
         void SetArguments(const Nan::FunctionCallbackInfo<v8::Value>& func,
                           std::initializer_list<Algorithm> functions );
         
-        std::vector <LibJNI::BaseJavaValue*>& GetArguments(){ return args; }
+        std::vector <LibJNI::BaseJavaValue*>&& GetArguments(){ return move(args); }
         // ========
         
         
@@ -71,10 +72,14 @@ namespace  ella {
             callers[ caller->Type() ] = caller;
         }
         
+        bool ready(){
+            return !callers.empty();
+        }
+        
         Base* operator()(std::string type){
             auto tmp = callers[type];
             if( tmp == nullptr )
-                tmp = callers["void"]; //throw VMError{"No caller implemented for return type: " + type};
+                tmp = callers["java.lang.Object"]; //throw VMError{"No caller implemented for return type: " + type};
             
             return tmp;
         }
@@ -90,7 +95,7 @@ namespace  ella {
         JNIWorker(
                   SupportedInvocation _supported,
                   FunctionHandler _fn,
-                  std::shared_ptr<Object>& _javaObject
+                  std::shared_ptr<Object<Server>>& _javaObject
                   ):
         AsyncWorker( _fn.GetCallback() ),
         supported(_supported),
@@ -119,6 +124,7 @@ namespace  ella {
              
         JNIWorker& call(){
             try{
+                std::cout << "name: " << fn.GetName() << std::endl;
                 supported(returnType)->Call(fn.GetName(), javaObject, fn.GetArguments());
             }catch(VMError& error){
                 throw error;
@@ -133,16 +139,16 @@ namespace  ella {
         }
         
     private:
-        void LookForReturnType(std::shared_ptr<Object>& _javaObject) {
+        void LookForReturnType(std::shared_ptr<Object<Server>>& _javaObject) {
             
-            auto method = _javaObject->LookupMethod(fn.GetName(), fn.GetArguments());
-            returnType = method.GetReturnTypeInfo();
+            auto method = _javaObject->GetMethodDescriptor(fn.GetName(), fn.GetArguments());
+            returnType = method.returnType;
         }
         
         SupportedInvocation supported;
         std::string returnType;
         FunctionHandler fn;
-        std::shared_ptr<Object>& javaObject;
+        std::shared_ptr<Object<Server>>& javaObject;
         v8::Local<v8::Value> retValue;
     };
     

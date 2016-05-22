@@ -1,7 +1,7 @@
 #ifndef jvm_loader_h
 #define jvm_loader_h
 
-
+#include <algorithm>
 #include "jvm_global.h"
 #include "utils.h"
 
@@ -53,8 +53,7 @@ private:
 public:
     HandleEnv(JVMLoader _java): java(_java){  };
     
-    const JEnv& GetEnv(){
-        Utils::isNull(java.GetJNIEnviorment());
+    const JEnv& Env(){
         return java.GetJNIEnviorment();
     };
     

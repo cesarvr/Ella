@@ -9,42 +9,58 @@
 #ifndef js_vm_h
 #define js_vm_h
 
-
-
 #include "nan.h"
 
+//LibJNI
 #include "jvm_handler.h"
-#include "jvm_object.h"
+#include "object.cpp"
+#include "object.h"
+#include "server.h"
 #include "classpath.h"
-
 
 #include "ella_utils.h"
 #include "ella_jvm.h"
 #include "ella_objects.h"
 #include "ella_types.h"
 
-
 #include <map>
 #include <regex>
 
 
 namespace ella {
+    using namespace LibJNI;
     JVMLoader vm;
-    std::map< int, std::shared_ptr<Object> > objectsMap;
-    
+    std::map< int, std::shared_ptr< Object<Server> > > objectsMap;
+    Server server;
     
     using V8Args = const Nan::FunctionCallbackInfo<v8::Value>;
     
     //supported class are declared in ella_functions.
     InvocationList<BaseCall> supportedInvocations;
    
+    
+    // initializing the Server & Call strategies.
+    void Initialize(){
+        
+        cout << "vm->" << endl;
+        if(supportedInvocations.ready()){
+            
+            // call flavors.
+            supportedInvocations.Create<StringCall>();
+            supportedInvocations.Create<IntCall>();
+            supportedInvocations.Create<DoubleCall>();
+            supportedInvocations.Create<VoidCall>();
+            supportedInvocations.Create<ByteArrayCall>();
+        }
+    }
+    
+    
    //here we extract the functions body, arguments and callback and proceed to call the JVM.
     void MakeCallToJNI(V8Args& args) {
         
         try {
             FunctionHandler fnHandler( args );
-            
-            
+       
             //functions dedicated to transform from v8 -> LibJNI::BaseJavaValue in  [ella_types.h].
             fnHandler.SetArguments(args, {GetString, GetNumber});
             fnHandler.DetectAndGetCallback(args, GetFunctionCallback);
@@ -70,13 +86,14 @@ namespace ella {
     void ClassLoader(V8Args& args) {
         
         try{
-            
+            Initialize();
+            server.SetJVM(vm);
             auto classname = Utils::GetClassName(args[0]);
             
-            std::shared_ptr<Object> clazz(new Object(vm, classname));
+            std::shared_ptr<Object<Server>> clazz(new Object<Server>(vm,server, classname));
             
-            auto methods  = clazz->GetMembers();
-            auto hashcode = clazz->Call<IntValue>("hashCode").Get();
+            auto methods  = clazz->MethodsNames();
+            auto hashcode = clazz->Call<IntValue>("hashCode",{}).Get();
             
             auto jsObject = Utils::CreateJSObject<decltype(methods), decltype(MakeCallToJNI)>(methods,hashcode, MakeCallToJNI);
             
@@ -100,8 +117,6 @@ namespace ella {
     
     void Start(V8Args& args ){
         
-    
-        
         if (!args[0]->IsFunction())
             Nan::ThrowTypeError("Callback required.");
         
@@ -110,14 +125,6 @@ namespace ella {
         auto vmInitWorker = new ella::JVM<decltype(ClassLoader)> (jscallBack, vm, ClassLoader);
         
         Nan::AsyncQueueWorker(vmInitWorker);
-        
-        
-        // easy replacement of call implementation.
-        supportedInvocations.Create<StringCall>();
-        supportedInvocations.Create<IntCall>();
-        supportedInvocations.Create<DoubleCall>();
-        supportedInvocations.Create<VoidCall>();
-        supportedInvocations.Create<ByteArrayCall>();
     }
     
     

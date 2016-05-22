@@ -31,6 +31,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <assert.h>
 
 struct VMError {
@@ -41,6 +42,15 @@ struct VMError {
 using JEnv  = const std::shared_ptr<JNIEnv>;
 
 
+const std::string JAVA_METHOD_CLASS("java/lang/reflect/Method");
+const std::string JAVA_STRING_CLASS("java/lang/String");
+const std::string CLASS_DEFAULT_CTS("<init>");
+const std::string VOID_RETURN("()V");
+
+struct Method {
+    jmethodID method = nullptr;
+    std::string returnType;
+};
 
 
 

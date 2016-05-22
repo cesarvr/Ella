@@ -65,8 +65,8 @@ struct BaseCall {
     
     virtual std::string Type() =0;
     virtual void Call(std::string methodName,
-                      std::shared_ptr<Object> object,
-                      std::vector<LibJNI::BaseJavaValue *>)=0;
+                      std::shared_ptr<Object<Server>> object,
+                      std::vector<LibJNI::BaseJavaValue *>&&)=0;
     
     virtual v8::Local<v8::Value> Get() = 0;
 };
@@ -83,10 +83,10 @@ public:
     };
     
     void Call(std::string methodName,
-              std::shared_ptr<Object> object,
-              std::vector<LibJNI::BaseJavaValue *> args) {
+              std::shared_ptr<Object<Server>> object,
+              std::vector<LibJNI::BaseJavaValue *>&& args) {
         
-        value = object->Call<ValueType>(methodName, args);
+        value = object->Call<ValueType>(methodName, move(args));
     };
     
 protected:
@@ -144,14 +144,6 @@ public:
         return  Nan::New( true );
     }
 };
-
-
-
-
-
-
-
-
 
 
 #endif /* ella_functions_h */

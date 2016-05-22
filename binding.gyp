@@ -1,7 +1,7 @@
 {
     "targets": [{
         "target_name": "ella",
-        "sources": ["src/java/jvm_handler.cpp", "src/java/jvm_object.cpp", "src/java/args.cpp",
+        "sources": ["src/java/jvm_handler.cpp", "src/java/server.cpp", "src/java/reflect.cpp", "src/java/object.cpp", "src/java/args.cpp",
             "src/java/classpath.cpp", "src/javascript/ella_objects.cpp", "src/ella.cpp"
         ],
 
@@ -40,7 +40,7 @@
 
                 "OS=='linux'", {
 
-                    "cflags": ['-std=c++11', "-Wall", "-fexceptions"],
+                    "cflags": ['-std=c++11', "-Wall", "-fexceptions", "-j 4"],
 
                     'include_dirs': [
                         "jdk/include/",
