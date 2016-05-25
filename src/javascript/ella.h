@@ -28,9 +28,85 @@
 
 
 namespace ella {
+    
+    
+    template <typename T>
+    void SeeKeys(T& t) {
+        cout << "\nlooking map: "<< endl;
+        for(auto it = t.begin(); it != t.end(); ++it) {
+            cout << it->first << "\n";
+        }
+    }
+    
+    class FunctionWrapper {
+    public:
+        
+        FunctionWrapper() {}
+        
+        string GetName(){ return name; };
+        
+        
+    
+        
+        v8::Local<v8::Object> Clone(){
+            //cout << "Empty->" << parent.IsEmpty() << endl;
+             cout << "cloning" << endl;
+            auto p = v8::Local<v8::ObjectTemplate>::New(Nan::GetCurrentContext()->GetIsolate(), mparent);
+           
+            return  p->NewInstance();
+        }
+        
+        template <typename Methods, typename Fn>
+       // v8::Local<v8::Object>
+       void CreateFunction(Methods& methods, string classname, uint32_t hashcode, Fn& callback ){
+            
+            cout << "creating function" << endl;
+            name = classname;
+            
+           auto obj = cache[classname];
+           
+           
+            if(!obj.IsEmpty()){
+                cout << "using cache" << endl;
+             //   auto tmp = v8::Local<v8::ObjectTemplate>::New(Nan::GetCurrentContext()->GetIsolate(),obj);
+                //return tmp->NewInstance();
+            }
+            
+            cout << "creating template" << endl;
+            
+            
+            auto parent = Nan::New<v8::ObjectTemplate>();
+            for(auto method: methods){
+                auto f = Nan::New<v8::FunctionTemplate>(callback);
+                parent->Set( Nan::New( method ).ToLocalChecked(), f->GetFunction() );
+            }
+            
+            mparent = pObjectTemplate(Nan::GetCurrentContext()->GetIsolate(),parent);
+            //tmpx.MarkIndependent();
+           
+            //cache[classname] = tmpx;
+           // return parent->NewInstance();
+        }
+      
+        ~FunctionWrapper(){
+            cout << "destroyed" << endl;
+            mparent.Reset(Nan::GetCurrentContext()->GetIsolate(),mparent);
+          //  pObjectTemplate::Reset(Nan::GetCurrentContext()->GetIsolate(),mparent);
+        }
+        
+        
+    private:
+        using pObjectTemplate = v8::Persistent<v8::ObjectTemplate, v8::CopyablePersistentTraits<v8::ObjectTemplate>>;
+        string name;
+        pObjectTemplate mparent;
+        map<string, pObjectTemplate> cache;
+    };
+    
+    
     using namespace LibJNI;
     JVMLoader vm;
     std::map< int, std::shared_ptr< Object<Server> > > objectsMap;
+    
     Server server;
     uint32_t hash_code =0;
     
@@ -38,7 +114,8 @@ namespace ella {
     
     //supported class are declared in ella_functions.
     InvocationList<BaseCall> supportedInvocations;
-   
+    FunctionWrapper functionWrapper;
+
     
     // initializing the Server & Call strategies.
     void Initialize(){
@@ -53,6 +130,25 @@ namespace ella {
         }
     }
     
+    
+    void Dummy(V8Args& args){
+        
+        cout << "dummy" <<endl;
+       // auto x = args.Callee()->GetHiddenValue(Nan::New("hashcode").ToLocalChecked());
+        
+        
+        
+        
+        //args.Callee()->GetHiddenValue(Nan::New("hashcode").ToLocalChecked());
+       // cout << "GetIdentityHash->" <<  args.Callee()->GetIdentityHash() << endl;
+        cout << "GetName->" <<  Utils::ObjectToString(args.Callee()->GetName()) << endl;
+        cout << "Secret->" <<   args.This()->GetIdentityHash() << endl;
+        cout << "vault [java/lang/String]->" <<   args.Callee()->Get(Nan::New( "java/lang/String" ).ToLocalChecked())->Int32Value() << endl;
+        
+        // cout << "Parent->" <<  Utils::ObjectToString(  ) << endl;
+       // cout << "GetInferredName->" <<  Utils::ObjectToString(args.Callee()->GetInferredName()) << endl;
+       // cout << "hashcode->" << x->IsNumber() << endl;
+    }
     
    //here we extract the functions body, arguments and callback and proceed to call the JVM.
     void MakeCallToJNI(V8Args& args) {
@@ -92,13 +188,12 @@ namespace ella {
             
             auto methods  = clazz->MethodsNames();
             hash_code++;
-
-            auto jsObject = Utils::CreateJSObject<decltype(methods), decltype(MakeCallToJNI)>(methods,hash_code, MakeCallToJNI);
             
-            objectsMap[hash_code] = clazz;
+            functionWrapper.CreateFunction(methods, classname, hash_code, Dummy);
             
-            args.GetReturnValue().Set(jsObject);
-            
+            auto ret = functionWrapper.Clone();
+            args.GetReturnValue().Set( ret );
+           
         }catch(VMError& error){
             Nan::ThrowTypeError( error.errorMessage.c_str() );
         }

@@ -14,6 +14,9 @@
 
 #include "nan.h"
 
+
+using namespace std;
+
 namespace ella {
     struct Utils {
         
@@ -90,18 +93,40 @@ namespace ella {
         }
         
  
+        template <typename Methods, typename Fn>
+        static v8::Local<v8::FunctionTemplate>
+        CreateFunctionTmpl(Methods& methods, string classname, uint32_t hashcode, Fn& callback ) {
+            v8::Local<v8::FunctionTemplate> fnCallback  = Nan::New<v8::FunctionTemplate>();
+            
+            for(auto method: methods){
+                auto f = Nan::New<v8::FunctionTemplate>(callback);
+                f->Set(Nan::New( classname ).ToLocalChecked(), Nan::New(hashcode));
+                fnCallback->Set(Nan::New( method ).ToLocalChecked(), f);
+            }
+            
+            return fnCallback;
+        }
+        
         
         
         template <typename Methods, typename Fn>
         static auto CreateJSObject(Methods& methods, uint32_t hashcode, Fn& callback ) ->decltype(Nan::New<v8::Object>()) {
             auto object = Nan::New<v8::Object>();
+           
+            v8::Local<v8::FunctionTemplate> fnCallback  = Nan::New<v8::FunctionTemplate>(callback);
             
+            
+            fnCallback->Set(Nan::New( "doom" ).ToLocalChecked(), Nan::New(666));
+           
+           // fnCallback.Set();
+            
+            //fnCallback->This();
             for(auto method: methods) {
-                auto fnCallback  = Nan::New<v8::FunctionTemplate>(callback);
-                
-                std::string name = method + "@" + std::to_string(hashcode);
+          
+                string name = method + "@" + std::to_string(hashcode);
                 
                 fnCallback->SetClassName(Nan::New( name ).ToLocalChecked());
+                
                 
                 object->Set(Nan::New( method ).ToLocalChecked(),
                             fnCallback->GetFunction() );
