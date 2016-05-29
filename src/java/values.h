@@ -113,10 +113,16 @@ protected:
 // dealing with jobjects this is just reusing the accessors.
 struct ObjectValue: public Value<jobject, jobject> {
     
-    ObjectValue(): Value("java.lang.Object") {};
+    ObjectValue(): Value("java.lang.Object") {
+        value = nullptr;
+    };
     
     ObjectValue(std::string className) :
-    Value( Utils::normalizeClassName(std::move(className) )) {}
+    Value( Utils::normalizeClassName(std::move(className) )) {
+        value = nullptr;
+    }
+    
+    bool isEmpty(){ return value == nullptr; }
     
     //Override.
     bool isCompatible(std::string& _type){

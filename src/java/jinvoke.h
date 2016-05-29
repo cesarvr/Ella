@@ -44,6 +44,23 @@ auto Wrapper(Function&& func, JEnv env, Args&&... args)
 }
 
 
+template <typename Function, typename ...Args>
+auto Memoization(string alias, Function&& func, JEnv env, Args&&... args)
+-> decltype(func(env.get(), args...))
+{
+    static vector< pair<string, decltype(func(env.get(), args...))> > memo;
+    
+    for(auto m: memo)
+        if(m.first == alias)
+            return m.second;
+    
+    auto ret = func(env.get(), args...);
+    
+    memo.push_back(make_pair(alias, ret));
+    return ret;
+}
+
+
 // Return the right function to call the JVM depending on the template parameter.
 template <class JE, typename T>
 struct Fn{

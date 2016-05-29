@@ -55,30 +55,9 @@ public:
     Method GetMethodDescriptor(string methodName, vector<BaseJavaValue* >&& args) {
         return service.MethodDescription(object, methodName, move(args) );
     }
-    
-    
-    
+
     ObjectValue& GetObjectValue() { return object;}
     
-    
-    
-  /*  vector<JavaMethod> FindMethod( string methodName );
-    
-    JavaMethod LookupMethod(string methodName, vector<BaseJavaValue *>& arguments );
-
-    string GetName(){ return object.GetType(); }
-    
-    const vector<JavaMethod>& GetMembers();
-    
-    string GetClassName();
-    
-
-    template <typename T>
-    T Call(string methodName) {
-        vector<BaseJavaValue *> empty;
-        return Call<T>(methodName, empty);
-    }
-      */
     template <typename T>
     T Call(string methodName, vector<BaseJavaValue *>&& arguments) {
         

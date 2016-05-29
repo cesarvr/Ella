@@ -41,7 +41,7 @@ public:
     static ObjectValue GetClass(JEnv& env, ObjectValue& object);
     static std::vector<string> GetMethodsNames(JEnv& env, ObjectArray methods);
     
-    static jmethodID GetMethodReference(JEnv& env, jobject object);
+    static jmethodID GetMethodReference(string alias, JEnv& env, jobject object);
     
     
     // reflects methods.

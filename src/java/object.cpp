@@ -53,18 +53,18 @@ void Object<Broker>::CreateObject(JVMLoader env, std::string className, std::vec
     auto jni = Env();
     auto& findclazz = jni->functions->GetMethodID;
     
-    auto member = Wrapper(jni->functions->FindClass, jni, name.c_str());
+    auto member = Memoization(name, jni->functions->FindClass, jni, name.c_str());
     
     if(arguments.empty())
-        constructor = Wrapper(findclazz, jni, member,
+        constructor = Memoization(name, findclazz, jni, member,
                               CLASS_DEFAULT_CTS.c_str(), VOID_RETURN.c_str());
     else
-        constructor = Wrapper(findclazz, jni, member,
+        constructor = Memoization(name, findclazz, jni, member,
                               CLASS_DEFAULT_CTS.c_str(), Arguments::GetConstructorSignature(jni,arguments).c_str());
     
     
     auto javaValues = Arguments::GetValues(jni, arguments);
-    auto tmp = Wrapper( jni->functions->NewObjectA, jni, member, constructor, (jvalue*)&javaValues[0]);
+    auto tmp = Wrapper( jni->functions->NewObjectA, jni, member, constructor, (jvalue*)&javaValues[0] );
     
     object.Set(tmp);
     methodArray = service.GetMethodsNative(object);

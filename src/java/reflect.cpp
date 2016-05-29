@@ -26,7 +26,7 @@ jmethodID Reflect::GetMethod(JEnv& env, std::string className, std::string metho
                    returnType.c_str());
 }
 
-jmethodID Reflect::GetMethodReference(JEnv& env, jobject object){
+jmethodID Reflect::GetMethodReference(string alias, JEnv& env, jobject object){
     return Wrapper(env->functions->FromReflectedMethod, env, object);
 }
 

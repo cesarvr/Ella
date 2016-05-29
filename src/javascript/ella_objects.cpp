@@ -13,14 +13,11 @@ using namespace ella;
 
 FunctionHandler::FunctionHandler(const Nan::FunctionCallbackInfo<v8::Value>& _func) {
     
-    //Extract function_name@hashcode.
-    auto fname = Utils::ObjectToString(_func.Callee()->GetName());
-    std::regex e ("(.*)@(.*)");
-    std::cmatch cm;
-    std::regex_match (fname.c_str(),cm,e);
     
-    name = cm[1];
-    hashcode = std::stoi(cm[2]);
+    name = Utils::ObjectToString(_func.Callee()->GetName());
+    hashcode = _func.This()->GetIdentityHash();
+    
+
 };
 
 

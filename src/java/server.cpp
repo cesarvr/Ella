@@ -23,7 +23,7 @@ string Args(T args) {
 Method Server::CreateMethod(JEnv& env, string name, jobject object, vector<BaseJavaValue* >& args) {
     Method method;
     
-    method.method = Reflect::GetMethodReference(env, object);
+    method.method = Reflect::GetMethodReference(name, env, object);
     method.returnType = Reflect::GetReturnType(env, object);
     
     icache[CreateSignature(name, args)] = method;
@@ -41,11 +41,9 @@ vector<string>& Server::GetMethods(ObjectValue object){
     
     auto& list = names_cache[object.GetType()];
     
-    if(list.empty()){
+    if(list.empty())
         list = Reflect::GetMethodsNames(jni, obj);
-        cout << "non-optimize" << endl;    
-    }
-
+    
     return list;
 }
 
@@ -57,7 +55,7 @@ ObjectArray Server::GetMethodsNative(ObjectValue object) {
     if(!obj.empty())
         return obj;
     
-    auto clazz = Reflect::GetClass(jni, object);
+    auto clazz = GetClass(object);
     obj = Reflect::GetMethodsArray(jni, clazz);
     
     jni->NewGlobalRef(obj.Get());
@@ -110,6 +108,21 @@ Method Server::MethodDescription(ObjectValue object, string methodName, vector<B
     
     return CreateMethod(jni, methodName, method, args);
 }
+
+ObjectValue Server::GetClass(LibJNI::ObjectValue& object) {
+
+    auto type = object.GetType();
+    auto clazz = class_cache[type];
+
+    if(!clazz.isEmpty())
+        return clazz;
+    
+    clazz = Reflect::GetClass(Env(), object);
+    class_cache[type] = clazz;
+    
+    return clazz;
+}
+
 
 Server::~Server(){
     for(auto iterator = mcache.begin(); iterator != mcache.end(); iterator++)

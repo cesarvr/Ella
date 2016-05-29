@@ -18,6 +18,9 @@ using namespace std;
 
 
 
+
+
+
 class Server {
 public:
     Server(){};
@@ -29,6 +32,7 @@ public:
     Method MethodDescription(ObjectValue object, string methodName, vector<BaseJavaValue* >&& args );
     string CreateSignature(string methodName, vector<BaseJavaValue*>& args);
     string GetReturnType();
+    ObjectValue GetClass( LibJNI::ObjectValue& object );
     
     ~Server();
     
@@ -41,6 +45,7 @@ private:
     map<string, ObjectArray> mcache;
     map<string, Method> icache;
     map<string, vector<string>> names_cache;
+    map<string, ObjectValue> class_cache;
     
     
     JVMLoader jvm;
