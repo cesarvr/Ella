@@ -20,6 +20,9 @@ Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS contain
   - You can send blocking Java calls to a background thread and assign a callback to continue when finished.
   ![alt tag](https://github.com/cesarvr/Ella/blob/master/docs/ella_multi_thread.png) 
 
+##### Performance
+  - This is part of the [LibJNI](https://github.com/cesarvr/JNI) project, but explain how the performance is achieved by using this *broker* class to hide the caching/reflection details to the object class, this server class can be easily replace by custom made or platform specific implementantion, you just need to implement the same method signature and thats it.
+  ![alt tag](https://github.com/cesarvr/Ella/blob/master/docs/design-diagram.png) 
  
 ### Things to be added soon. 
 	
