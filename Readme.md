@@ -122,7 +122,7 @@ Just call the method as normal and add a function callback as an extra parameter
 	
 	var buffer = pdf.createPDF('my_blocking.pdf');   // this call will block the interpreter in this position. 
 	
-	// the addition of an anonymous function make this method async.
+	// the addition of an anonymous function make all jvm->js-method async.
 	pdf.createPDF('my_async.pdf', function(buffer){  /* do some work with buffer */ }); // non-blocking call.
 	
 	//js code.......
