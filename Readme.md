@@ -4,18 +4,21 @@ Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS contain
 
 ###Why 
 
-- because Java have very good ecosystem of libraries like PDFBox, iText, Solr, etc.., all mature and useful.
-- the objective is to create wrappers around the library you want and use it in your Node app.
+- Because Java have very good ecosystem of libraries like PDFBox, iText, Solr, etc.., all mature and useful.
+- The objective is to create wrappers around the library you want and use it in your Node app.
+- Easing Node.js integration with legacy Java system. 
+- Performance, comunication between JS and a JVM method is ≈<1ms.
  
 ### Features 
   
   - The JVM run in the same NodeJS process as a native add-on so comunication between each other is fast. 
   - Allow you to load jar/classes and use them inside NodeJS like Javascript objects literals.  
-  - You can send blocking Java calls to a background thread and assign a callback to continue when finished.
-  - The API can choose the right method giving a set of arguments, so it solves the method overloading in Java. [experimental]. 
+  - The API can choose the right method giving a set of arguments, so it solves the method overloading in Java. [experimental].
   - Exception handling, exception thrown by JVM are translated to Javascript [exception](http://www.w3schools.com/js/js_errors.asp). 
-
-
+  
+##### Multi-Thread
+  - You can send blocking Java calls to a background thread and assign a callback to continue when finished.
+  ![alt tag](https://github.com/cesarvr/Ella/blob/master/docs/ella_multi_thread.png) 
 
  
 ### Things to be added soon. 
