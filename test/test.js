@@ -97,16 +97,16 @@ describe('ella', function() {
 
         assert.isObject(strBuffer, 'loading  java->StringBuffer');
     });
-        it('loading an array of 1000 java objects', function() {
+        it('loading an array of 10000 java objects', function() {
             var pdfs = [];
 
             console.time("object allocation");
-            for (var i = 0; i < 1000; i++) {
+            for (var i = 0; i < 10000; i++) {
                 pdfs.push(vm.new('pdf.P2HService'));
             }
             console.timeEnd("object allocation");
 
-            for (var i = 0; i < 999; i++) {
+            for (var i = 0; i < 10000; i++) {
                 var pdf = pdfs[i];
                 assert.isObject(pdf, 'object needed here');
                 assert.isNumber(pdf.hashCode(), 'type number expected');
