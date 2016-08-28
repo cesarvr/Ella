@@ -32,19 +32,16 @@ private:
     
     ObjectValue object;
     ObjectArray methodArray;
-    Broker& service;
+    Broker& broker;
     
     void CreateObject(JVMLoader env, string classname, vector<BaseJavaValue *>& arguments);
     
 public:
-    Object(JVMLoader env, string className);
     Object(JVMLoader env, Broker& broker, string className);
-   
-    Object(JVMLoader env, string className, vector<BaseJavaValue *>& arguments);
     Object(JVMLoader env, Broker& broker, string className, vector<BaseJavaValue *>&& arguments);
     
     vector<string> MethodsNames() {
-        return service.GetMethods(object);
+        return broker.GetMethods(object);
     }
     
     // Get a qualified Java name.
@@ -53,7 +50,7 @@ public:
     }
     
     Method GetMethodDescriptor(string methodName, vector<BaseJavaValue* >&& args) {
-        return service.MethodDescription(object, methodName, move(args) );
+        return broker.MethodDescription(object, methodName, move(args) );
     }
 
     ObjectValue& GetObjectValue() { return object;}
@@ -64,7 +61,7 @@ public:
         T tmp;
         JEnv jni = Env();
         
-        auto method = service.MethodDescription(object, methodName, move(arguments));
+        auto method = broker.MethodDescription(object, methodName, move(arguments));
         
         auto javaValues = Arguments::GetValues(jni, arguments);
         

@@ -19,7 +19,7 @@
 #include "jvm_global.h"
 
 
-/* Classpath handle here allowing recursive search for .jar and .class */
+// Classpath handle the location of libs and allows recursive search for .jar and .class.
 
 class ClassPath {
 

@@ -50,6 +50,7 @@ const std::string VOID_RETURN("()V");
 struct Method {
     jmethodID method = nullptr;
     std::string returnType;
+    std::vector<std::string> parameters;
 };
 
 

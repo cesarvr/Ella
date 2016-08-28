@@ -9,28 +9,11 @@
 #include "object.h"
 
 
+
 // Represent an object in java.
 template <typename Broker>
-Object<Broker>::Object(JVMLoader loader, std::string className)
-: HandleEnv(loader), object(className), service(loader) {
-    
-    std::vector<BaseJavaValue*> _empty;
-    
-    CreateObject(loader, className, _empty);
-};
-
-template <typename Broker>
-Object<Broker>::Object(JVMLoader loader, string className, vector<BaseJavaValue *>& arguments):
-HandleEnv(loader),
-object(className),
-service(loader) {
-    
-    CreateObject(loader, className, arguments);
-};
-
-template <typename Broker>
 Object<Broker>::Object(JVMLoader loader,  Broker& broker, std::string className)
-: HandleEnv(loader), object(className), service(broker){
+: HandleEnv(loader), object(className), broker(broker){
     std::vector<BaseJavaValue*> _empty;
     _empty.reserve(0);
     CreateObject(loader, className, _empty);
@@ -38,7 +21,7 @@ Object<Broker>::Object(JVMLoader loader,  Broker& broker, std::string className)
 
 template <typename Broker>
 Object<Broker>::Object(JVMLoader env, Broker& broker, string className, vector<BaseJavaValue *>&& arguments)
-: HandleEnv(env), object(className), service(broker) {
+: HandleEnv(env), object(className), broker(broker) {
     
     CreateObject(env, className, arguments);
 }
@@ -55,6 +38,8 @@ void Object<Broker>::CreateObject(JVMLoader env, std::string className, std::vec
     
     auto member = Memoization(name, jni->functions->FindClass, jni, name.c_str());
     
+    Utils::raiseNullError(member, "Class not found in: " + name);
+    
     if(arguments.empty())
         constructor = Memoization(name, findclazz, jni, member,
                               CLASS_DEFAULT_CTS.c_str(), VOID_RETURN.c_str());
@@ -67,5 +52,5 @@ void Object<Broker>::CreateObject(JVMLoader env, std::string className, std::vec
     auto tmp = Wrapper( jni->functions->NewObjectA, jni, member, constructor, (jvalue*)&javaValues[0] );
     
     object.Set(tmp);
-    methodArray = service.GetMethodsNative(object);
+    methodArray = broker.GetMethodsNative(object);
 }

@@ -64,13 +64,33 @@ ObjectArray Server::GetMethodsNative(ObjectValue object) {
     return obj;
 }
 
-
-
 string Server::CreateSignature(string methodName, vector<BaseJavaValue*>& args) {
     stringstream signature;
     signature << methodName <<"@" << Args(args);
     return signature.str();
 }
+
+vector<Method> Server::MethodDesc(ObjectValue& object, string methodName){
+
+    auto jni = Env();
+    auto methodListPTR = GetMethodsNative(object);
+    
+    auto lookup = [&methodName](JEnv& env, jobject obj){
+    
+        Method m;
+        auto name = Reflect::GetName(env, obj);
+        cout << "looking for " << methodName  << "  == " << name << endl;
+        if(methodName == name){
+            m.returnType = Reflect::GetReturnType(env, obj);
+            m.parameters = Reflect::GetParameters(env, obj);
+        }
+        
+        return m;
+    };
+    
+    return Utils::IterateJObjectArray<decltype(lookup), Method>(jni, (jobjectArray)methodListPTR.Get(), lookup);
+}
+
 
 Method Server::MethodDescription(ObjectValue object, string methodName, vector<BaseJavaValue* >&& args) {
     auto jni = Env();
@@ -83,8 +103,7 @@ Method Server::MethodDescription(ObjectValue object, string methodName, vector<B
         return tmp;
     
     jobject method;
-    
-    
+
     auto seek = [&method, &methodName, &args](JEnv& env, jobject object ){
         auto name = Reflect::GetName(env, object);
         

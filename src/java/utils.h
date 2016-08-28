@@ -18,9 +18,6 @@ using namespace std;
 
 namespace Utils {
     
-
-
-    
     template<typename T>
     void chkNull(T&& param){
         assert(param != nullptr);
@@ -36,6 +33,13 @@ namespace Utils {
         chkNull(first);
         
         isNull(args...);
+    }
+    
+    template <typename T>
+    inline void raiseNullError(T& t, std::string message){
+        if (t == nullptr) {
+            throw VMError{ message };
+        }
     }
     
     template <typename Collection>
@@ -57,7 +61,6 @@ namespace Utils {
     inline std::string normalizeClassName(std::string&& classname) {
         std::replace(classname.begin(), classname.end(), '.', '/');
         return std::move(classname);
-        
     }
     
     template <typename T, typename R>
@@ -86,7 +89,7 @@ namespace Utils {
         return list;
     };
 
-    // Iterate a objectArray and apply a function, if the function return true it finish.
+    // Iterate a objectArray and apply a function, the loop breaks when T return true.
     // useful for quick linear search.
     template <typename T, typename R>
     bool Find( JEnv env, jobjectArray array, T cb ) {
@@ -107,8 +110,7 @@ namespace Utils {
                 env->ExceptionDescribe();
             
             env->DeleteLocalRef( element );
-            
-            }
+        }
         
         return ret;
     };
