@@ -7,6 +7,7 @@ var install_dir = './jdk';
 var jdk6 = [install_dir + '/include', install_dir + '/linux', install_dir + '/libjvm.so'];
 var os = require('os');
 
+
 var app_folder = path.dirname(require.main.filename);
 
 //Helpers
@@ -16,7 +17,6 @@ var app_folder = path.dirname(require.main.filename);
 // Installer steps.
 var download = function(next) {
     console.log('proceed download OpenJDK.');
-
     var arch = process.arch;
 
     return false;
@@ -62,6 +62,7 @@ var look_java_home = function() {
 
     var path = process.env['JAVA_HOME'];
 
+    if(path === '') return false;
     var options = {};
     options.exclude = ['bin', 'man', 'db'];
 
@@ -117,7 +118,7 @@ var pre_install = function() {
 
 var install = function() {
 
-    var steps = [pre_install, handle_macosx, lookup_jvm, /*jdk_debug,*/ look_user_folder, look_java_home, download];
+    var steps = [pre_install, handle_macosx, lookup_jvm, /*jdk_debug,*/ look_java_home, download];
 
     for (var i = 0; i < steps.length; i++)
         if (steps[i]()) break;

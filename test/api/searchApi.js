@@ -21,8 +21,10 @@ try {
 }
 
 
-//jvm.setClassPath('../demo/lib/pdfbox-app-1.8.11.jar');
+console.log('loading jar...');
+//jvm.setClassPath(['../demo/lib/']);
 
+jvm.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
 //jvm.setClassPath('../demo/lib/itext-5.5.8/itextpdf-5.5.8.jar:../demo/PDFHtml/bin/:../demo/lib/itext-5.5.8/xmlworker-5.5.8.jar:../demo/lib/pdfbox-app-1.8.11.jar');
 
 
@@ -33,7 +35,7 @@ var PDF = function(cb) {
 
 
     jvm.start(function(java) {
-        javaObject = java.New("pdf/P2HService");
+        javaObject = java.new("pdf/P2HService");
 
         var obj = {
             readAndCachePDF: function(cb) {

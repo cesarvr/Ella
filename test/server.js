@@ -51,7 +51,7 @@ app.get('/preview', function(req, res) {
         pdf(function(api) {
             api.previewPDF(q, function(base64) {
                 //console.log('->', base64);
-								cacheImg[q] = base64;
+                cacheImg[q] = base64;
                 res.send({
                     img: base64
                 });
@@ -101,6 +101,6 @@ app.get('/look', function(req, res) {
 
 
 
-app.listen(3000, function() {
-    console.log('Serving...');
+app.listen(8888, function() {
+    console.log('Serving... 8888');
 });

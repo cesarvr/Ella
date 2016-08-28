@@ -26,7 +26,6 @@ describe('ella', function() {
     var vm = null;
 
 
-
     it(' testing classpath validation: ', function() {
         try {
         java.setClassPath("../empty");
@@ -35,19 +34,15 @@ describe('ella', function() {
         }
     })
 
-  
-
-
-
-
     it(' testing jar files search: ', function() {
 
         console.time('recursive search');
         
         // macosx test 
-        java.setClassPath(['/Users/cvaldez/Documents/java_demo/bin/', '/Users/cvaldez/Documents/java_demo/lib/'], true);
+        //java.setClassPath(['/Users/cvaldez/Documents/java_demo/bin/', '/Users/cvaldez/Documents/java_demo/lib/'], true);
 
-        //java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
+        //linux
+        java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
         console.timeEnd('recursive search');
 
         assert.notEqual(java.getClassPath(), '', 'should expect something here.');
@@ -55,16 +50,13 @@ describe('ella', function() {
     });
 
 
-
-
-
     it('turning on the jvm', function(done) {
 
-
-        //java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
+        //linux
+        java.setClassPath(['../demo/lib', '../demo/PDFHtml/bin'], true);
       
         // macosx test 
-        java.setClassPath(['/Users/cvaldez/Documents/java_demo/bin/', '/Users/cvaldez/Documents/java_demo/lib/'], true);
+        //java.setClassPath(['/Users/cvaldez/Documents/java_demo/bin/', '/Users/cvaldez/Documents/java_demo/lib/'], true);
 
         assert.notEqual(java.getClassPath(), '', 'should expect something here.');
         //console.log('classpath ->' ,java.getClassPath());

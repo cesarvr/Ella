@@ -21,7 +21,7 @@ var http = require('http');
 var https = require('https');
 
 // macosx location of jar.
-java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
+//java.setClassPath(['/Users/cvaldez/Desktop/NWR/java/lib', '/Users/cvaldez/Desktop/NWR/java/PDFHtml/bin'], true);
 
 // linux location of the jars.
 java.setClassPath(['../demo/lib/', '../demo/PDFHtml'], true);
@@ -32,7 +32,7 @@ java.start(function(jvm) {
     console.log(jvm);
 
     console.log('loading->')
-    var javaObject = jvm.New("pdf.P2HService");
+    var javaObject = jvm.new("pdf.P2HService");
 
     console.log('Calling PDF Generator method');
 
