@@ -1,30 +1,25 @@
 {
-    "name": "ella",
-    "version": "1.1.2",
-    "description": "",
-    "main": "ella.node",
-    "scripts": {
-        "preinstall": "npm install file-tools nan --save && node scripts/install.js && node-gyp rebuild && ln -s ./build/Release/ella.node ./ella.node"
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "file-tools": "^1.0.0",
-        "nan": "^2.3.3"
-    },
-
-    "keywords": [
-        "java",
-        "jni",
-        "enterprise",
-        "ella",
-        "J2EE"
-    ],
-
-    "devDependencies": {
-        "chai": "^3.5.0"
-    },
-    "author": "cvaldezr",
-    "license": "MIT"
-
+  "name": "ella",
+  "version": "1.5.0",
+  "description": "",
+  "main": "ella.node",
+  "scripts": {
+    "preinstall": "npm install file-tools nan --save && node scripts/install.js && node-gyp rebuild && ln -s ./build/Release/ella.node ./ella.node"
+  },
+  "author": "cvaldezr",
+  "license": "MIT",
+  "dependencies": {
+    "file-tools": "^1.0.0",
+    "nan": "^2.3.5"
+  },
+  "keywords": [
+    "java",
+    "jni",
+    "enterprise",
+    "ella",
+    "J2EE"
+  ],
+  "devDependencies": {
+    "chai": "^3.5.0"
+  }
 }

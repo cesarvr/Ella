@@ -71,11 +71,12 @@ std::string JVMLoader::Start() {
 
 #ifdef __linux__
 
-  std::string java_home = getenv("JAVA_HOME");
+  auto env_var = getenv("JAVA_HOME");
   bool loadStatus = false;
-
-  if (!(loadStatus =
-            LoadJVMLibrary(java_home + "/jre/lib/amd64/server/libjvm.so", create_vm))) {
+  if(env_var !=NULL){
+    std::string java_home = env_var;
+    loadStatus = LoadJVMLibrary(java_home + "/jre/lib/amd64/server/libjvm.so", create_vm);
+  }else{
     loadStatus = LoadJVMLibrary("./jdk/libjvm.so", create_vm);
   }
 
