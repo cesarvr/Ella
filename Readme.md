@@ -1,6 +1,8 @@
 # Ella
 
-Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS container. Is done in C++11 to make use of object oriented design.
+Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS container. Is done in C++11 to make use of object oriented design. 
+
+This library is compatible with Node.js 6 and below.
 
 ###Why 
 

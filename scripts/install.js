@@ -10,100 +10,112 @@ var os = require('os');
 
 var app_folder = path.dirname(require.main.filename);
 
+var complete_path = function(path) {
+
+  if( process.platform === "win32") {
+    if(path.slice(-1) !== '\\') path += '\\' 
+  }else {
+    if(path.slice(-1) !== '/') path += '/' 
+  }
+
+  return path
+}
+
+
 //Helpers
 //
 
 
 // Installer steps.
 var download = function(next) {
-    console.log('proceed download OpenJDK.');
-    var arch = process.arch;
+  console.log('proceed download OpenJDK.');
+  var arch = process.arch;
 
-    return false;
+  return false;
 };
 
 var search_jdk = function(path, options) {
-    console.log('looking for jdk in->', path);
+  path = complete_path(path)
+  console.log('looking for jdk in->', path);
 
-    console.log(path)
-    var libjvm = file.search(path, "libjvm.so", options);
-    var include = file.search(path, 'include', options);
-    var linux = file.search(path, 'linux', options);
+  var libjvm = file.search(path, "libjvm.so", options);
+  var include = file.search(path, 'include', options);
+  var linux = file.search(path, 'linux', options);
 
-    var jdk = [include, linux, libjvm];
-    var err = null;
+  var jdk = [include, linux, libjvm];
+  var err = null;
 
-    if (file.exists([include.path, linux.path, libjvm.path])) {
-        console.log('include->', include.path);
-        console.log('linux->', linux.path);
-        console.log('lib->', libjvm.path);
-
-
-        jdk.forEach(function(file) {
+  if (file.exists([include.path, linux.path, libjvm.path])) {
+    console.log('include->', include.path);
+    console.log('linux->', linux.path);
+    console.log('lib->', libjvm.path);
 
 
-            fs.symlink(file.path, install_dir + '/' + file.file, function(err, arg) {
-                err = err;
-            });
-        });
+    jdk.forEach(function(file) {
 
-        if (err) console.log('error => ', err);
-        else
-            return true;
-    }
 
-    console.log('jdk files: not found');
+      fs.symlink(file.path, install_dir + '/' + file.file, function(err, arg) {
+        err = err;
+      });
+    });
 
-    return false;
+    if (err) console.log('error => ', err);
+    else
+      return true;
+  }
+
+  console.log('jdk files: not found');
+
+  return false;
 }
 
 var look_java_home = function() {
-    console.log('looking for JAVA_HOME.');
+  console.log('looking for JAVA_HOME.');
 
-    var path = process.env['JAVA_HOME'];
+  var path = process.env['JAVA_HOME'];
 
-    if(path === '') return false;
-    var options = {};
-    options.exclude = ['bin', 'man', 'db'];
+  if(path === '') return false;
+  var options = {};
+  options.exclude = ['bin', 'man', 'db'];
 
 
-    return search_jdk(path, options);
+  return search_jdk(path, options);
 };
 
 var jdk_debug = function() {
 
-    console.log('looking in user folder for jdk [DEBUG]');
+  console.log('looking in user folder for jdk [DEBUG]');
 
-    var options = {};
-    options.exclude = ['.git', 'www', 'build', 'node_modules', 'docs', 'src'];
+  var options = {};
+  options.exclude = ['.git', 'www', 'build', 'node_modules', 'docs', 'src'];
 
-    return search_jdk(app_folder + '/../', options);
+  return search_jdk(app_folder + '/../', options);
 };
 
 var look_user_folder = function() {
 
-    console.log('looking in user folder for jdk');
+  console.log('looking in user folder for jdk');
 
-    var path = process.env['PWD'];
-    var options = {};
-    options.exclude = ['.git', 'www', 'build', 'node_modules', 'docs', 'src'];
+  var path = process.env['PWD'];
+  var options = {};
+  options.exclude = ['.git', 'www', 'build', 'node_modules', 'docs', 'src'];
 
 
-    return search_jdk(path + '/', options);
+  return search_jdk(path + '/', options);
 };
 
 
 
 var lookup_jvm = function() {
-    console.log('checking user jdk');
+  console.log('checking user jdk');
 
-    if (file.exists(jdk6)) {
-        console.log('found one jdk < 8');
-        return true;
-    }
+  if (file.exists(jdk6)) {
+    console.log('found one jdk < 8');
+    return true;
+  }
 
-    console.log('not found..');
-    return false;
+  console.log('not found..');
+  return false;
 };
 
 var handle_macosx = function(){
@@ -111,19 +123,19 @@ var handle_macosx = function(){
 }
 
 var pre_install = function() {
-    if (!fs.existsSync(install_dir)) {
-        fs.mkdirSync(install_dir);
-    };
+  if (!fs.existsSync(install_dir)) {
+    fs.mkdirSync(install_dir);
+  };
 };
 
 var install = function() {
 
-    var steps = [pre_install, handle_macosx, lookup_jvm, /*jdk_debug,*/ look_java_home, download];
+  var steps = [pre_install, handle_macosx, lookup_jvm, /*jdk_debug,*/ look_java_home, download];
 
-    for (var i = 0; i < steps.length; i++)
-        if (steps[i]()) break;
+  for (var i = 0; i < steps.length; i++)
+    if (steps[i]()) break;
 
-    return false;
+  return false;
 };
 
 install();
