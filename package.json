@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "file-tools": "^1.0.0",
-    "nan": "^2.3.5"
+    "nan": "^2.13.2"
   },
   "keywords": [
     "java",

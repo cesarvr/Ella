@@ -38,22 +38,31 @@ var search_jdk = function(path, options) {
   path = complete_path(path)
   console.log('looking for jdk in->', path);
 
-  var libjvm = file.search(path, "libjvm.so", options);
-  var include = file.search(path, 'include', options);
-  var linux = file.search(path, 'linux', options);
+  var libjvm = null
+  var include = null
+  var linux = null
+  var jdk =[]
+  if(process.platform === "win32"){
+     libjvm = file.search(path, "jvm.lib", options);
+     include = file.search(path, 'include', options);
+     jdk = [include, libjvm];
+  }else{
+     libjvm =  file.search(path, "libjvm.so", options);
+     include = file.search(path, 'include', options);
+     linux =   file.search(path, 'linux', options);
+     jdk = [include, linux, libjvm];
+  }
+ 
 
-  var jdk = [include, linux, libjvm];
+  
   var err = null;
+  var paths = jdk.map(function(file){
+    return file.path
+  })
 
-  if (file.exists([include.path, linux.path, libjvm.path])) {
-    console.log('include->', include.path);
-    console.log('linux->', linux.path);
-    console.log('lib->', libjvm.path);
-
-
+  if (file.exists(paths)) {
+    console.log('paths->', paths);
     jdk.forEach(function(file) {
-
-
       fs.symlink(file.path, install_dir + '/' + file.file, function(err, arg) {
         err = err;
       });
