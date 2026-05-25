@@ -2,7 +2,7 @@
 
 This project is a NodeJS native plugin to run Java libraries and code inside NodeJS / Javascript (V8) VM, written in C++ and compatible with Node.js 6. The motivation for this was that our main product at Feedhenry was a NodeJS only cloud platform and some customers sometimes needed PDF generation and in those days the best library for that job was iText. 
 
-It supports multithreading (delegate heavy blocking operations to Java without blocking Javascript) and type translation, so you can seamlessly pass values between Java and Javascript.
+It supports multithreading (delegate heavy blocking operations to Java without blocking Javascript) and type/method translation, so you can seamlessly pass values between Java and Javascript.
 
 
 ### Other reasons to write this plugin… 
@@ -24,7 +24,7 @@ It supports multithreading (delegate heavy blocking operations to Java without b
   ![alt tag](https://github.com/cesarvr/Ella/blob/master/docs/ella_multi_thread.png) 
 
 ##### Performance
-  - This is part of the [LibJNI](https://github.com/cesarvr/JNI) project, but explain how the performance is achieved by using this *broker* class to hide the caching/reflection details to the object class, this server class can be easily replace by custom made or platform specific implementantion, you just need to implement the same method signature and thats it.
+  - I also wrote [this C++ library](https://github.com/cesarvr/JNI) to handle the caching/reflection details for each instantiated object, it was very fun...
   ![alt tag](https://github.com/cesarvr/Ella/blob/master/docs/design-diagram.png) 
  
 ### Things to be added soon. 
