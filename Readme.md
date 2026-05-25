@@ -1,10 +1,11 @@
 # Ella
 
-Is an NodeJS native plugin to allow Java code execution inside V8/NodeJS container. Is done in C++11 to make use of object oriented design. 
+This project is a NodeJS native plugin to run Java libraries and code inside NodeJS / Javascript (V8) VM, written in C++ and compatible with Node.js 6. The motivation for this was that our main product at Feedhenry was a NodeJS only cloud platform and some customers sometimes needed PDF generation and in those days the best library for that job was iText. 
 
-This library is compatible with Node.js 6 and below.
+It supports multithreading (delegate heavy blocking operations to Java without blocking Javascript) and type translation, so you can seamlessly pass values between Java and Javascript.
 
-### Why 
+
+### Other reasons to write this plugin… 
 
 - Because Java have very good ecosystem of libraries like PDFBox, iText, Solr, etc.., all mature and useful.
 - The objective is to create wrappers around the library you want and use it in your Node app.
@@ -75,7 +76,7 @@ return the classpath configuration.
 
 This method allow us to configure the classpath.
 
-```sh
+```js
 	ella.getClassPath();  //myjar1.jar:myjar2.jar   
 ```
 
@@ -88,7 +89,7 @@ callback(instance): function take as parameter an instance of the JVM.
 
 This method allow us to configure the classpath.
 
-```sh
+```js
 	ella.start(function(vm){  /* do some work with vm */   })
 ```
 
@@ -98,7 +99,7 @@ This method allow us to configure the classpath.
 
 given a classname create a new object.
 
-```sh
+```js
 	var stringBuffer = vm.new('java.lang.StringBuffer');
 	
 	// stringBuffer.append
@@ -111,7 +112,7 @@ given a classname create a new object.
 
 To make an sync call just call the method.
 
-```sh
+```js
 	stringBuffer.append('hello'); 
 	console.log(stringBuffer.toString() );  //hello. 
 ```
@@ -121,7 +122,7 @@ To make an sync call just call the method.
 
 Just call the method as normal and add a function callback as an extra parameter this extra parameter transform the call to async. 
 
-```sh
+```js
 	
 	var pdf = vm.new('com.pdf.Library'); // method signature  byte[] createPDF(string); 
 	
