@@ -1,17 +1,14 @@
 # Ella
 
-This project is a NodeJS native plugin to run Java libraries and code inside NodeJS / Javascript (V8) VM, written in C++ and compatible with Node.js 6. The motivation for this was that our main product at Feedhenry was a NodeJS only cloud platform and some customers sometimes needed PDF generation and in those days the best library for that job was iText. 
+This project is a NodeJS native plugin to run Java libraries and code inside NodeJS / Javascript (V8) VM, written in C++ and compatible with Node.js 6. 
 
-It supports multithreading (delegate heavy blocking operations to Java without blocking Javascript) and type/method translation, so you can seamlessly pass values between Java and Javascript.
-
-
-### Other reasons to write this plugin… 
+### Why
 
 - Because Java have very good ecosystem of libraries like PDFBox, iText, Solr, etc.., all mature and useful.
 - The objective is to create wrappers around the library you want and use it in your Node app.
 - Easing Node.js integration with legacy Java system. 
 - Performance, comunication between JS and a JVM method is ≈<1ms.
- 
+   
 ### Features 
   
   - The JVM run in the same NodeJS process as a native add-on so comunication between each other is fast. 
